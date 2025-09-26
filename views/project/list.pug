@@ -1,0 +1,27 @@
+extends ../layout.pug
+
+block content
+  h1.mb-4 Lista de Proyectos
+
+  table.table.table-hover.table-dark
+    thead
+      tr
+        th ID        
+        th Proyecto
+        th Estado
+        th Presupuesto
+        th.text-end.pe-5 Acciones
+    tbody
+      each item in items
+        tr
+          td= item.id
+          td.d-none = item.client_id
+          td= item.name
+          td= item.status
+          td $#{item.budget}
+          td.text-end
+            a.btn.btn-gray.btn-sm.me-2(href=`/projects/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/projects/${item.id}/edit`) Editar
+            form(action=`/api/projects/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+              input(type="hidden", name="_method", value="DELETE")
+              button.btn.btn-danger-soft.btn-sm(type="submit") Eliminar

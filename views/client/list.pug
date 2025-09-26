@@ -1,0 +1,25 @@
+extends ../layout.pug
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.mb-4 Lista de Clientes
+    a.btn.btn-gray.btn-sm.me-2(href="/client-form") Agregar Cliente
+  table.table.table-hover.table-dark
+    thead
+      tr
+        th ID
+        th Empresa
+        th Estado
+        th.text-end.pe-5 Acciones
+    tbody
+      each item in items
+        tr
+          td= item.id
+          td= item.name
+          td= item.status
+          td.text-end
+            a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}/edit`) Editar
+            form(action=`/api/clients/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+              input(type="hidden", name="_method", value="DELETE")
+              button.btn.btn-danger-soft.btn-sm(type="submit") Eliminar

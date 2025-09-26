@@ -1,0 +1,50 @@
+extends ../layout.pug
+
+block content
+  h1.mb-4= title
+
+  form(method="POST", action=item ? `/api/projects/${item.id}?_method=PUT` : "/api/projects")
+    .mb-3
+      label.form-label(for="name") Nombre del proyecto
+      input.form-control(type="text", id="name", name="name", required, value=item ? item.name : "")
+
+    .mb-3
+      label.form-label(for="client_id") Cliente
+      input.form-control(type="number", id="client_id", name="client_id", required, value=item ? item.client_id : "")
+
+    .mb-3
+      label.form-label(for="description") Descripción
+      textarea.form-control(id="description", name="description")= item ? item.description : ""
+
+    .mb-3
+      label.form-label(for="start_date") Fecha de inicio
+      input.form-control(type="date", id="start_date", name="start_date", required, value=item ? item.start_date : "")
+
+    .mb-3
+      label.form-label(for="end_date") Fecha de fin
+      input.form-control(type="date", id="end_date", name="end_date", value=item ? item.end_date : "")
+
+    .mb-3
+      label.form-label(for="budget") Presupuesto
+      input.form-control(type="number", id="budget", name="budget", step="0.01", value=item ? item.budget : "")
+
+    .mb-3
+      label.form-label(for="billing_type") Tipo de facturación
+      select.form-select(id="billing_type", name="billing_type")
+        option(value="Mensual", selected=item && item.billing_type === 'Mensual') Mensual
+        option(value="Anual", selected=item && item.billing_type === 'Anual') Anual
+        option(value="Única", selected=item && item.billing_type === 'Única') Única
+
+    .mb-3
+      label.form-label(for="status") Estado
+      select.form-select(id="status", name="status")
+        option(value="Activo", selected=item && item.status === 'Activo') Activo
+        option(value="En Progreso", selected=item && item.status === 'En Progreso') En Progreso
+        option(value="Finalizado", selected=item && item.status === 'Finalizado') Finalizado
+
+    .mb-3
+      label.form-label(for="manager_id") Manager
+      input.form-control(type="number", id="manager_id", name="manager_id", value=item ? item.manager_id : "")
+
+    button.btn.btn-primary(type="submit" disabled) Guardar
+    a.btn.btn-secondary(href="/projects") Cancelar
