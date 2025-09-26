@@ -42,10 +42,6 @@ app.use(methodOverride('_method'));
 
 // Ruta de bienvenida 
 app.get('/', (req, res) => {
-    // res.json({ 
-    //     title: 'Bienvenido a la API de ClickWave', 
-    //     message: 'Gestiona tus proyectos, clientes y tiempo.' 
-    // });
     res.render('index', { title: 'ClickWave' });
 });
 
@@ -61,12 +57,12 @@ app.post('/clients', ClientController.createView);
 
 
 // User
-app.get('/users', UserController.getAllView);
-app.get('/users/new', UserController.newView);
 app.post('/users', UserController.createView);
-app.get('/users/:id/edit', UserController.getEditView); // Nueva ruta para mostrar formulario de edición
-app.put('/users/:id', UserController.updateView); // Nueva ruta para procesar la actualización
+app.get('/users', UserController.getAllView);
 app.get('/users/:id', UserController.getByIdView);
+app.get('/users/new', UserController.newView);
+app.get('/users/:id/edit', UserController.getEditView); // Ruta para mostrar formulario de edición
+app.put('/users/:id', UserController.updateView); // Ruta para procesar la actualización
 
 // Project views Pug
 app.get('/projects', ProjectController.getAllView);
@@ -100,10 +96,6 @@ app.use('/api/areas', areaRoutes);
 
 // Manejo de errores 404 para rutas no encontradas
 app.use((req, res, next) => {
-    // res.status(404).json({ 
-    //     error: 'Página no encontrada',
-    //     message: 'La ruta que intentas acceder no existe.'
-    // });
     res.render('error404', { tittle: 'Error'});
 });
 

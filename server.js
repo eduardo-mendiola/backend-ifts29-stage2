@@ -6,9 +6,9 @@ const PORT = process.env.PORT || 3000;
 
 (async () => {
     await dbConnect(); // Conecta a MongoDB
-    console.log('DB lista');
+    console.log('----------------------------------\n  BASE DE DATOS MONGO DB LISTA \n----------------------------------');
 
     app.listen(PORT, () => {
-        console.log(`Servidor de ClickWave corriendo en http://localhost:${PORT}`);
+        console.log(`=> Servidor de ClickWave corriendo en http://localhost:${PORT}`);
     });
 })();

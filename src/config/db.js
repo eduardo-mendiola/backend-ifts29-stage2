@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import 'dotenv/config';
 
-const DB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/clickwavedb';
+const DB_URI = process.env.MONGO_URI_LOCAL 
 
 const dbConnect = async () => {
     try {
@@ -9,9 +9,9 @@ const dbConnect = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
-        console.log('Conectado a la base de datos MongoDB');
+        console.log('************************************************\n ESPERE: Conectado a la base de datos MongoDB \n************************************************');
     } catch (error) {
-        console.error('Error al conectar a la DB:', error.message);
+        console.error('****************************\n Error al conectar a la DB \n****************************\nERROR:', error.message);
         process.exit(1);
     }
 };
