@@ -7,6 +7,34 @@ const validateClientInput = (req, res, next) => {
     next(); 
 };
 
+// Validación para usuarios
+const validateUserInput = (req, res, next) => {
+    const { first_name, last_name, email, password_hash, role_id, area_id } = req.body;
+
+    if (!first_name || !last_name || !email || !password_hash || !role_id || !area_id) {
+        return res.status(400).json({ 
+            message: 'first_name, last_name, email, password_hash, role_id y area_id son campos obligatorios.'
+        });
+    }
+
+    // Validación simple de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: 'Formato de email inválido.' });
+    }
+
+    // Validación de teléfono opcional
+    if (req.body.phone) {
+        const phoneRegex = /^\+?[0-9\s\-]{7,15}$/;
+        if (!phoneRegex.test(req.body.phone)) {
+            return res.status(400).json({ message: 'Formato de teléfono inválido.' });
+        }
+    }
+
+    next();
+};
+
+
 const validateProjectInput = (req, res, next) => {
     const { client_id, name, start_date, end_date, budget, billing_type, status, manager_id } = req.body;
 
@@ -53,7 +81,7 @@ const validateProjectInput = (req, res, next) => {
 
 export {
     validateClientInput,
-    // validateUserInput,
+    validateUserInput,
     // validateRoleInput,
     validateProjectInput
 };

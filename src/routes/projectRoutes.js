@@ -8,7 +8,7 @@ import { validateProjectInput } from '../middleware/validationMiddleware.js';
 // Rutas CRUD para Proyectos
 
 // POST /api/projects - Crear un nuevo proyecto
-router.post('/', validateProjectInput, projectController.create);
+router.post('/', projectController.create);
 
 // GET /api/projects - Obtener todos los proyectos
 router.get('/', projectController.getAll);

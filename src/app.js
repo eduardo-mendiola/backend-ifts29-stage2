@@ -1,15 +1,21 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import methodOverride from 'method-override';
+
 // Importar rutas de cada entidad
-import ClientController from './controllers/ClientController.js';
 import clientRoutes from './routes/clientRoutes.js';
-import UserController from './controllers/UserController.js';
 import userRoutes from './routes/userRoutes.js';
 import roleRoutes from './routes/roleRoutes.js';
-import ProjectController from './controllers/ProjectController.js';
 import projectRoutes from './routes/projectRoutes.js';
-import methodOverride from 'method-override';
+import areaRoutes from './routes/areaRoutes.js';
+
+// Importar controladores para vistas
+import ClientController from './controllers/ClientController.js';
+import ProjectController from './controllers/ProjectController.js';
+import UserController from './controllers/UserController.js';
+import AreaController from './controllers/AreaController.js';
+import RoleController from './controllers/RoleController.js';
 
 
 // __dirname en ESM
@@ -57,7 +63,7 @@ app.post('/clients', ClientController.createView);
 // User
 app.get('/users', UserController.getAllView);
 app.get('/users/new', UserController.newView);
-app.post('/users', UserController.createViewAll);
+app.post('/users', UserController.createView);
 app.get('/users/:id/edit', UserController.getEditView); // Nueva ruta para mostrar formulario de edición
 app.put('/users/:id', UserController.updateView); // Nueva ruta para procesar la actualización
 app.get('/users/:id', UserController.getByIdView);
@@ -67,12 +73,29 @@ app.get('/projects', ProjectController.getAllView);
 app.get('/projects/:id', ProjectController.getByIdView);
 app.get('/projects/:id/edit', ProjectController.getByIdView);
 
+// Vistas Pug para áreas
+app.get('/areas', AreaController.getAllView);
+app.get('/areas/new', AreaController.newView);
+app.get('/areas/:id/edit', AreaController.getEditView);
+app.get('/areas/:id', AreaController.getByIdView);
+app.post('/areas', AreaController.createView);
+app.put('/areas/:id', AreaController.updateView);
+
+// Vistas Pug para roles
+app.get('/roles', RoleController.getAllView);          
+app.get('/roles/new', RoleController.newView);        
+app.get('/roles/:id/edit', RoleController.getEditView); 
+app.get('/roles/:id', RoleController.getByIdView);  
+app.post('/roles', RoleController.createView);        
+app.put('/roles/:id', RoleController.updateView);    
+
 
 // || Rutas base (endpoints de la API) ||
 app.use('/api/client', clientRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/roles', roleRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/areas', areaRoutes);
 
 
 // Manejo de errores 404 para rutas no encontradas

@@ -16,14 +16,21 @@ block content
       label.form-label(for="email") Email
       input#email.form-control(type="email", name="email", value=item.email, required)
     .mb-3
+      label.form-label(for="password_hash") Contraseña
+      input#password_hash.form-control(type="text", name="password_hash", value=item.password_hash || "", required)
+    .mb-3
       label.form-label(for="phone") Teléfono
       input#phone.form-control(type="text", name="phone", value=item.phone || "")
     .mb-3
       label.form-label(for="role_id") Rol
-      input#role.form-control(type="text", name="role_id", value=item.role_id || "", placeholder="Ej: Desarrollador, Diseñador, etc.", required)
+      select#role_id.form-select(name="role_id", required)
+        each role in roles
+          option(value=role._id selected=(role._id.toString() === item.role_id._id.toString())) #{role.name}
     .mb-3
       label.form-label(for="area_id") Área
-      input#area.form-control(type="text", name="area_id", value=item.area_id || "", placeholder="Ej: Desarrollo, Marketing, etc.", required)
+      select#area_id.form-select(name="area_id", required)
+        each area in areas
+          option(value=area._id selected=(area._id.toString() === item.area_id._id.toString())) #{area.name_area}
     .mb-3
       label.form-label(for="monthly_salary") Salario Mensual
       input#monthly_salary.form-control(type="number", name="monthly_salary", value=item.monthly_salary || "", required)

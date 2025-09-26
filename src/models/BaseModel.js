@@ -1,105 +1,48 @@
-import db from '../config/db.js';
-import IdGenerator from '../utils/IdGenerator.js';
+import mongoose from 'mongoose';
 
 class BaseModel {
-    constructor(collectionName, EntityClass, fieldsOrder) {
-        this.collectionName = collectionName;
-        this.EntityClass = EntityClass;
-        this.fieldsOrder = fieldsOrder;
-        this.idGen = new IdGenerator(db, collectionName);
+    constructor(schema, collectionName) {
+        // Evitar sobrescribir modelos si ya existen
+        this.model = mongoose.models[collectionName] || mongoose.model(collectionName, schema);
     }
 
-    
+    // Crear un nuevo documento
     async create(data) {
-        const collection = db.getCollection(this.collectionName);
-
-        // Si hay fieldsOrder definido, reordenamos data
-        const values = this.fieldsOrder
-            ? this.fieldsOrder.map(field => data[field])
-            : Object.values(data);
-
-        const newItem = new this.EntityClass(...values);
-
-        collection.push(newItem);
-        db.setCollection(this.collectionName, collection);
-        await db.saveData();
-        return newItem;
+        return this.model.create(data);
     }
 
-    async findAll() {
-        return db.getCollection(this.collectionName);
+    // Obtener todos los documentos
+    async findAll(populateFields = []) {
+        let query = this.model.find({});
+        populateFields.forEach(field => {
+            query = query.populate(field);
+        });
+        return query;
     }
 
-    async findById(id) {
-        const collection = db.getCollection(this.collectionName);
-        return collection.find(item => String(item.id) === String(id));
+    // Buscar por id
+    async findById(id, populateFields = []) {
+        let query = this.model.findById(id);
+        populateFields.forEach(field => {
+            query = query.populate(field);
+        });
+        return query;
     }
 
-    // async update(id, updateData) {
-    //     const collection = db.getCollection(this.collectionName);
-    //     const index = collection.findIndex(item => String(item.id) === String(id));
-    //     if (index === -1) return null;
-
-    //     collection[index] = { ...collection[index], ...updateData, id };
-    //     db.setCollection(this.collectionName, collection);
-    //     await db.saveData();
-    //     return collection[index];
-    // }
-
+    // Actualizar documento completo
     async update(id, updateData) {
-    const collection = db.getCollection(this.collectionName);
-    const index = collection.findIndex(item => String(item.id) === String(id));
-    if (index === -1) return null;
-
-    // Reordenar updateData según fieldsOrder si existe
-    let reorderedData;
-    if (this.fieldsOrder) {
-        reorderedData = {};
-        for (const field of this.fieldsOrder) {
-            if (field in updateData) {
-                reorderedData[field] = updateData[field];
-            }
-        }
-        // agregar los campos que no están en fieldsOrder al final
-        for (const key of Object.keys(updateData)) {
-            if (!this.fieldsOrder.includes(key)) {
-                reorderedData[key] = updateData[key];
-            }
-        }
-    } else {
-        reorderedData = updateData;
+        return this.model.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
     }
 
-    // Merge manteniendo el orden
-    collection[index] = { ...collection[index], ...reorderedData, id };
-    db.setCollection(this.collectionName, collection);
-    await db.saveData();
-    return collection[index];
-}
-
-
+    // Actualizar parcialmente (patch)
     async patch(id, updateData) {
-        const collection = db.getCollection(this.collectionName);
-        const index = collection.findIndex(item => String(item.id) === String(id));
-        if (index === -1) return null;
-
-        collection[index] = { ...collection[index], ...updateData, id };
-        db.setCollection(this.collectionName, collection);
-        await db.saveData();
-        return collection[index];
+        return this.model.findByIdAndUpdate(id, { $set: updateData }, { new: true, runValidators: true });
     }
 
+    // Eliminar documento
     async delete(id) {
-        const collection = db.getCollection(this.collectionName);
-        const initialLength = collection.length;
-        const updatedCollection = collection.filter(item => item.id !== id);
-
-        if (updatedCollection.length < initialLength) {
-            db.setCollection(this.collectionName, updatedCollection);
-            await db.saveData();
-            return true;
-        }
-        return false;
+        const deleted = await this.model.findByIdAndDelete(id);
+        return !!deleted;
     }
 }
 

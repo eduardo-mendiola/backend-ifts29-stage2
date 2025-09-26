@@ -1,35 +1,24 @@
+import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
-import ProjectEntity from '../entities/ProjectEntity.js';
-import IdGenerator from '../utils/IdGenerator.js';
-import db from '../config/db.js';
 
-// Generador de IDs para proyectos
-const projectIdGen = new IdGenerator(db, 'projects');
+const projectSchema = new mongoose.Schema({
+    client_id: { type: mongoose.Schema.Types.ObjectId, ref: 'clients', required: true },
+    name: { type: String, required: true },
+    description: { type: String },
+    start_date: { type: Date },
+    end_date: { type: Date },
+    budget: { type: Number },
+    billing_type: { type: String, enum: ['hourly', 'fixed'], default: 'fixed' },
+    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
+    manager_id: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+}, {
+    collection: 'projects',
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
+});
 
 class ProjectModel extends BaseModel {
     constructor() {
-        super(
-            'projects',
-            ProjectEntity,
-            [
-                'id',
-                'client_id',
-                'name',
-                'description',
-                'start_date',
-                'end_date',
-                'budget',
-                'billing_type',
-                'status',
-                'manager_id'
-            ]
-        );
-        this.idGen = projectIdGen;
-    }
-
-    async create(data) {
-        data.id = this.idGen.generateId();
-        return super.create(data);
+        super(projectSchema);
     }
 }
 

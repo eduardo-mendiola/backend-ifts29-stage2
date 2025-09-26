@@ -1,23 +1,21 @@
-import BaseModel from './BaseModel.js'; 
-import ClientEntity from '../entities/ClientEntity.js'; 
-import IdGenerator from '../utils/IdGenerator.js';
-import db from '../config/db.js';
+import mongoose from 'mongoose';
+import BaseModel from './BaseModel.js';
 
-const clientIdGen = new IdGenerator(db, 'clients');
+const clientSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    contact_name: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    address: { type: String },
+    status: { type: String, enum: ['active', 'inactive'], default: 'active' }
+}, {
+    collection: 'clients',
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
+});
 
 class ClientModel extends BaseModel {
     constructor() {
-        super(
-            'clients', 
-            ClientEntity, 
-            ['id','name','contact_name','email','phone','address','status'] 
-        ); 
-        this.idGen = clientIdGen;       
-    }
-
-    async create(data) {
-        data.id = this.idGen.generateId();
-        return super.create(data); 
+        super(clientSchema);
     }
 }
 
