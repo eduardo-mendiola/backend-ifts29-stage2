@@ -1,17 +1,22 @@
 class BaseController {
     constructor(model, viewPath) {
-        this.model = model; 
-        this.viewPath = viewPath; 
+        this.model = model;
+        this.viewPath = viewPath;
     }
 
-    // Helper para convertir _id a id
     formatItem = (item) => {
         if (!item) return null;
         const obj = item.toObject ? item.toObject() : { ...item };
-        obj.id = obj._id;
-        delete obj._id;
-        delete obj.__v; // Opcional: elimina el campo de versión
-        return obj;
+
+        const formatted = {
+            id: obj._id.toString(),
+            ...obj
+        };
+
+        delete formatted._id;
+        delete formatted.__v;
+
+        return formatted;
     };
 
     formatItems = (items) => items.map(this.formatItem);
@@ -43,8 +48,8 @@ class BaseController {
 
     getById = async (req, res) => {
         try {
-            const { _id } = req.params;
-            const item = await this.model.findById(_id);
+            const { id } = req.params;
+            const item = await this.model.findById(id);
             if (!item) return res.status(404).json({ message: 'No encontrado.' });
             res.status(200).json(this.formatItem(item));
         } catch (error) {
@@ -55,8 +60,8 @@ class BaseController {
 
     update = async (req, res) => {
         try {
-            const { _id } = req.params;
-            const updatedItem = await this.model.update(_id, req.body);
+            const { id } = req.params;
+            const updatedItem = await this.model.update(id, req.body);
             if (!updatedItem) return res.status(404).json({ message: 'No encontrado para actualizar.' });
             res.status(200).json(this.formatItem(updatedItem));
         } catch (error) {

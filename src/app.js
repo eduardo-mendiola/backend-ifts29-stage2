@@ -57,10 +57,10 @@ app.post('/clients', ClientController.createView);
 
 
 // User
+app.get('/users/new', UserController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
 app.post('/users', UserController.createView);
 app.get('/users', UserController.getAllView);
 app.get('/users/:id', UserController.getByIdView);
-app.get('/users/new', UserController.newView);
 app.get('/users/:id/edit', UserController.getEditView); // Ruta para mostrar formulario de edición
 app.put('/users/:id', UserController.updateView); // Ruta para procesar la actualización
 
