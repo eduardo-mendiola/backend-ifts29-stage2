@@ -4,12 +4,15 @@ html(lang="es")
     title= title
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    // Bootstrap CSS
     link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css")
     style.
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
       body {
-        padding-top: 120px; /* espacio para navbar */
-        background-color: #121212; /* fondo oscuro */
+        background-color: #121212;
         color: #f0f0f0;
       }
       .btn-gray {
@@ -31,37 +34,91 @@ html(lang="es")
       table {
         background-color: #1e1e1e;
       }
+      .sidebar {
+        width: 280px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+      }
+      main.flex-grow-1 {
+        height: calc(100vh - 56px - 48px); /* altura de barra superior + tabs */
+        overflow-y: auto; /* scroll vertical si es necesario */
+      }
+
   body
-    header
-      // Navbar
-      nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.fixed-top
-        .container-fluid
-          a.navbar-brand(href="/") Mi Aplicación
-          button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav")
-            span.navbar-toggler-icon
-          #navbarNav.collapse.navbar-collapse
-            ul.navbar-nav.ms-auto
-              li.nav-item
-                a.nav-link(href="/") Página Principal
-              li.nav-item
-                a.nav-link(href="javascript:history.back()") Volver
+    .d-flex.h-100
+      // Sidebar
+      .sidebar.d-flex.flex-column.flex-shrink-0.p-3.text-white.bg-dark
+        a.d-flex.align-items-center.mb-3.mb-md-0.me-md-auto.text-white.text-decoration-none(href="/")
+          i.bi.bi-c-square-fill.fs-2.me-2
+          span.fs-4 ClickWare
+        hr
+        ul.nav.nav-pills.flex-column.mb-auto
+          li.nav-item
+            a.nav-link.active(aria-current="page" href="/")
+              i.bi.bi-house-door.me-2
+              | Inicio
+          li
+            a.nav-link.text-white(href="/users")
+              i.bi.bi-people.me-2
+              | Usuarios
+          li
+            a.nav-link.text-white(href="/projects")
+              i.bi.bi-grid.me-2
+              | Proyectos
+          li
+            a.nav-link.text-white(href="/clients")
+              i.bi.bi-table.me-2
+              | Clientes
+        hr
+        .dropdown
+          a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(
+            href="#" data-bs-toggle="dropdown" aria-expanded="false")
+            img.rounded-circle.me-2(src="https://github.com/mdo.png" alt="" width="32" height="32")
+            strong mdo
+          ul.dropdown-menu.dropdown-menu-dark.text-small.shadow(aria-labelledby="dropdownUser1")
+            li
+              a.dropdown-item(href="#") New project...
+            li
+              a.dropdown-item(href="#") Settings
+            li
+              a.dropdown-item(href="#") Profile
+            li
+              hr.dropdown-divider
+            li
+              a.dropdown-item(href="#") Sign out
 
-      div.container
-      // Banner informativo de desarrollo
-      .fixed-top(style="top: 56px; z-index: 1029;")
-        .container-fluid
-          .row
-            .col-12.text-center.py-2.bg-warning.fs-5
-              small
-                i.me-2
-                strong VERSIÓN DE DESARROLLO: 
-                | Funcionalidad CRUD completa disponible únicamente en el módulo de 
-                strong USUARIOS
-                |  - Otras entidades en construcción
+      // Columna derecha (barra de pestañas + contenido)
+      .flex-grow-1.d-flex.flex-column
+        // Barra de pestañas
+        header
+          .bg-dark
+            .container-fluid
+              ul.nav.nav-tabs.bg-dark
+                li.nav-item
+                  a.nav-link.active(href="#") Active
+                li.nav-item.dropdown
+                  a.nav-link.dropdown-toggle(data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false") Dropdown
+                  ul.dropdown-menu
+                    li
+                      a.dropdown-item(href="#") Action
+                    li
+                      a.dropdown-item(href="#") Another action
+                    li
+                      a.dropdown-item(href="#") Something else here
+                    li
+                      hr.dropdown-divider
+                    li
+                      a.dropdown-item(href="#") Separated link
+                li.nav-item
+                  a.nav-link(href="#") Link
+                li.nav-item
+                  a.nav-link(href="#") Link 2
+                li.nav-item
+                  a.nav-link.disabled(aria-disabled="true") Disabled
 
-    main
-    
-      block content
+        // Contenido principal
+        main.flex-grow-1.p-4
+          block content
 
-    // Bootstrap JS
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js")

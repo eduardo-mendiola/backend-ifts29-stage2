@@ -1,10 +1,29 @@
-extends layout.pug
+extends layout-public.pug
 
 block content
-  .d-flex.flex-column.justify-content-center.align-items-center.min-vh-100
-    h1.display-1.text-center.mb-4 ClickWave
-    p.lead.text-center.mb-4 La aplicación para gestionar tus proyectos
-    .d-flex.gap-3.mt-3
-      a.btn.btn-gray.btn-lg(href="/users") Ir a Usuarios
-      a.btn.btn-gray.btn-lg(href="/projects") Ir a Proyectos
-      a.btn.btn-gray.btn-lg(href="/clients") Ir a Clientes
+  .d-flex.justify-content-center.align-items-center.min-vh-100
+    form.text-center(style="min-width: 350px;" action="/admin" method="POST")
+      // Logo de ejemplo
+      img.mb-4(src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="72" height="57")
+      h1.h3.mb-3.fw-normal Please sign in
+
+      // Email
+      .form-floating.mb-3
+        input.form-control(type="email" id="floatingInput" name="email" placeholder="name@example.com")
+        label(for="floatingInput") Email address
+
+      // Password
+      .form-floating.mb-3
+        input.form-control(type="password" id="floatingPassword" name="password" placeholder="Password")
+        label(for="floatingPassword") Password
+
+      // Remember me
+      .form-check.text-start.mb-3
+        input.form-check-input(type="checkbox" value="remember-me" id="checkDefault")
+        label.form-check-label(for="checkDefault") Remember me
+
+      // Submit
+      button.btn.btn-primary.w-100.py-2(type="submit") Sign in
+
+      // Pie de página
+      p.mt-5.mb-3.text-body-secondary © 2017–2025

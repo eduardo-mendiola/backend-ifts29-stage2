@@ -45,6 +45,17 @@ app.get('/', (req, res) => {
     res.render('index', { title: 'ClickWave' });
 });
 
+// POST login (temporal)
+app.post('/admin', (req, res) => {
+  // Por ahora no validamos usuarios, solo redirige
+  res.redirect('/admin/dashboard');
+});
+
+// GET dashboard
+app.get('/admin/dashboard', (req, res) => {
+  res.render('admin', { title: 'Dashboard Admin' });
+});
+
 
 // Client
 app.get('/clients', ClientController.getAllView);

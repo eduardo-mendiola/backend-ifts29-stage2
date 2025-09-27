@@ -1,43 +1,57 @@
 extends ../layout.pug
 
 block content
-  .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-0 #{item && item.id ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
-    a.btn.btn-gray(href="/users") Volver a la lista
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action=item && item.id ? `/users/${item.id}?_method=PUT` : "/users", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 #{item && item.id ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
+        a.btn.btn-gray(href="/users") Volver a la lista
 
-  form(action=item && item.id ? `/users/${item.id}?_method=PUT` : "/users", method="POST", class="bg-dark text-white p-4 rounded")
-    .mb-3
-      label.form-label(for="first_name") Nombre
-      input#first_name.form-control(type="text", name="first_name", value=item.first_name || "", required)
-    .mb-3
-      label.form-label(for="last_name") Apellido
-      input#last_name.form-control(type="text", name="last_name", value=item.last_name || "", required)
-    .mb-3
-      label.form-label(for="email") Email
-      input#email.form-control(type="email", name="email", value=item.email || "", required)
-    .mb-3
-      label.form-label(for="password_hash") Contraseña
-      input#password_hash.form-control(type="password", name="password_hash", value=item.password_hash || "", required)
-    .mb-3
-      label.form-label(for="phone") Teléfono
-      input#phone.form-control(type="text", name="phone", value=item.phone || "")
-    .mb-3
-      label.form-label(for="role_id") Rol
-      select#role_id.form-select(name="role_id", required)
-        each role in roles
-          option(value=role._id selected=(item.role_id && role._id.toString() === item.role_id._id.toString())) #{role.name}
-    .mb-3
-      label.form-label(for="area_id") Área
-      select#area_id.form-select(name="area_id", required)
-        each area in areas
-          option(value=area._id selected=(item.area_id && area._id.toString() === item.area_id._id.toString())) #{area.name_area}
-    .mb-3
-      label.form-label(for="monthly_salary") Salario Mensual
-      input#monthly_salary.form-control(type="number", name="monthly_salary", value=item.monthly_salary || "", required)
-    .mb-3
-      label.form-label(for="status") Estado
-      select#status.form-select(name="status", required)
-        option(value="active" selected=(item.status === "active")) Activo
-        option(value="inactive" selected=(item.status === "inactive")) Inactivo
+      // Contenedor de 2 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="first_name") Nombre
+            input#first_name.form-control(type="text", name="first_name", value=item.first_name || "", required)
+          .mb-3
+            label.form-label(for="email") Email
+            input#email.form-control(type="email", name="email", value=item.email || "", required)
+          .mb-3
+            label.form-label(for="phone") Teléfono
+            input#phone.form-control(type="text", name="phone", value=item.phone || "")
+          .mb-3
+            label.form-label(for="role_id") Rol
+            select#role_id.form-select(name="role_id", required)
+              each role in roles
+                option(
+                  value=role._id 
+                  selected=(item.role_id && role._id.toString() === item.role_id._id.toString())
+                ) #{role.name}
 
-    button.btn.btn-primary(type="submit") #{item && item.id ? 'Actualizar Usuario' : 'Crear Usuario'}
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="last_name") Apellido
+            input#last_name.form-control(type="text", name="last_name", value=item.last_name || "", required)
+          .mb-3
+            label.form-label(for="password_hash") Contraseña
+            input#password_hash.form-control(type="password", name="password_hash", value=item.password_hash || "", required)
+          .mb-3
+            label.form-label(for="area_id") Área
+            select#area_id.form-select(name="area_id", required)
+              each area in areas
+                option(
+                  value=area._id 
+                  selected=(item.area_id && area._id.toString() === item.area_id._id.toString())
+                ) #{area.name_area}
+          .mb-3
+            label.form-label(for="monthly_salary") Salario Mensual
+            input#monthly_salary.form-control(type="number", name="monthly_salary", value=item.monthly_salary || "", required)
+          .mb-3
+            label.form-label(for="status") Estado
+            select#status.form-select(name="status", required)
+              option(value="active" selected=(item.status === "active")) Activo
+              option(value="inactive" selected=(item.status === "inactive")) Inactivo
+
+      button.btn.btn-primary.mt-3(type="submit") #{item && item.id ? 'Actualizar Usuario' : 'Crear Usuario'}
