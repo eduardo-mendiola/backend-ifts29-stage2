@@ -1,187 +1,228 @@
-# Tecnicatura Superior en Desarrollo de Software
-## **2° Entrega de Proyecto Parcial<br>API RESTful CRUD <br>Caso 2: ClickWave**
+# Tecnicatura Superior en Desarrollo de Software  
+## 2° Entrega de Proyecto Parcial: Desarrollo Backend con MongoDB  
+### Caso 2: ClickWave  
 
 **Materia:** Desarrollo de Sistemas Web (Back End)  
 **Profesor:** Emir Eliezer Garcia Ontiveros  
 **Comisión:** A  
-
-**Alumno:**  
-- Mendiola, Eduardo E.  
-
-**Fecha de inicio:** 26-09-2025  
+**Alumno:** - Mendiola, Eduardo E.  
+**Fecha de la Entrega:** 28-09-2025 (Estimada)  
 
 ---
-**Para ejecutarlo:**
-1. Clonar el repositorio
-2. Instalar dependencias con `npm install`
-3. Crear archivo `.env` con tus variables
-4. Ejecutar con `npm run dev` o `npm start`
+
+## Para ejecutar el proyecto (¡Importante la conexión a MongoDB!):  
+1. Clonar el repositorio.  
+2. Instalar dependencias con `npm install`.  
+3. Crear un archivo `.env` en la raíz del proyecto para la configuración de la base de datos.  
+
+### Contenido Mínimo del `.env`:  
+```bash
+# Puerto donde se ejecutará la aplicación
+PORT=3000
+
+# URI de conexión a MongoDB (local o Atlas)
+MONGO_URI="mongodb://localhost:27017/clickwavedb" 
+# o MONGO_URI="mongodb+srv://user:password@cluster.mongodb.net/..."
+````
+
+4. Ejecutar la aplicación con `npm run dev` (o `npm start`).
+
 ---
 
 ## Índice
 
-1. [Introducción del Caso](#introducción-del-caso)  
+1. [Introducción del Caso](#1-introducción-del-caso)  
    1.1 [Propósito del Sistema](#11-propósito-del-sistema)  
    1.2 [Contexto Empresarial](#12-contexto-empresarial)  
-      - 1.2.1 [Descripción General de ClickWave](#121-descripción-general-de-clickwave)  
-      - 1.2.2 [Problemáticas Detectadas](#122-problemáticas-detectadas)
-            
+       1.2.1 [Descripción General de ClickWave](#121-descripción-general-de-clickwave)  
+       1.2.2 [Problemáticas Detectadas (Etapa 1)](#122-problemáticas-detectadas-etapa-1)  
    1.3 [Objetivos del Sistema](#13-objetivos-del-sistema)  
    1.4 [Arquitectura Técnica del Sistema](#14-arquitectura-técnica-del-sistema)  
-2. [Asignación de Roles y Responsabilidades](#2-asignación-de-roles-y-responsabilidades)  
-   - [Eduardo E. Mendiola](#eduardo-e-mendiola)  
-     - Rol Asignado: Arquitectura de Software y Desarrollo  
-   - [Miriam Moreno](#miriam-moreno)
-     - Rol Asignado: Backend Developer
-3. [Funcionamiento del Sistema](#3-funcionamiento-del-sistema)  
+       1.4.1 [Definiciones Técnicas y Tecnologías](#141-definiciones-técnicas-y-tecnologías)  
+
+2. [Rol y Responsabilidades](#2-rol-y-responsabilidades)
+
+3. [Funcionamiento del Sistema (Etapa 2)](#3-funcionamiento-del-sistema-etapa-2)  
    3.1 [Funcionamiento General](#31-funcionamiento-general)  
    3.2 [Funcionalidades y Módulos Principales](#32-funcionalidades-y-módulos-principales)  
-   3.3 [Interacción entre Módulos](#33-interacción-entre-módulos)  
-   3.4 [Modelo de Datos y Entidades del Sistema](#34-modelo-de-datos-y-entidades-del-sistema)
-   - 3.4.1 [Entidades y su contexto](#341-entidades-y-su-contexto)
-   - 3.4.2 [Diagrama DER](#342-diagrama-der)
+   3.3 [Interacción entre Módulos (usando MongoDB y Mongoose)](#33-interacción-entre-módulos-usando-mongodb-y-mongoose)  
+   3.4 [Modelo de Datos y Entidades del Sistema](#34-modelo-de-datos-y-entidades-del-sistema)  
+       3.4.1 [Entidades y su contexto](#341-entidades-y-su-contexto)  
+       3.4.2 [Diagrama DER](#342-diagrama-der)
+
 4. [Cómo ejecutar este proyecto](#4-cómo-ejecutar-este-proyecto)  
-   4.1 [Clonar el repositorio:](#41-clonar-el-repositorio)  
-   4.2 [Instalar las dependencias](#42-instalar-las-dependencias)      
-   4.3 [Ejecutar la aplicación](#43-ejecutar-la-aplicación)   
-   4.4 [Abrir la aplicación en el navegador](#44-abrir-la-aplicación-en-el-navegador)   
-   4.5 [Variables de entorno](#45-variables-de-entorno)   
+   4.1 [Clonar el repositorio](#41-clonar-el-repositorio)  
+   4.2 [Instalar las dependencias](#42-instalar-las-dependencias)  
+   4.3 [Configurar MongoDB](#43-configurar-mongodb)  
+   4.4 [Variables de entorno](#44-variables-de-entorno)  
+   4.5 [Ejecutar la aplicación](#45-ejecutar-la-aplicación)  
+   4.6 [Abrir la aplicación en el navegador](#46-abrir-la-aplicación-en-el-navegador)  
+
 5. [Capturas de Consultas](#5-capturas-de-consultas)  
    5.1 [Ejecución del Servidor](#51-ejecución-del-servidor)  
    5.2 [Ejemplo de Consulta - CRUD: Cliente](#52-ejemplo-de-consulta---crud-cliente)  
-   5.3 [Ejemplo de Consulta - CRUD: Projecto](#53-ejemplo-de-consulta---crud-projecto)
+   5.3 [Ejemplo de Consulta - CRUD: Projecto](#53-ejemplo-de-consulta---crud-projecto)  
+ 
 6. [Capturas de Views](#6-capturas-de-views)  
    6.1 [Página principal](#61-página-principal)  
    6.2 [Página usuarios del sistema](#62-página-usuarios-del-sistema)  
    6.3 [Eliminar a un usuario](#63-eliminar-a-un-usuario)  
    6.4 [Crear un nuevo usuario](#64-crear-un-nuevo-usuario)  
-   6.5 [Editar un los datos de un usuario](#65-editar-un-los-datos-de-un-usuario)
-7. [Uso de IAs](#6-uso-de-ias)  
-   6.1 [Modelos](#71-modelos)  
-   6.2 [Prompts](#72-prompts)  
-8. [Bibliografía y Fuentes](#8-bibliografía-y-fuentes)
+   6.5 [Editar los datos de un usuario](#65-editar-los-datos-de-un-usuario)  
+
+7. [Uso de IAs](#7-uso-de-ias)  
+   7.1 [Modelos](#71-modelos)  
+   7.2 [Prompts](#72-prompts)  
+
+8. [Bibliografía y Fuentes](#8-bibliografía-y-fuentes)  
 
 ---
 
-<br/>
+## 1. Introducción del Caso
 
+El sistema **ClickWave** es una aplicación de gestión interna diseñada para optimizar la administración de Usuarios (User), Clientes (Client), y la estructura interna de la compañía (definición de Roles y Áreas).
 
-## Introducción del Caso
+La primera etapa se enfocó en la construcción de una API RESTful con persistencia basada en archivos JSON.
+
+Esta segunda etapa se centra en la refactorización profunda del backend, reemplazando la persistencia por una base de datos documental **MongoDB**, mejorando la robustez y escalabilidad, y actualizando la interfaz administrativa con vistas **Pug**.
 
 ### 1.1 Propósito del Sistema
+
 El presente documento describe el Sistema de Gestión de Proyectos desarrollado para ClickWave, una consultora de marketing digital, con el objetivo de optimizar la gestión interna de proyectos y mejorar la eficiencia operativa. La propuesta tecnológica busca transformar procesos informales en flujos de trabajo estandarizados, medibles y trazables, facilitando la centralización de información y la toma de decisiones basada en datos confiables.
 
 ### 1.2 Contexto Empresarial
 
 #### 1.2.1 Descripción General de ClickWave
+
 ClickWave fue fundada en 2020 con el propósito de brindar servicios de marketing digital a pequeñas y medianas empresas (PyMEs). Comenzó como un proyecto remoto de un equipo reducido y actualmente cuenta con 12 empleados organizados en distintas áreas: gestión de campañas publicitarias, diseño gráfico, análisis de datos y desarrollo de contenidos digitales.  
 Su modalidad de trabajo es híbrida, combinando presencia en oficina y trabajo remoto, lo que permite atender clientes locales e internacionales, aunque mantiene desafíos internos asociados a la informalidad de procesos y la ausencia de roles claramente definidos.
 
-#### 1.2.2 Problemáticas Detectadas
+#### 1.2.2 Problemáticas Detectadas (Etapa 1)
+
 - **Falta de control formal de tiempos:** dificulta la justificación de costos y el cálculo de rentabilidad de los proyectos.  
 - **Roles y responsabilidades poco definidos:** provoca desorganización, sobrecarga de trabajo y seguimiento ineficiente.  
 - **Limitaciones en evaluación de desempeño y análisis financiero:** impide una evaluación objetiva del rendimiento y retrasa informes financieros precisos.
 
 ### 1.3 Objetivos del Sistema
+
 - Formalizar la gestión de proyectos y tareas, centralizando la información y garantizando trazabilidad.  
 - Registrar y controlar el tiempo dedicado a cada proyecto para analizar rentabilidad y justificar costos.  
 - Generar reportes detallados y paneles de control gerenciales.  
 - Integrar la gestión de proyectos con contabilidad y facturación, optimizando procesos financieros.
 
 ### 1.4 Arquitectura Técnica del Sistema
-El sistema fue desarrollado con un stack **JavaScript**: Node.js como entorno de ejecución y Express.js como framework web. La arquitectura sigue el patrón **MVC** (Modelo-Vista-Controlador), permitiendo:
+El sistema fue desarrollado con un stack **JavaScript**: Node.js como entorno de ejecución y Express.js como framework web. La arquitectura sigue el patrón **MVC** (**Modelo-Vista-Controlador**), permitiendo:
 - Separación clara de responsabilidades entre presentación, lógica de negocio y acceso a datos.  
 - Facilitar mantenibilidad, escalabilidad y comprensión del código.  
 - Garantizar un flujo de información seguro y centralizado entre usuarios, proyectos y tareas.
+- Cuenta con una capa de persistencia implementada sobre una base de datos documental (**MongoDB**), utilizando **Mongoose** para la definición de esquemas, validación de datos y gestión eficiente de las operaciones CRUD.
+
+#### 1.4.1 Definiciones Técnicas y Tecnologías
+
+| Componente   | Tecnología            | Descripción                                |
+| ------------ | --------------------- | ------------------------------------------ |
+| Backend      | Node.js, Express      | API RESTful y gestión de rutas             |
+| Persistencia | MongoDB Atlas / Local | Base de datos NoSQL documental             |
+| ODM          | Mongoose              | Definición de esquemas y CRUD estructurado |
+| Vistas       | Pug                   | Motor de plantillas dinámicas              |
+| Estilos      | Bootstrap             | Framework CSS responsive                   |
 
 ---
 
-## 2. Asignación de Roles y Responsabilidades
 
-### **Eduardo E. Mendiola**  
-**Rol:** Arquitectura de Software y Desarrollo  
+## 2. Rol y Responsabilidades
+
+### **Mendiola, Eduardo E.**
+**Rol:** Desarrollo Backend con MongoDB y Refactorización de Vistas  
 
 **Responsabilidades y tareas:**
 
-Las responsabilidades y las tareas realizadas en el proyecto abarcan todo el ciclo de vida del desarrollo, desde el diseño arquitectónico hasta la implementación de componentes.  
+En esta etapa, el foco principal estuvo en la migración de la aplicación desde un sistema de persistencia basado en archivos JSON hacia una base de datos documental en **MongoDB**, utilizando **Mongoose** como ODM. Esto implicó tanto refactorización de clases y controladores como la adaptación de las vistas y plantillas para trabajar de forma coherente con la nueva lógica de persistencia.
 
-### Diseño y Definición de la Arquitectura del Sistema
-- Establecimiento de una arquitectura modular y jerárquica para la aplicación, organizando el código en controladores, modelos, entidades y rutas, promoviendo la reutilización y el mantenimiento del código.
+### Configuración y Creación de la Base de Datos MongoDB
 
-### Desarrollo del Core del Framework (Base Controllers y Models)
-- **Implementación de BaseController:** Creación de la clase BaseController que encapsula las operaciones CRUD (Create, Read All, Read One by ID, Update, Patch, Delete) comunes para todas las entidades, gestionando las respuestas HTTP (status 201, 200, 404, 500, 204) y el manejo de errores centralizado.  
-- **Implementación de BaseModel:** Creación de la BaseModel que proporciona una interfaz genérica para la interacción con la base de datos subyacente (JSON), incluyendo los métodos `create`, `findAll`, `findById`, `update`, `patch` y `delete`. Esta clase utiliza un generador de IDs y el objeto db configurado.
+* **Instalación y Configuración de Mongoose:** Integración de la librería **mongoose** mediante npm para gestionar la conexión y la definición de esquemas de datos, garantizando un mapeo consistente entre los documentos de MongoDB y las entidades de la aplicación.
 
-### Gestión de Persistencia de Datos (Base de Datos JSON)
-- **Modelado de la Base de Datos:** Modelado de datos del sistema. Se identificaron las entidades principales (`users`, `roles`, `clients`, `projects`, `tasks`, `time_entries`, `estimates`, `invoices`, `payments`, `expenses`, `teams`, `team_members`, `documents`) y sus relaciones clave, asegurando que cada colección refleje correctamente la estructura del negocio y permitiera la trazabilidad de la información. 
-- **Creacioón de diagramas:** Modelado de la base de datos del sistema mediante un **Diagrama de Entidad-Relación (DER)** en SQL, incluyendo todas las entidades, atributos y relaciones principales. Este diagrama sirvió para generar las tablas y claves foráneas en MySQL, definiendo la estructura relacional de la base de datos. Posteriormente, se planifica adaptar este modelo a **MongoDB**, utilizando referencias o documentos embebidos según convenga para la persistencia en formato JSON.
-- **Creación de JsonDatabase:** Desarrollo de un sistema de base de datos basado en archivos JSON, `JsonDatabase.js`, que maneja la carga y guardado de datos de forma asíncrona en un archivo `db.json`. Este módulo también gestiona las colecciones dentro del archivo JSON.  
-- **Configuración de la Base de Datos:** Configuración de la instancia de `JsonDatabase` para ser utilizada en toda la aplicación a través de `db.js`.  
-- **Población de Datos Iniciales:** Creación y población del archivo `db.json` con datos de ejemplo para diversas colecciones como `users`, `areas`, `roles`, `clients`, `projects`, `tasks`, `time_entries`, `estimates`, `invoices`, `payments`, `expenses`, `teams`, `team_members` y `documents`, estableciendo una estructura de datos para la aplicación.  
-- **Generación de IDs Únicos (IdGenerator):** Creación de la `IdGenerator` para generar IDs secuenciales y únicos para los nuevos elementos en cada colección de la base de datos.
 
-### Implementación de Entidades Específicas del Dominio
-- **Definición de Clases de Entidad:** Creación de las clases `ClientEntity`, `RoleEntity` y `UserEntity`, que modelan la estructura de datos y el comportamiento de los clientes, roles y usuarios, respectivamente, incluyendo métodos específicos como `getFullName()` o `getDisplayName()`.  
-- **Desarrollo de Modelos Específicos:** Implementación de `ClientModel`, `RoleModel` y `UserModel`, extendiendo `BaseModel` y adaptando la lógica de creación de IDs y el manejo de timestamps (para usuarios).  
-- **Desarrollo de Controladores Específicos:** Creación de `ClientController`, `RoleController` y `UserController`, extendiendo `BaseController` para manejar las operaciones específicas de cada entidad a través de la API.
+* **Conexión a MongoDB:** Desarrollo de un módulo de conexión centralizado, **db.js**, encargado de gestionar la conexión a MongoDB mediante variables de entorno (archivo **.env**), permitiendo mantener la configuración desacoplada y portable entre entornos locales y de producción.
 
-### Configuración de Rutas de la API
-- **Definición de Rutas Principales:** Configuración del archivo `app.js` para integrar las rutas de clientes, usuarios y roles en la API, definiendo los endpoints base `/api/client`, `/api/users` y `/api/roles`.  
-- **Creación de Archivos de Rutas Específicos:** Implementación de `clientRoutes.js`, `userRoutes.js` y `roleRoutes.js` para definir los endpoints CRUD para cada entidad, mapeando las solicitudes HTTP a los métodos de los controladores correspondientes.  
-- **Implementación de Middlewares:** Desarrollo de un middleware de validación, `validationMiddleware.js`, para asegurar la calidad de los datos de entrada, como `validateClientInput` para los clientes.
 
-### Creación y Configuración del Servidor Principal (server.js)
-- **Servidor Principal:** Creación del archivo `server.js`, el punto de arranque de la aplicación. Este archivo carga las variables de entorno, inicializa la base de datos y pone en marcha el servidor Express, escuchando las peticiones en un puerto específico.  
-- **Configuración de Puertos y Variables de Entorno (.env):** Instalación de la dependencia `dotenv` desde npm para gestionar de manera centralizada la configuración de variables de entorno. A través del archivo `.env` se definió el puerto del servidor y queda disponible para futuras variables necesarias como por ejemplo, la conexión a MongoDB. Esto permite una configuración flexible y desacopla del código. El archivo `server.js` carga y utiliza estas variables mediante la dependencia `dotenv`, garantizando una mayor portabilidad y mantenibilidad de la aplicación.
+* **Modelado de Esquemas con Mongoose:**
 
-### User Interface / Views:
-- **Creación de Plantillas Pug y Lógica de Vistas:** Desarrollo de las vistas de la aplicación utilizando Pug como motor de plantillas, incluyendo la página de inicio (layout.pug e index.pug), plantillas de manejo de errores (error500.pug y error404.pug), y las vistas específicas para clientes (list.pug, details.pug) y para usuarios (list.pug y details.pug).  
-- **Vistas entidades:**
-clients (list.pug, details.pug),
-users (list.pug, details.pug, form.pug, edit.pug).
-- **Implementación de lógica** en los controladores para renderizar estas vistas con los datos provenientes de los modelos, manteniendo los métodos genéricos de BaseController y adaptándolos para permitir la renderización dinámica de cualquier entidad. Se aplicó Bootstrap con tema oscuro y estilos para botones, tablas y navegación.
-- **Implementación** de lógica para **eliminar** y **actualizar**.
+  * Definición de schemas para entidades principales como **User**, **Client**, **Role** y **Area**, estableciendo validaciones, índices y relaciones entre colecciones.
 
-### Actualizaciones y refactorización de código: 
-- **Refactorización completa del proyecto** para utilizar `ECMAScript Modules (ESM)`, reemplazando require y module.exports por import y export. Se actualizaron todos los modelos, controladores, entidades y rutas. 
-- **Se implementó fieldsOrder en BaseModel** y en los modelos de User, Client y Role para asegurar un orden consistente de propiedades en las respuestas JSON en operaciones de create, update y patch. Se mantuvo toda la lógica existente y se aplicaron buenas prácticas de legibilidad y mantenimiento de código.
 
-### Owner y Maintainer del repositorio GitHub: 
-- **Creación del Repositorio en GitHub:** Gestión de la inicialización y configuración del repositorio de control de versiones en GitHub para el proyecto, facilitando la colaboración y el seguimiento de los cambios. 
-- **Responsable del mantenimiento del repositorio en GitHub**, me encargué de administrar las **pull requests** enviadas por los colaboradores. 
-- **Revisar el código propuesto**, verificar que cumpliera con los estándares del proyecto, dar retroalimentación cuando fue necesario
-- **Aprobar o rechazar cambios** y finalmente **integrarlos** al repositorio principal.
+  * Inclusión de **timestamps automáticos** (**createdAt**, **updatedAt**) y campos únicos cuando correspondía (ejemplo: email en usuarios).
 
-### Control de Versiones y Documentación
-- **Creación del Repositorio en GitHub:** Gestión de la inicialización y configuración del repositorio de control de versiones en GitHub para el proyecto, facilitando la colaboración y el seguimiento de los cambios.  
-- **Capturas de consultas:** capturas de pantalla de las peticiones realizadas con la herramienta Postman en Visual Studio Code, a la API RESTful para demostrar su funcionamiento y validar las operaciones CRUD.
-- **Capturas de pantallas:** capturas de pantalla realizadas con plantillas pug y bootstrap.
-- **Generación de la documentación:** Elaboración de un documento en Google Docs como base principal de la documentación del proyecto, adaptado a los requisitos de entrega del trabajo práctico y posteriormente exportado en formato PDF. Este documento incluye la asignación de roles, las fuentes consultadas y el enlace al video explicativo del proyecto.  
-- **Creación del archivo README:** Adaptación del contenido del documento principal al archivo `README.md`, que funcionará como documentación de referencia dentro del repositorio. Este archivo resume la información esencial sobre el funcionamiento, instalación y uso de la aplicación.
+
+  * Implementación de validaciones integradas (required, minLength, unique, etc.) para asegurar la integridad de los datos.
+
+
+### Refactorización de Clases y Controladores
+
+* **Migración de BaseModel a Mongoose:** Adaptación de la lógica CRUD genérica, reemplazando operaciones sobre archivos JSON por métodos nativos de Mongoose (**create**, **find**, **findById**, **findByIdAndUpdate**, **findByIdAndDelete**).
+
+
+* **Refactorización de Controladores:**
+
+  * Actualización de **UserController**, **ClientController** y **RoleController** para utilizar directamente los modelos de Mongoose en lugar de las clases previas basadas en JSON.
+
+
+  * Implementación de un sistema de manejo de errores estandarizado con try/catch y respuestas claras para errores de validación o conexión a base de datos.
+
+
+* **Actualización de Middlewares:** Adaptación del middleware de validación para trabajar en conjunto con los errores arrojados por Mongoose (ejemplo: duplicados o campos requeridos).
+
+
+### Refactorización y Ampliación de Vistas (Pug + Bootstrap)
+
+* **Actualización de Plantillas Existentes:** Refactorización de las vistas para reflejar datos provenientes de MongoDB, garantizando la correcta renderización de documentos con los nuevos métodos de Mongoose.
+
+* **Implementación de Sidebar en layout.pug:** Inclusión de un panel lateral de navegación que centraliza el acceso a las entidades principales (**Users**, **Clients**, **Roles**, **Areas**), mejorando la usabilidad.
+
+
+* **Nuevas Vistas CRUD:**
+
+  * Creación de plantillas para las entidades **Role** y **Area**, incluyendo **list.pug**, **details.pug**, **form.pug** y **edit.pug**.
+
+
+  * Integración de formularios adaptados a la lógica de **MongoDB**, con validaciones de entrada y mensajes de error dinámicos.
+
+
+### Mantenimiento de Repositorio y Documentación
+
+* **Owner y Maintainer del repositorio GitHub:** 
+  * **Creación del Repositorio en GitHub:** Gestión de la inicialización y configuración del repositorio de control de versiones en GitHub para el proyecto, facilitando el seguimiento de los cambios. 
+  * **Seguimiento en GitHub:** Administración de commits específicos para cada fase de la migración, manteniendo la trazabilidad de los cambios y asegurando la claridad en la evolución del proyecto.
+
+* **Actualización del README:** Documentación de los cambios realizados en la migración a MongoDB, incluyendo las instrucciones para configurar la conexión a la base de datos.
+
+
+* **Capturas de Pantalla y Ejemplos:** Inclusión de nuevas evidencias visuales de operaciones CRUD sobre MongoDB, tanto desde Postman como desde las vistas Pug.
 
 
 ---
 
-## 3. Funcionamiento del Sistema
+## 3. Funcionamiento del Sistema (Etapa 2)
 
-La aplicación es una API RESTful construida sobre Express.js que permite gestionar un sistema de proyectos, clientes y tiempo. Su diseño modular facilita la escalabilidad y el mantenimiento.
+La aplicación es una API RESTful construida sobre Node.js y Express.js, diseñada para gestionar usuarios, clientes y proyectos de ClickWave entre otras entidades. Su arquitectura modular basada en MVC y la migración a MongoDB mediante Mongoose permiten escalabilidad, mantenibilidad y robustez en la persistencia de datos.
 
 ### 3.1. Funcionamiento General
-El sistema opera como un servidor web que escucha peticiones HTTP. Cuando recibe una petición, la procesa a través de una serie de capas (rutas, middlewares, controladores, modelos) hasta interactuar con una base de datos JSON para almacenar y recuperar información. Las respuestas se envían en formato JSON.  
+El sistema opera como un servidor web que escucha peticiones HTTP. Cada petición se procesa a través de rutas, middlewares, controladores y modelos, interactuando con MongoDB. Las respuestas se envían en formato JSON o mediante vistas Pug para la administración web. 
 
-El punto de entrada de la aplicación es **server.js**. Este archivo es responsable de:
-- Cargar las variables de entorno del archivo `.env` utilizando la librería `dotenv`.  
-  Por ejemplo, define el puerto en el que el servidor escuchará las peticiones, como `PORT = 4000`.
-- Inicializar la base de datos (`db.initialize()`) antes de arrancar el servidor.
-- Importar la instancia de la aplicación Express (`app.js`) y ponerla a escuchar en el puerto configurado, mostrando un mensaje en la consola:  
-  `Servidor de ClickWave corriendo en http://localhost:${PORT}`
+El punto de entrada es **server.js**, que realiza las siguientes tareas:
+
+- Carga variables de entorno desde el archivo .env usando dotenv (ej. PORT=3000, MONGO_URI=...).
+- Inicializa la conexión a la base de datos mediante db.js, utilizando Mongoose para conectarse a MongoDB Atlas o local.
+- Importa la instancia de la aplicación Express (app.js) y la pone a escuchar en el puerto configurado, mostrando en consola:
+- Servidor de ClickWave corriendo en http://localhost:${PORT}.
 
 ### 3.2. Funcionalidades y Módulos Principales
 
 #### Servidor Principal (server.js)
 - Es el punto de arranque de la aplicación.  
 - Carga la configuración del entorno desde `.env` usando `dotenv`.  
-- Inicializa la base de datos JSON antes de que la aplicación comience a recibir solicitudes.  
+- Inicializa la conexión a base de datos MongoDB antes de que la aplicación comience a recibir solicitudes.  
 - Inicia la instancia de la aplicación Express (`app`) y la hace escuchar en el puerto especificado (por defecto 4000 si se carga desde `.env.txt`).  
 
 #### Variables de Entorno (.env) y dotenv
@@ -194,20 +235,17 @@ El punto de entrada de la aplicación es **server.js**. Este archivo es responsa
 - Monta las rutas específicas de cada entidad (clientes, usuarios, roles, Projectos) bajo sus respectivos prefijos (`/api/clientRoutes`, `/api/users`, `/api/roles`).  
 - Define una ruta de bienvenida y un manejador de errores 404 para rutas no encontradas.  
 
-#### Base de Datos JSON (JsonDatabase.js, db.js)
-- `JsonDatabase.js` gestiona la persistencia de datos. Carga y guarda la información en un archivo `db.json`.  
-- Proporciona métodos para `getCollection(name)` y `setCollection(name, data)` para interactuar con las diferentes colecciones (e.g., "users", "clients") dentro del archivo JSON.  
-- `db.js` es la instancia centralizada de `JsonDatabase` utilizada por los modelos.  
-
-#### Generador de IDs (IdGenerator.js)
-- Se encarga de crear IDs secuenciales únicos para cada nueva entrada en una colección específica, basándose en el último ID existente en esa colección.  
+#### Base de Datos (MongoDB + Mongoose)
+- Cada entidad (User, Client, Role, Area, Project, etc.) tiene un Schema de Mongoose con validaciones, relaciones y timestamps automáticos.
+- Implementa operaciones CRUD con métodos de Mongoose (.create(), .find(), .findByIdAndUpdate(), .deleteOne(), etc.).
+- Los controladores interactúan con estos modelos, asegurando consistencia y manejo de errores centralizado. 
 
 #### Entidades (Entity.js)
 - Definen la estructura y los atributos de los objetos de negocio (e.g., `ClientEntity`, `RoleEntity`, `UserEntity`, `ProjectEntity`).  
 - Pueden incluir métodos específicos de negocio (e.g., `getFullName()` en `ClientEntity` y `UserEntity`, `getDisplayName()` en `RoleEntity`).  
 
 #### Modelos (Model.js, BaseModel.js)
-- **BaseModel.js:** Proporciona las operaciones CRUD genéricas que interactúan directamente con `JsonDatabase`. Incluye métodos para `create`, `findAll`, `findById`, `update`, `patch` y `delete`. Utiliza el `IdGenerator` para la asignación de IDs.  
+- **BaseModel.js:** Proporciona las operaciones CRUD genéricas que interactúan directamente **Mongoose**. Incluye métodos para `create`, `findAll`, `findById`, `update`, `patch` y `delete`. Utiliza el `IdGenerator` para la asignación de IDs.  
 - **Modelos Específicos (e.g., ClientModel.js, RoleModel.js, UserModel.js):** Extienden `BaseModel` para gestionar datos de una entidad particular. Pueden sobrescribir o añadir lógica específica, como la inyección de IDs generados o la actualización de timestamps en los métodos `create` y `update`.  
 
 #### Controladores (Controller.js, BaseController.js)
@@ -222,16 +260,21 @@ El punto de entrada de la aplicación es **server.js**. Este archivo es responsa
 - Contienen funciones que se ejecutan antes de los controladores para realizar validaciones sobre los datos de entrada de las peticiones.  
 - Por ejemplo, `validateClientInput` verifica la presencia de campos obligatorios para un cliente.  
 
-### 3.3. Interacción entre Módulos
-- El archivo `server.js` arranca el servidor Express y asegura que la base de datos esté inicializada y las variables de entorno cargadas.  
-- Una petición HTTP (e.g., `POST /api/clients`) llega al servidor Express configurado en `app.js` (que es iniciado por `server.js`).  
-- `app.js` dirige la petición a la ruta correspondiente (e.g., `clientRoutes.js`).  
-- La ruta puede aplicar un middleware de validación (e.g., `validateClientInput`) para verificar los datos de la petición.  
-- Si la validación es exitosa, la petición se pasa al método del controlador (e.g., `clientController.create`) asociado a esa ruta y verbo HTTP.  
-- El método del controlador (que extiende `BaseController`) invoca la operación correspondiente en su modelo asociado (e.g., `ClientModel.create`).  
-- El modelo (que extiende `BaseModel`) utiliza la instancia de `JsonDatabase` (`db`) para interactuar con el archivo `db.json`, realizando la operación de lectura o escritura de datos. Si es una operación de creación, el `IdGenerator` se utiliza para asignar un ID único.  
-- El resultado de la operación se devuelve desde el modelo al controlador.  
-- Finalmente, el controlador construye una respuesta HTTP (con un código de estado y datos en formato JSON) y la envía de vuelta al cliente.  
+Perfecto, Ezequiel. Antes de adaptar tu texto, tu inglés no tiene errores aquí, así que no hay correcciones necesarias. Vamos a enfocarnos en la adaptación a MongoDB usando **Mongoose**:
+
+---
+
+### 3.3. Interacción entre Módulos (usando MongoDB y Mongoose)
+
+- El archivo `server.js` arranca el servidor Express y asegura que la conexión a MongoDB esté establecida correctamente mediante Mongoose, además de cargar las variables de entorno.
+- Una petición HTTP (por ejemplo, `POST /api/clients`) llega al servidor Express configurado en `app.js` (iniciado por `server.js`).
+- `app.js` dirige la petición a la ruta correspondiente (por ejemplo, `clientRoutes.js`).
+- La ruta puede aplicar un middleware de validación (por ejemplo, `validateClientInput`) para verificar los datos de la petición.
+- Si la validación es exitosa, la petición se pasa al método del controlador (por ejemplo, `clientController.create`) asociado a esa ruta y verbo HTTP.
+- El método del controlador (que extiende `BaseController`) invoca la operación correspondiente en su **modelo de Mongoose** asociado (por ejemplo, `ClientModel.create`).
+- El modelo, definido mediante **Mongoose schemas**, se encarga de interactuar directamente con la colección de MongoDB, realizando operaciones de creación, lectura, actualización o eliminación de documentos. Mongoose maneja automáticamente la generación de IDs únicos (`_id`) y la validación de esquema.
+- El resultado de la operación se devuelve desde el modelo al controlador.
+- Finalmente, el controlador construye una respuesta HTTP (con un código de estado y datos en formato JSON) y la envía de vuelta al cliente.
 
 ### 3.4. Modelo de Datos y Entidades del Sistema
 
@@ -312,17 +355,18 @@ El sistema ha sido diseñado como una API RESTful que gestiona proyectos, client
 
 ![3.4.2 - Diagrama DER](./assets/screenshots/3.4.2-der.png)
 
+
 ---
 ## 4. Cómo ejecutar este proyecto
 
-Este proyecto es una aplicación en **Node.js** y **Express**. Para ejecutarlo localmente, sigue estos pasos:
+Este proyecto es una aplicación en **Node.js** y **Express**, que utiliza **MongoDB** para la gestión de datos mediante **Mongoose**. Para ejecutarlo localmente, sigue estos pasos:
 
 ### 4.1. Clonar el repositorio:
 
 ```bash
 git clone https://github.com/tu_usuario/primer_entrega_crud.git
 cd primer_entrega_crud
-````
+```
 
 ### 4.2. Instalar las dependencias:
 
@@ -330,9 +374,28 @@ cd primer_entrega_crud
 npm install
 ```
 
-Esto instalará todas las dependencias necesarias que están listadas en `package.json`.
+Esto instalará todas las dependencias necesarias que están listadas en `package.json`, incluyendo **Mongoose**.
 
-### 4.3. Ejecutar la aplicación:
+### 4.3. Configurar MongoDB
+
+1. Asegúrate de tener un servidor MongoDB en funcionamiento (local o en la nube, por ejemplo **MongoDB Atlas**).
+2. Copia la URL de conexión de tu base de datos. Por ejemplo:
+
+```
+mongodb+srv://usuario:contraseña@cluster0.mongodb.net/nombreDB?retryWrites=true&w=majority
+```
+
+### 4.4. Variables de entorno
+
+Crea un archivo llamado `.env` en la raíz del proyecto y agrega tus variables de entorno, incluyendo la conexión a MongoDB:
+
+```env
+PORT=3000
+MONGO_URI=mongodb+srv://usuario:contraseña@cluster0.mongodb.net/nombreDB
+OTRA_VARIABLE=valor
+```
+
+### 4.5. Ejecutar la aplicación
 
 * Para desarrollo (se reinicia automáticamente al modificar archivos):
 
@@ -346,29 +409,15 @@ npm run dev
 npm start
 ```
 
-### 4.4 Abrir la aplicación en el navegador:
+### 4.6. Abrir la aplicación en el navegador
 
-El servidor se ejecutará en el puerto definido en tu archivo `.env`.  
+El servidor se ejecutará en el puerto definido en tu archivo `.env`.
 Si no has definido un puerto, por defecto será `http://localhost:3000`.
 
+> ⚠️ Nota: La primera vez que ejecutes la aplicación, Mongoose creará automáticamente las colecciones necesarias según los modelos definidos en tu proyecto.
 
-### 4.5 Variables de entorno
 
-Este proyecto utiliza variables de entorno para configurar ciertos parámetros (por ejemplo, puerto del servidor, credenciales, etc.).  
-
-1. Crea un archivo llamado `.env` en la raíz del proyecto.
-2. Agrega tus variables de entorno siguiendo este formato:
-
-```
-
-PORT=3000
-DB\_USER=usuario
-DB\_PASS=contraseña
-OTRA\_VARIABLE=valor
-
-```
-
-3. Guarda el archivo. Ahora la aplicación podrá acceder a estas variables mediante `process.env` en Node.js.
+---
 
 ### 5. Capturas de Consultas
 
