@@ -1,7 +1,7 @@
 {
-  "name": "primer_entrega_crud",
+  "name": "segunda_entrega_api_restful",
   "version": "1.0.0",
-  "description": "CRUD para la empresa ClickWave",
+  "description": "Aplicación para la empresa ClickWave",
   "type": "module",
   "main": "server.js",
   "scripts": {
