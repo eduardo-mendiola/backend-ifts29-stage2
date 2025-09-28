@@ -58,14 +58,12 @@ app.get('/admin/dashboard', (req, res) => {
 
 
 // Client
+app.get('/clients/new', ClientController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
+app.post('/clients', ClientController.createView);
 app.get('/clients', ClientController.getAllView);
 app.get('/clients/:id', ClientController.getByIdView);
-// app.get('/clients/new', (req, res) => res.render('client-form', { title: 'Nuevo Cliente', client: {} }));
-// app.get('/clients/:id/edit', ClientController.getByIdView);
-
-app.get('/client-form', ClientController.newView);
-app.post('/clients', ClientController.createView);
-
+app.get('/clients/:id/edit', ClientController.getEditView); // Ruta para mostrar formulario de edición
+app.put('/clients/:id', ClientController.updateView); // Ruta para procesar la actualización
 
 // User
 app.get('/users/new', UserController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
@@ -76,9 +74,9 @@ app.get('/users/:id/edit', UserController.getEditView); // Ruta para mostrar for
 app.put('/users/:id', UserController.updateView); // Ruta para procesar la actualización
 
 // Project views Pug
-app.get('/projects', ProjectController.getAllView);
-app.get('/projects/:id', ProjectController.getByIdView);
-app.get('/projects/:id/edit', ProjectController.getByIdView);
+// app.get('/projects', ProjectController.getAllView);
+// app.get('/projects/:id', ProjectController.getByIdView);
+// app.get('/projects/:id/edit', ProjectController.getByIdView);
 
 // Vistas Pug para áreas
 app.get('/areas', AreaController.getAllView);

@@ -34,11 +34,11 @@ MONGO_URI="mongodb://localhost:27017/clickwavedb"
 1. [Introducción del Caso](#1-introducción-del-caso)  
    1.1 [Propósito del Sistema](#11-propósito-del-sistema)  
    1.2 [Contexto Empresarial](#12-contexto-empresarial)  
-       1.2.1 [Descripción General de ClickWave](#121-descripción-general-de-clickwave)  
-       1.2.2 [Problemáticas Detectadas (Etapa 1)](#122-problemáticas-detectadas-etapa-1)  
+       - 1.2.1 [Descripción General de ClickWave](#121-descripción-general-de-clickwave)  
+       - 1.2.2 [Problemáticas Detectadas (Etapa 1)](#122-problemáticas-detectadas-etapa-1)  
    1.3 [Objetivos del Sistema](#13-objetivos-del-sistema)  
    1.4 [Arquitectura Técnica del Sistema](#14-arquitectura-técnica-del-sistema)  
-       1.4.1 [Definiciones Técnicas y Tecnologías](#141-definiciones-técnicas-y-tecnologías)  
+       - 1.4.1 [Definiciones Técnicas y Tecnologías](#141-definiciones-técnicas-y-tecnologías)  
 
 2. [Rol y Responsabilidades](#2-rol-y-responsabilidades)
 
@@ -47,8 +47,8 @@ MONGO_URI="mongodb://localhost:27017/clickwavedb"
    3.2 [Funcionalidades y Módulos Principales](#32-funcionalidades-y-módulos-principales)  
    3.3 [Interacción entre Módulos (usando MongoDB y Mongoose)](#33-interacción-entre-módulos-usando-mongodb-y-mongoose)  
    3.4 [Modelo de Datos y Entidades del Sistema](#34-modelo-de-datos-y-entidades-del-sistema)  
-       3.4.1 [Entidades y su contexto](#341-entidades-y-su-contexto)  
-       3.4.2 [Diagrama DER](#342-diagrama-der)
+       - 3.4.1 [Entidades y su contexto](#341-entidades-y-su-contexto)  
+       - 3.4.2 [Diagrama DER](#342-diagrama-der)
 
 4. [Cómo ejecutar este proyecto](#4-cómo-ejecutar-este-proyecto)  
    4.1 [Clonar el repositorio](#41-clonar-el-repositorio)  

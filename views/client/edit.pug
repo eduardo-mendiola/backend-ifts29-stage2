@@ -1,10 +1,10 @@
 extends ../layout.pug
-//- views/client/form.pug
+//- views/client/edit.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=item && item.id ? `/clients/${item.id}?_method=PUT` : "/clients", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/clients/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 #{item && item.id ? 'Editar Cliente' : 'Crear Nuevo Cliente'}
+        h1.mb-0 Editar Cliente
         a.btn.btn-gray(href="/clients") Volver a la lista
 
       // Contenedor de 2 columnas
@@ -21,7 +21,6 @@ block content
             label.form-label(for="email") Email
             input#email.form-control(type="email", name="email", 
             value=item.email || "", required)
-
         // Columna derecha
         .col-md-6
           .mb-3
@@ -36,4 +35,4 @@ block content
               option(value="active" selected=(item.status === "active")) Activo
               option(value="inactive" selected=(item.status === "inactive")) Inactivo
 
-      button.btn.btn-primary.mt-3(type="submit") #{item && item.id ? 'Actualizar Cliente' : 'Crear Cliente'}
+      button.btn.btn-success.mt-3(type="submit") Actualizar Cliente
