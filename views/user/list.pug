@@ -34,7 +34,7 @@ block content
           button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
         div.modal-body
           p ¿Está seguro de que desea eliminar este usuario?
-          p#userNameToDelete.font-weight-bold.mt-3
+          p#nameToDelete.font-weight-bold.mt-3
         div.modal-footer
           button#confirmYes.btn.btn-danger Eliminar
           button.btn.btn-secondary(data-bs-dismiss="modal") Cancelar
@@ -45,8 +45,8 @@ block content
         const modalElement = document.getElementById('confirmModal');
         const modal = new bootstrap.Modal(modalElement);
         const confirmYes = document.getElementById('confirmYes');
-        const userNameToDelete = document.getElementById('userNameToDelete');
-        let userIdToDelete = null;
+        const nameToDelete = document.getElementById('nameToDelete');
+        let idToDelete = null;
         let rowToDelete = null;
 
         deleteButtons.forEach(button => {
@@ -54,14 +54,14 @@ block content
             event.preventDefault(); // Prevenir el envío del formulario
 
             const row = event.target.closest('tr');
-            userIdToDelete = event.target.dataset.id;
+            idToDelete = event.target.dataset.id;
             rowToDelete = row;
 
             // Obtener el nombre y apellido del usuario
-            const userName = row.dataset.name;
+            const name = row.dataset.name;
 
             // Actualizar el contenido del modal
-            userNameToDelete.textContent = `Nombre: ${userName}`;
+            nameToDelete.textContent = `Nombre: ${name}`;
 
             // Mostrar el modal
             modal.show();
@@ -69,9 +69,9 @@ block content
         });
 
         confirmYes.addEventListener('click', async () => {
-          if (userIdToDelete) {
+          if (idToDelete) {
             try {
-              const response = await fetch(`/api/users/${userIdToDelete}`, {
+              const response = await fetch(`/api/users/${idToDelete}`, {
                 method: 'DELETE',
               });
 

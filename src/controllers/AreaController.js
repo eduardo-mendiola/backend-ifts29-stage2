@@ -1,9 +1,9 @@
 import BaseController from './BaseController.js';
-import AreaModel from '../models/AreaModel.js';
+import Area from '../models/AreaModel.js';
 
 class AreaController extends BaseController {
     constructor() {
-        super(AreaModel, 'area');
+        super(Area, 'area');
     }
 }
 

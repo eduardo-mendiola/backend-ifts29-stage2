@@ -1,5 +1,5 @@
 extends ../layout.pug
-//- views/role/details.pug
+//- views/area/details.pug
 block content
   h1.mb-4 Usuario del sistema: #{ item.getFullName ? item.getFullName() : `${item.first_name} ${item.last_name}` }
 
@@ -10,13 +10,13 @@ block content
         td= item.id
       tr
         th Nombre
-        td= item.name
+        td= item.name_area
       tr
         th Descripción
         td= item.description
 
   .mt-3
-    a.btn.btn-gray.me-2(href="/roles") Volver a la lista
+    a.btn.btn-gray.me-2(href="/areas") Volver a la lista
     //- a.btn.btn-gray.me-2(href=`/users/${item.id}/edit`) Editar
     //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
     //-   input(type="hidden", name="_method", value="DELETE")

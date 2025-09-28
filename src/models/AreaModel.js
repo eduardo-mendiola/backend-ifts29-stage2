@@ -2,8 +2,11 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const areaSchema = new mongoose.Schema({
-    name_area: { type: String, required: true }
-}, { collection: 'areas' });
+    name_area: { type: String, required: true },
+    description: { type: String }
+}, { 
+    collection: 'areas' 
+});
 
 class AreaModel extends BaseModel {
     constructor() {
@@ -15,12 +18,4 @@ class AreaModel extends BaseModel {
 
 export default new AreaModel();
 
-// import mongoose from 'mongoose';
 
-// const areaSchema = new mongoose.Schema({
-//     name_area: { type: String, required: true }
-// }, { 
-//     collection: 'areas'
-// });
-
-// export default mongoose.models.Area || mongoose.model('Area', areaSchema);
