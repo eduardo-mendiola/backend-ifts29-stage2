@@ -15,8 +15,8 @@ class UserController extends BaseController {
             const user = await this.model.findById(id); // populate ya trae role_id y area_id
             if (!user) return res.render('error404', { title: 'Usuario no encontrado' });
 
-            const roles = await Role.find({}); 
-            const areas = await Area.find({}); 
+            const roles = await Role.findAll(); 
+            const areas = await Area.findAll(); 
 
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Usuario`,
@@ -32,8 +32,8 @@ class UserController extends BaseController {
 
     newView = async (req, res) => {
         try {
-            const roles = await Role.find({});
-            const areas = await Area.find({});
+            const roles = await Role.findAll();
+            const areas = await Area.findAll();
 
             res.render(`${this.viewPath}/form`, {
                 title: `Nuevo Usuario`,

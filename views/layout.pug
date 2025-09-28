@@ -55,7 +55,7 @@ html(lang="es")
         hr
         ul.nav.nav-pills.flex-column.mb-auto
           li.nav-item
-            a.nav-link.active(aria-current="page" href="/")
+            a.nav-link(aria-current="page" href="/")
               i.bi.bi-house-door.me-2
               | Inicio
           li
@@ -70,6 +70,14 @@ html(lang="es")
             a.nav-link.text-white(href="/clients")
               i.bi.bi-table.me-2
               | Clientes
+          li
+            a.nav-link.text-white(href="/roles")
+              i.bi.bi-people.me-2
+              | Roles 
+          li
+            a.nav-link.text-white(href="/areas")
+              i.bi.bi-people.me-2
+              | Areas
         hr
         .dropdown
           a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(

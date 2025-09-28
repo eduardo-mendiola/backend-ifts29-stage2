@@ -4,7 +4,9 @@ import BaseModel from './BaseModel.js';
 const roleSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String }
-}, { collection: 'roles' });
+}, { 
+    collection: 'roles' 
+});
 
 class RoleModel extends BaseModel {
     constructor() { 
