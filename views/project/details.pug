@@ -1,7 +1,7 @@
 extends ../layout.pug
 //- views/project/details.pug
 block content
-  h1.mb-4 Usuario del sistema: #{ item.getFullName ? item.getFullName() : `${item.first_name} ${item.last_name}` }
+  h1.mb-4 #{ `${item.name} - ${item.client_id.name}` }
 
   table.table.table-dark
     tbody
