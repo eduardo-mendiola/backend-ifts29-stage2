@@ -73,10 +73,13 @@ app.get('/users/:id', UserController.getByIdView);
 app.get('/users/:id/edit', UserController.getEditView); // Ruta para mostrar formulario de edición
 app.put('/users/:id', UserController.updateView); // Ruta para procesar la actualización
 
-// Project views Pug
-// app.get('/projects', ProjectController.getAllView);
-// app.get('/projects/:id', ProjectController.getByIdView);
-// app.get('/projects/:id/edit', ProjectController.getByIdView);
+// Project
+app.get('/projects/new', ProjectController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
+app.post('/projects', ProjectController.createView);
+app.get('/projects', ProjectController.getAllView);
+app.get('/projects/:id', ProjectController.getByIdView);
+app.get('/projects/:id/edit', ProjectController.getEditView); // Ruta para mostrar formulario de edición
+app.put('/projects/:id', ProjectController.updateView); // Ruta para procesar la actualización
 
 // Vistas Pug para áreas
 app.get('/areas', AreaController.getAllView);

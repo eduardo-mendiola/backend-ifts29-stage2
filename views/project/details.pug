@@ -1,0 +1,44 @@
+extends ../layout.pug
+//- views/project/details.pug
+block content
+  h1.mb-4 Usuario del sistema: #{ item.getFullName ? item.getFullName() : `${item.first_name} ${item.last_name}` }
+
+  table.table.table-dark
+    tbody
+      tr
+        th ID
+        td= item.id
+      tr
+        th Nombre del Proyecto
+        td= item.name
+      tr
+        th Cliente
+        td= item.client_id.name
+      tr
+        th Descripción
+        td= item.description
+      tr
+        th Fecha de inicio
+        td= item.start_date
+      tr
+        th Fecha de fin
+        td= item.end_date
+      tr
+        th Presupuesto
+        td= item.budget
+      tr
+        th Facturación
+        td= item.billing_type
+      tr
+        th Estado
+        td= item.status
+      tr
+        th Manager de Proyecto
+        td=  item.manager_user_id.first_name + " " + item.manager_user_id.last_name
+
+  .mt-3
+    a.btn.btn-gray.me-2(href="/projects") Volver a la lista
+    //- a.btn.btn-gray.me-2(href=`/users/${item.id}/edit`) Editar
+    //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+    //-   input(type="hidden", name="_method", value="DELETE")
+    //-   button.btn.btn-danger-soft(type="submit") Eliminar

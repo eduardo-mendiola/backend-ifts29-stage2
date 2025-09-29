@@ -15,7 +15,7 @@ const clientSchema = new mongoose.Schema({
 
 class ClientModel extends BaseModel {
     constructor() {
-        super(clientSchema);
+        super(clientSchema, 'Client');
     }
 }
 

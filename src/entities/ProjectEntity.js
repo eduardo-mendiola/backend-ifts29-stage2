@@ -1,5 +1,5 @@
 class ProjectEntity {
-    constructor(id, client_id, name, description, start_date, end_date, budget, billing_type, status, manager_id) {
+    constructor(id, client_id, name, description, start_date, end_date, budget, billing_type, status, manager_user_id) {
         this.id = id;                     
         this.client_id = client_id;       
         this.name = name;                 
@@ -9,7 +9,7 @@ class ProjectEntity {
         this.budget = budget;             
         this.billing_type = billing_type; 
         this.status = status;             
-        this.manager_id = manager_id;     
+        this.manager_user_id = manager_user_id;     
     }
 
     getProjectInfo() {
