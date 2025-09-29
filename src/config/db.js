@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import 'dotenv/config';
 
-const DB_URI = process.env.MONGO_URI_LOCAL 
+const DB_URI = process.env.MONGO_URI_ATLAS 
 
 const dbConnect = async () => {
     try {
