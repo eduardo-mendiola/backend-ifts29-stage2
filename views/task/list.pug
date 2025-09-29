@@ -1,0 +1,95 @@
+extends ../layout.pug
+//- views/task/list.pug
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.mb-0 Lista de Tareas
+    a.btn.btn-primary(href="/tasks/new") Nueva Tarea
+
+  table.table.table-hover.table-dark
+    thead
+      tr
+        th ID
+        th Título 
+        th Asignado 
+        th status
+        th.text-end.pe-5 Acciones
+    tbody
+      each item in items
+        tr(data-id=item.id, data-title=`${item.title}`, data-assigned_to=`${item.assigned_to}`, data-status=`${item.status}`)
+          td= item.id
+          td= item.title
+          td= item.assigned_to.first_name + " " + item.assigned_to.last_name
+          td= item.status
+          td.text-end
+            a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}/edit`) Editar
+            form(action=`/api/tasks/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+              input(type="hidden", name="_method", value="DELETE")
+              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+
+  // Modal de confirmación con Bootstrap
+  div#confirmModal.modal.fade(tabindex="-1", aria-labelledby="confirmModalLabel", aria-hidden="true")
+    div.modal-dialog.modal-dialog-centered
+      div.modal-content.bg-dark.text-white
+        div.modal-header
+          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar una tarea
+          button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
+        div.modal-body
+          p ¿Está seguro de que desea eliminar esta tarea?
+          p#nameToDelete.font-weight-bold.mt-3
+        div.modal-footer
+          button#confirmYes.btn.btn-danger Eliminar
+          button.btn.btn-secondary(data-bs-dismiss="modal") Cancelar
+
+  script.
+      document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const modalElement = document.getElementById('confirmModal');
+        const modal = new bootstrap.Modal(modalElement);
+        const confirmYes = document.getElementById('confirmYes');
+        const nameToDelete = document.getElementById('nameToDelete');
+        let idToDelete = null;
+        let rowToDelete = null;
+
+        deleteButtons.forEach(button => {
+          button.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevenir el envío del formulario
+
+            const row = event.target.closest('tr');
+            idToDelete = event.target.dataset.id;
+            rowToDelete = row;
+
+            // Obtener el nombre y apellido del usuario
+            const name = row.dataset.title;
+
+            // Actualizar el contenido del modal
+            nameToDelete.textContent = `Nombre: ${name}`;
+
+            // Mostrar el modal
+            modal.show();
+          });
+        });
+
+        confirmYes.addEventListener('click', async () => {
+          if (idToDelete) {
+            try {
+              const response = await fetch(`/api/tasks/${idToDelete}`, {
+                method: 'DELETE',
+              });
+
+              if (response.ok) {
+                rowToDelete.remove(); // Eliminar la fila de la tabla
+                //alert('Usuario eliminado correctamente.');
+              } else {
+                alert('Error al eliminar la tarea.');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Error al eliminar la tarea.');
+            }
+          }
+
+          // Ocultar el modal
+          modal.hide();
+        });
+      });
