@@ -73,7 +73,7 @@ block content
         confirmYes.addEventListener('click', async () => {
           if (idToDelete) {
             try {
-              const response = await fetch(`/api/project/${idToDelete}`, {
+              const response = await fetch(`/api/projects/${idToDelete}`, {
                 method: 'DELETE',
               });
 
@@ -81,11 +81,11 @@ block content
                 rowToDelete.remove(); // Eliminar la fila de la tabla
                 //alert('Usuario eliminado correctamente.');
               } else {
-                alert('Error al eliminar el usuario.');
+                alert('Error al eliminar el proyecto.');
               }
             } catch (error) {
               console.error('Error:', error);
-              alert('Error al eliminar el usuario.');
+              alert('Error al eliminar el proyecto.');
             }
           }
 
