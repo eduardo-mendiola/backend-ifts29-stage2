@@ -30,9 +30,9 @@ block content
             label.form-label(for="phone") Teléfono
             input#phone.form-control(type="text", name="phone", value=item.phone || "")
           .mb-3
-            label.form-label(for="status") Estado
-            select#status.form-select(name="status", required)
-              option(value="active" selected=(item.status === "active")) Activo
-              option(value="inactive" selected=(item.status === "inactive")) Inactivo
+            label.form-label(for="is_active") Estado
+            select#is_active.form-select(name="is_active", required)
+              option(value="true" selected=(item.is_active === true)) Activo
+              option(value="false" selected=(item.is_active === false)) Inactivo
 
       button.btn.btn-success.mt-3(type="submit") Actualizar Cliente

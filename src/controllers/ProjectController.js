@@ -14,7 +14,7 @@ class ProjectController extends BaseController {
             user.role_id && 
             user.role_id._id && 
             user.role_id._id.toString() === '68d5de77fad3690190dc30d2' && 
-            user.status === 'active'
+            user.is_active === true
         );
     }
 

@@ -99,7 +99,7 @@ app.put('/roles/:id', RoleController.updateView);
 
 
 // || Rutas base (endpoints de la API) ||
-app.use('/api/client', clientRoutes);
+app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/roles', roleRoutes);

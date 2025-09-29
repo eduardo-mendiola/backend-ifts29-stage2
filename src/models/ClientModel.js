@@ -7,7 +7,7 @@ const clientSchema = new mongoose.Schema({
     email: { type: String },
     phone: { type: String },
     address: { type: String },
-    status: { type: String, enum: ['active', 'inactive'], default: 'active' }
+    is_active: { type: Boolean, default: true }
 }, {
     collection: 'clients',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
