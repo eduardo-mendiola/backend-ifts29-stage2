@@ -9,7 +9,7 @@ class UserEntity {
         role_id,
         area_id,
         monthly_salary,
-        status,
+        is_active,
         created_at = new Date().toISOString(),
         updated_at = new Date().toISOString()
     ) {
@@ -22,7 +22,7 @@ class UserEntity {
         this.role_id = role_id;
         this.area_id = area_id;
         this.monthly_salary = monthly_salary;
-        this.status = status;
+        this.is_active = is_active;
         this.created_at = created_at;
         this.updated_at = updated_at;
     }

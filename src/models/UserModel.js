@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     role_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Role', required: true },
     area_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Area', required: true },
     monthly_salary: { type: Number },
-    status: { type: String, default: 'active' },
+    is_active: { type: Boolean, default: true },
 }, { 
     collection: 'users',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

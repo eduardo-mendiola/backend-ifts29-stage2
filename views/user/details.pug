@@ -31,7 +31,7 @@ block content
         td= item.monthly_salary
       tr
         th Estado
-        td= item.status
+        td= item.is_active ? 'Activo' : 'Inactivo'
       tr
         th Fecha de creación
         td= item.created_at
