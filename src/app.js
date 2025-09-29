@@ -9,6 +9,7 @@ import userRoutes from './routes/userRoutes.js';
 import roleRoutes from './routes/roleRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import areaRoutes from './routes/areaRoutes.js';
+import taskRoutes from './routes/taskRoutes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -16,6 +17,7 @@ import ProjectController from './controllers/ProjectController.js';
 import UserController from './controllers/UserController.js';
 import AreaController from './controllers/AreaController.js';
 import RoleController from './controllers/RoleController.js';
+import TaskController from './controllers/TaskController.js';
 
 
 // __dirname en ESM
@@ -97,6 +99,14 @@ app.get('/roles/:id', RoleController.getByIdView);
 app.post('/roles', RoleController.createView);        
 app.put('/roles/:id', RoleController.updateView);    
 
+// Vistas Pug para tasks
+app.get('/tasks', TaskController.getAllView);          
+app.get('/tasks/new', TaskController.newView);        
+app.get('/tasks/:id/edit', TaskController.getEditView); 
+app.get('/tasks/:id', TaskController.getByIdView);  
+app.post('/tasks', TaskController.createView);        
+app.put('/tasks/:id', TaskController.updateView); 
+
 
 // || Rutas base (endpoints de la API) ||
 app.use('/api/clients', clientRoutes);
@@ -104,6 +114,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/areas', areaRoutes);
+app.use('/api/tasks', taskRoutes);
 
 
 // Manejo de errores 404 para rutas no encontradas

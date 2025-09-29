@@ -13,7 +13,7 @@ class ProjectController extends BaseController {
         return users.filter(user => 
             user.role_id && 
             user.role_id._id && 
-            user.role_id._id.toString() === '66f80e051a7b4f5d02e86e02' && 
+            user.role_id._id.toString() === '68d5de77fad3690190dc30d2' && 
             user.is_active === true
         );
     }
