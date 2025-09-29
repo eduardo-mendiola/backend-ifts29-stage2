@@ -1,21 +1,11 @@
 import BaseController from './BaseController.js'
+import Task from '../models/TaskModel.js';
 import Project from '../models/ProjectModel.js'; 
-import Client from '../models/ClientModel.js';
 import User from '../models/UserModel.js';
 
-class ProjectController extends BaseController {
+class TaskController extends BaseController {
     constructor() {
-        super(Project, 'project'); 
-    }
-
-    // Método helper para filtrar managers
-    filterManagers = (users) => {
-        return users.filter(user => 
-            user.role_id && 
-            user.role_id._id && 
-            user.role_id._id.toString() === '68d5de77fad3690190dc30d2' && 
-            user.is_active === true
-        );
+        super(Task, 'task'); 
     }
 
     // Método helper para formatear fechas
@@ -28,8 +18,7 @@ class ProjectController extends BaseController {
 
         return {
             ...item,
-            start_date: formatDate(item.start_date),
-            end_date: formatDate(item.end_date)
+            due_date: formatDate(item.due_date)
         };
     }
 
@@ -37,21 +26,20 @@ class ProjectController extends BaseController {
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;
-            const project = await this.model.findById(id);
-            if (!project) return res.render('error404', { title: 'Proyecto no encontrado' });
+            const task = await this.model.findById(id);
+            if (!task) return res.render('error404', { title: 'Tarea no encontrado' });
 
-            const clients = await Client.findAll(); 
-            const allUsers = await User.findAll();
-            const managers = this.filterManagers(allUsers);
+            const users = await User.findAll();
+            const projects = await Project.findAll();
 
             // Formatear fechas antes de enviar a la vista
-            const formattedProject = this.formatDatesForInput(this.formatItem(project));
+            const formattedTask = this.formatDatesForInput(this.formatItem(task));
 
             res.render(`${this.viewPath}/edit`, {
-                title: `Editar Proyecto`,
-                item: formattedProject, // Proyecto con fechas formateadas
-                clients,
-                managers
+                title: `Editar Task`,
+                item: formattedTask, // Tarea con fecha formateada
+                users,
+                projects
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -61,21 +49,20 @@ class ProjectController extends BaseController {
 
     newView = async (req, res) => {
         try {
-            const clients = await Client.findAll();
-            const allUsers = await User.findAll();
-            const managers = this.filterManagers(allUsers);
+            const users = await User.findAll();
+            const projects = await Project.findAll();
 
             res.render(`${this.viewPath}/form`, {
-                title: `Nuevo Proyecto`,
+                title: `Nueva Tarea`,
                 item: {}, // objeto vacío porque es nuevo
-                clients,
-                managers
+                users,
+                projects
             });
         } catch (error) {
-            console.error('Error al abrir formulario de proyecto:', error.message);
+            console.error('Error al abrir formulario de tareas:', error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
 }
 
-export default new ProjectController();
+export default new TaskController();
