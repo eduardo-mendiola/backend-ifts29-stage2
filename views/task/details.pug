@@ -17,15 +17,20 @@ block content
       tr
         th Descripción
         td= item.description
+      tr 
+        th Prioridad
+        td
+          span.badge.fs-6(class=`${item.priority === 'baja' ? 'bg-success' : item.priority === 'media' ? 'bg-warning' : 'bg-danger'}`)
+            = item.priority === 'baja' ? 'Baja' : item.priority === 'media' ? 'Media' : 'Alta'
       tr
         th Estado
         td= item.status
       tr
-        th Asignado a
+        th Asignado
         td= item.assigned_to.first_name + " " + item.assigned_to.last_name
       tr
         th Estimación (horas)
-        td= item.estimated_hours
+        td= item.estimated_hours + ' hrs'
       tr
         th Fecha de Vencimiento
         td= item.due_date ? item.due_date.toLocaleDateString() : 'N/A'

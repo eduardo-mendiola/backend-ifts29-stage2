@@ -4,7 +4,7 @@ import BaseModel from './BaseModel.js';
 const taskSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String },
-    priority: { type: String, enum: ['Baja', 'Media', 'Alta'], default: 'Media' },
+    priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },
     status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
     assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     estimated_hours: { type: Number },

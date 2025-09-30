@@ -18,7 +18,8 @@ class TaskController extends BaseController {
 
         return {
             ...item,
-            due_date: formatDate(item.due_date)
+            due_date: formatDate(item.due_date),
+            created_at: formatDate(item.created_at)
         };
     }
 
