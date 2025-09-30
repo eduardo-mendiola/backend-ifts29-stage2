@@ -2,9 +2,9 @@ extends ../layout.pug
 
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=item && item.id ? `/users/${item.id}?_method=PUT` : "/users", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/users", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 #{item && item.id ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
+        h1.mb-0 Crear Nuevo Usuario
         a.btn.btn-gray(href="/users") Volver a la lista
 
       // Contenedor de 2 columnas
@@ -54,4 +54,4 @@ block content
               option(value="true" selected=(item.is_active === true)) Activo
               option(value="false" selected=(item.is_active === false)) Inactivo
 
-      button.btn.btn-primary.mt-3(type="submit") #{item && item.id ? 'Actualizar Usuario' : 'Crear Usuario'}
+      button.btn.btn-primary.mt-3(type="submit") Crear Usuario

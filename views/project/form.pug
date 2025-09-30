@@ -2,10 +2,10 @@ extends ../layout.pug
 //- views/project/form.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=item && item.id ? `/projects/${item.id}?_method=PUT` : "/projects", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/projects", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 #{item && item.id ? 'Editar Proyecto' : 'Crear Nuevo Proyecto'}
-        a.btn.btn-gray(href="/project") Volver a la lista
+        h1.mb-0 Crear Nuevo Proyecto
+        a.btn.btn-gray(href="/projects") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -64,4 +64,4 @@ block content
                 option(value="") No hay managers disponibles
 
 
-      button.btn.btn-primary.mt-3(type="submit") #{item && item.id ? 'Actualizar Proyecto' : 'Crear Proyecto'}
+      button.btn.btn-primary.mt-3(type="submit") Crear Proyecto

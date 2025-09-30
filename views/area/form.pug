@@ -2,9 +2,9 @@ extends ../layout.pug
 //- views/area/form.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=item && item.id ? `/areas/${item.id}?_method=PUT` : "/areas", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/areas", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 #{item && item.id ? 'Editar Area' : 'Crear Nuevo Area'}
+        h1.mb-0 Crear Nuevo Area
         a.btn.btn-gray(href="/areas") Volver a la lista
 
       // Contenedor de 1 columnas
@@ -17,4 +17,4 @@ block content
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", value=item.description || "", required)
 
-      button.btn.btn-primary.mt-3(type="submit") #{item && item.id ? 'Actualizar Area' : 'Crear Area'}
+      button.btn.btn-primary.mt-3(type="submit") Crear Area

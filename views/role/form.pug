@@ -2,9 +2,9 @@ extends ../layout.pug
 //- views/role/form.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=item && item.id ? `/roles/${item.id}?_method=PUT` : "/roles", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/roles", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 #{item && item.id ? 'Editar Rol' : 'Crear Nuevo Rol'}
+        h1.mb-0 Crear Nuevo Rol
         a.btn.btn-gray(href="/roles") Volver a la lista
 
       // Contenedor de 1 columnas
@@ -17,4 +17,4 @@ block content
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", value=item.description || "", required)
 
-      button.btn.btn-primary.mt-3(type="submit") #{item && item.id ? 'Actualizar Rol' : 'Crear Rol'}
+      button.btn.btn-primary.mt-3(type="submit") Crear Rol
