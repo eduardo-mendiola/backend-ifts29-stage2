@@ -137,7 +137,7 @@ class BaseController {
     createView = async (req, res) => {
         try {
             const newItem = await this.model.create(req.body);
-            res.redirect(`/${this.viewPath}s`);
+            res.redirect(`/${this.viewPath}s/${newItem._id}`);
         } catch (error) {
             console.error(`Error al crear ${this.viewPath}:`, error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
@@ -177,7 +177,7 @@ class BaseController {
             const { id } = req.params;
             const updatedItem = await this.model.update(id, req.body);
             if (!updatedItem) return res.render('error404', { title: `${this.viewPath} no encontrado para actualizar.` });
-            res.redirect(`/${this.viewPath}s`);
+            res.redirect(`/${this.viewPath}s/${id}`);
         } catch (error) {
             console.error(`Error al actualizar ${this.viewPath}:`, error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });

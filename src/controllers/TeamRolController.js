@@ -84,7 +84,7 @@ class TeamRoleController extends BaseController {
                 return res.status(404).send('Rol no encontrado');
             }
             
-            res.redirect('/teamroles');
+            res.redirect('/team_roles');
 
         } catch (error) {
             console.error('Error al eliminar rol de equipo:', error.message);
