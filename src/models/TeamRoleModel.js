@@ -2,17 +2,16 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const teamRoleSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
+    name: {
+        type: String,
         required: true,
         unique: true
     },
-    description: { 
-        type: String 
+    description: {
+        type: String
     }
-}, { 
-    collection: 'team_roles',
-    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+}, {
+    collection: 'team_roles'
 });
 
 // Registrar el modelo en mongoose ANTES de crear la clase
@@ -29,9 +28,16 @@ class TeamRoleModel extends BaseModel {
     }
 
     // Buscar por nombre
-    async findByName(name) {
-        return this.model.findOne({ name });
+    // async findByName(name) {
+    //     return this.model.findOne({ name });
+    // }
+
+    async findByName(name, excludeId = null) {
+        const query = { name };
+        if (excludeId) query._id = { $ne: excludeId }; // excluye el mismo id
+        return this.model.findOne(query);
     }
+
 }
 
 export default new TeamRoleModel();

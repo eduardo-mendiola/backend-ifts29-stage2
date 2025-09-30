@@ -1,15 +1,15 @@
 import express from 'express';
 const router = express.Router();
 
-import teamController from '../controllers/TeamController.js';
+import teamRolController from '../controllers/TeamRolController.js';
 // import { validateUserInput } from '../middleware/validationMiddleware.js'; 
 
-router.post('/', teamController.create);
-router.get('/', teamController.getAll);
-router.get('/:id', teamController.getById);
-router.put('/:id', teamController.update);
-router.patch('/:id', teamController.patch);
-router.delete('/:id', teamController.delete);
+router.post('/', teamRolController.create);
+router.get('/', teamRolController.getAll);
+router.get('/:id', teamRolController.getById);
+router.put('/:id', teamRolController.update);
+router.patch('/:id', teamRolController.patch);
+router.delete('/:id', teamRolController.delete);
 
 
 export default router;

@@ -3,94 +3,108 @@ import TeamRoleModel from '../models/TeamRoleModel.js';
 
 class TeamRoleController extends BaseController {
     constructor() {
-        super(TeamRoleModel, 'teamrole');
+        super(TeamRoleModel, 'team_role');
     }
 
-    // Solo sobreescribir updateView para validar nombres únicos
+    // Sobrescribimos createView
+    createView = async (req, res) => {
+        try {
+            const { name, description } = req.body;
+
+            if (!name || name.trim() === '') {
+                return res.status(400).json({ success: false, message: 'El nombre del rol es requerido' });
+            }
+
+            const existingRole = await this.model.findByName(name.trim());
+            if (existingRole) {
+                return res.status(400).json({ success: false, message: 'Nombre de rol existente, intente otro' });
+            }
+
+            const created = await this.model.create({
+                name: name.trim(),
+                description: description ? description.trim() : ''
+            });
+
+            // return res.status(201).json({ success: true, message: 'Rol creado correctamente', data: created });
+
+            return res.status(201).json({
+                success: true,
+                message: 'Rol creado correctamente',
+                redirectUrl: `/team_roles/${created._id}`,
+                data: created
+            });
+
+
+        } catch (error) {
+            console.error('Error al crear rol de equipo:', error.message);
+            return res.status(500).json({ success: false, message: 'Error interno al crear el rol' });
+        }
+    }
+
+
+    // Sobrescribimos updateView
     updateView = async (req, res) => {
         try {
             const { id } = req.params;
             const { name, description } = req.body;
 
-            // Validación específica: nombre requerido
             if (!name || name.trim() === '') {
-                return res.status(400).send('El nombre del rol es requerido');
+                return res.status(400).json({ success: false, message: 'El nombre del rol es requerido' });
             }
 
-            // Validación específica: nombre único
-            const existingRole = await this.model.findByName(name.trim());
-            if (existingRole && existingRole._id.toString() !== id) {
-                return res.status(400).send('Ya existe un rol de equipo con ese nombre');
+            const existingRole = await this.model.findByName(name.trim(), id);
+            if (existingRole) {
+                return res.status(400).json({ success: false, message: 'Ya existe un rol de equipo con ese nombre' });
             }
 
-            // Usar el updateView del BaseController
-            req.body.name = name.trim();
-            req.body.description = description ? description.trim() : '';
-            
-            return super.updateView(req, res);
+            const updated = await this.model.update(id, {
+                name: name.trim(),
+                description: description ? description.trim() : ''
+            });
+
+            if (!updated) {
+                return res.status(404).json({ success: false, message: 'Rol no encontrado' });
+            }
+
+            return res.status(200).json({ success: true, message: 'Rol actualizado correctamente', data: updated });
 
         } catch (error) {
             console.error('Error al actualizar rol de equipo:', error.message);
-            res.status(500).send(`Error: ${error.message}`);
+            return res.status(500).json({ success: false, message: 'Error interno al actualizar el rol' });
         }
-    };
+    }
 
-    // Solo sobreescribir createView para validar nombres únicos
-    createView = async (req, res) => {
-        try {
-            const { name, description } = req.body;
 
-            // Validación específica: nombre requerido
-            if (!name || name.trim() === '') {
-                return res.status(400).send('El nombre del rol es requerido');
-            }
-
-            // Validación específica: nombre único
-            const existingRole = await this.model.findByName(name.trim());
-            if (existingRole) {
-                return res.status(400).send('Ya existe un rol de equipo con ese nombre');
-            }
-
-            // Usar el createView del BaseController
-            req.body.name = name.trim();
-            req.body.description = description ? description.trim() : '';
-            
-            return super.createView(req, res);
-
-        } catch (error) {
-            console.error('Error al crear rol de equipo:', error.message);
-            res.status(500).send(`Error: ${error.message}`);
-        }
-    };
 
     // Solo sobreescribir deleteView para verificar si está en uso
-    deleteView = async (req, res) => {
+
+    delete = async (req, res) => {
         try {
             const { id } = req.params;
+            const TeamModel = (await import('../models/TeamModel.js')).default;
 
-            // Verificar si el rol está siendo usado en algún equipo
-            const TeamModel = await import('../models/TeamModel.js');
-            const teamsUsingRole = await TeamModel.default.model.find({
-                'members.team_role_id': id
+            // Buscar equipos que usen este rol
+            const teamsUsingRole = await TeamModel.model.find({
+                members: { $elemMatch: { 'team_role_id._id': id } }
             });
 
             if (teamsUsingRole.length > 0) {
-                return res.status(400).send('No se puede eliminar el rol porque está siendo usado en equipos');
+                return res.status(400).json({ message: 'No se puede eliminar el rol porque está siendo usado en equipos' });
             }
 
-            // Usar el método delete del BaseController (API)
             const deleted = await this.model.delete(id);
-            if (!deleted) {
-                return res.status(404).send('Rol no encontrado');
-            }
-            
-            res.redirect('/team_roles');
+            if (!deleted) return res.status(404).json({ message: 'Rol no encontrado' });
+
+            res.status(204).send();
 
         } catch (error) {
             console.error('Error al eliminar rol de equipo:', error.message);
-            res.status(500).send(`Error: ${error.message}`);
+            res.status(500).json({ message: 'Error interno del servidor al eliminar.' });
         }
     };
+
+
+
 }
 
 export default new TeamRoleController();
