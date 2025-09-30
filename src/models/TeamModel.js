@@ -8,7 +8,7 @@ const teamSchema = new mongoose.Schema({
     members: [
         {
             user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-            role_in_team: { type: String, required: true }
+            team_role_id: { type: mongoose.Schema.Types.ObjectId, ref: 'TeamRole', required: true }
         }
     ]
 }, { 
@@ -21,13 +21,13 @@ class TeamModel extends BaseModel {
         super(teamSchema, 'Team');
     }
 
-    // Obtener todos los equipos con líderes y miembros poblados
+    // Obtener todos los equipos con líderes, miembros y roles de equipo poblados
     async findAll() {
-        return super.findAll(['team_leader', 'members.user_id']);
+        return super.findAll(['team_leader', 'members.user_id', 'members.team_role_id']);
     }
 
     async findById(id) {
-        return super.findById(id, ['team_leader', 'members.user_id']);
+        return super.findById(id, ['team_leader', 'members.user_id', 'members.team_role_id']);
     }
 }
 

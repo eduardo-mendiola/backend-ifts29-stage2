@@ -41,40 +41,130 @@ block content
                   li.list-group-item.d-flex.justify-content-between.align-items-center(
                     data-member-id=member.user_id._id
                     data-member-name=`${member.user_id.first_name} ${member.user_id.last_name}`
-                    data-member-role=member.role_in_team
+                    data-member-role-id=member.team_role_id._id
+                    data-member-role-name=member.team_role_id.name
+                    data-default-role-id=member.user_id.role_id._id
+                    data-default-role-name=member.user_id.role_id.name
                   )
-                    span #{member.user_id.first_name} #{member.user_id.last_name} (#{member.role_in_team})
+                    span #{member.user_id.first_name} #{member.user_id.last_name} (#{member.team_role_id.name})
                     button.btn.btn-sm.btn-danger(type="button", onclick="removeMember(this)") Quitar
               else
                 li#no-members.list-group-item No hay miembros aún
-                
-            // Inputs hidden para miembros existentes
-            if item.members && item.members.length > 0
-              each member in item.members
-                input(type="hidden", name="members", value=member.user_id._id)
 
           // Agregar miembros
           .mb-3
             label.form-label Agregar miembro
-            select#add_member.form-select
-              option(value="") Seleccionar usuario...
-              if users && users.length > 0
-                each user in users
-                  //- Evitar duplicar al líder
-                  if !item.team_leader || user._id.toString() !== item.team_leader._id.toString()
-                    option(value=user._id, data-name=`${user.first_name} ${user.last_name}`, data-role=user.role_id.name) #{user.first_name} #{user.last_name} - #{user.role_id.name}
-              else
-                option(value="") No hay usuarios disponibles
-            button.btn.btn-sm.btn-primary.mt-2(type="button", onclick="addMember()") Agregar
+            .row.g-2
+              .col-12
+                select#add_member.form-select(onchange="handleMemberSelection()")
+                  option(value="") Seleccionar usuario...
+                  if users && users.length > 0
+                    each user in users
+                      //- Evitar duplicar al líder
+                      if !item.team_leader || user._id.toString() !== item.team_leader._id.toString()
+                        option(value=user._id, data-name=`${user.first_name} ${user.last_name}`, data-default-role-id=user.role_id._id, data-default-role-name=user.role_id.name) #{user.first_name} #{user.last_name} - #{user.role_id.name}
+                  else
+                    option(value="") No hay usuarios disponibles
+              
+              // Campo de rol (inicialmente oculto)
+              .col-12#role-container(style="display: none;")
+                label.form-label(for="member_role") Rol en el equipo
+                select#member_role.form-select
+                  if teamRoles && teamRoles.length > 0
+                    each teamRole in teamRoles
+                      option(value=teamRole._id)= teamRole.name
+                  else
+                    option(value="") No hay roles de equipo disponibles
+              
+              .col-12#add-button-container(style="display: none;")
+                .d-flex.gap-2
+                  button.btn.btn-primary(type="button", onclick="addMember()") Agregar Miembro
+                  button.btn.btn-secondary(type="button", onclick="cancelSelection()") Cancelar
 
       button.btn.btn-success.mt-3(type="submit") Actualizar Equipo
 
   //- Scripts para agregar y quitar miembros dinámicamente
   script.
+    // Variables globales para manejar la selección
+    let selectedUserId = null;
+    let selectedUserName = null;
+    let selectedUserDefaultRoleId = null;
+    let selectedUserDefaultRoleName = null;
+
+    // Función para manejar la selección de usuario
+    function handleMemberSelection() {
+      const select = document.getElementById('add_member');
+      const selectedOption = select.options[select.selectedIndex];
+      const roleContainer = document.getElementById('role-container');
+      const addButtonContainer = document.getElementById('add-button-container');
+      const roleSelect = document.getElementById('member_role');
+      
+      if (selectedOption.value === "") {
+        // No hay selección
+        roleContainer.style.display = 'none';
+        addButtonContainer.style.display = 'none';
+        selectedUserId = null;
+        selectedUserName = null;
+        selectedUserDefaultRoleId = null;
+        selectedUserDefaultRoleName = null;
+      } else {
+        // Usuario seleccionado
+        selectedUserId = selectedOption.value;
+        selectedUserName = selectedOption.getAttribute('data-name');
+        selectedUserDefaultRoleId = selectedOption.getAttribute('data-default-role-id');
+        selectedUserDefaultRoleName = selectedOption.getAttribute('data-default-role-name');
+        
+        // Intentar preseleccionar un rol similar al rol organizacional del usuario
+        const userRoleName = selectedUserDefaultRoleName.toLowerCase();
+        let bestMatch = null;
+        
+        // Buscar coincidencias aproximadas
+        for (let option of roleSelect.options) {
+          const teamRoleName = option.textContent.toLowerCase();
+          if (teamRoleName.includes(userRoleName) || userRoleName.includes(teamRoleName)) {
+            bestMatch = option.value;
+            break;
+          }
+        }
+        
+        // Si encontró coincidencia, seleccionarla; sino, dejar en blanco
+        if (bestMatch) {
+          roleSelect.value = bestMatch;
+        } else {
+          roleSelect.selectedIndex = 0;
+        }
+        
+        // Mostrar campos de rol y botones
+        roleContainer.style.display = 'block';
+        addButtonContainer.style.display = 'block';
+        
+        // Enfocar el select de rol
+        roleSelect.focus();
+      }
+    }
+
+    // Función para cancelar la selección
+    function cancelSelection() {
+      const select = document.getElementById('add_member');
+      const roleContainer = document.getElementById('role-container');
+      const addButtonContainer = document.getElementById('add-button-container');
+      const roleSelect = document.getElementById('member_role');
+      
+      // Resetear todo
+      select.selectedIndex = 0;
+      roleSelect.selectedIndex = 0;
+      roleContainer.style.display = 'none';
+      addButtonContainer.style.display = 'none';
+      selectedUserId = null;
+      selectedUserName = null;
+      selectedUserDefaultRoleId = null;
+      selectedUserDefaultRoleName = null;
+    }
+
     // Función para actualizar los inputs hidden
     function updateMembersInputs() {
       // Remover todos los inputs hidden existentes
-      const existingInputs = document.querySelectorAll('input[name="members"]');
+      const existingInputs = document.querySelectorAll('input[name^="member_"]');
       existingInputs.forEach(input => input.remove());
       
       // Agregar inputs hidden para cada miembro visible
@@ -83,14 +173,31 @@ block content
       
       memberItems.forEach((item, index) => {
         const memberId = item.getAttribute('data-member-id');
-        if (memberId) {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'members';
-          input.value = memberId;
-          document.querySelector('form').appendChild(input);
+        const memberRoleId = item.getAttribute('data-member-role-id');
+        
+        if (memberId && memberRoleId) {
+          // Input para el ID del miembro
+          const inputId = document.createElement('input');
+          inputId.type = 'hidden';
+          inputId.name = `member_${index}_id`;
+          inputId.value = memberId;
+          document.querySelector('form').appendChild(inputId);
+          
+          // Input para el ID del rol de equipo
+          const inputRole = document.createElement('input');
+          inputRole.type = 'hidden';
+          inputRole.name = `member_${index}_role`;
+          inputRole.value = memberRoleId;
+          document.querySelector('form').appendChild(inputRole);
         }
       });
+      
+      // Input para contar total de miembros
+      const inputCount = document.createElement('input');
+      inputCount.type = 'hidden';
+      inputCount.name = 'members_count';
+      inputCount.value = memberItems.length;
+      document.querySelector('form').appendChild(inputCount);
     }
 
     // Función para remover miembro
@@ -113,14 +220,16 @@ block content
       // Volver a agregar la opción al select
       const memberId = listItem.getAttribute('data-member-id');
       const memberName = listItem.getAttribute('data-member-name');
-      const memberRole = listItem.getAttribute('data-member-role');
+      const memberDefaultRoleId = listItem.getAttribute('data-default-role-id');
+      const memberDefaultRoleName = listItem.getAttribute('data-default-role-name');
       
       const select = document.getElementById('add_member');
       const option = document.createElement('option');
       option.value = memberId;
       option.setAttribute('data-name', memberName);
-      option.setAttribute('data-role', memberRole);
-      option.textContent = `${memberName} - ${memberRole}`;
+      option.setAttribute('data-default-role-id', memberDefaultRoleId);
+      option.setAttribute('data-default-role-name', memberDefaultRoleName);
+      option.textContent = `${memberName} - ${memberDefaultRoleName}`;
       select.appendChild(option);
       
       // Actualizar inputs hidden
@@ -129,10 +238,20 @@ block content
 
     // Función para agregar miembro
     function addMember() {
-      const select = document.getElementById('add_member');
-      const selectedOption = select.options[select.selectedIndex];
+      const roleSelect = document.getElementById('member_role');
+      const selectedRoleOption = roleSelect.options[roleSelect.selectedIndex];
       
-      if (!selectedOption || selectedOption.value === "") return;
+      // Validar que se haya seleccionado un rol
+      if (!selectedRoleOption || selectedRoleOption.value === "") {
+        alert('Por favor, selecciona un rol para el miembro');
+        roleSelect.focus();
+        return;
+      }
+      
+      if (!selectedUserId) {
+        alert('Error: No hay usuario seleccionado');
+        return;
+      }
 
       const membersList = document.getElementById('members-list');
       const noMembersItem = document.getElementById('no-members');
@@ -145,12 +264,15 @@ block content
       // Crear nuevo elemento de lista
       const li = document.createElement('li');
       li.className = 'list-group-item d-flex justify-content-between align-items-center';
-      li.setAttribute('data-member-id', selectedOption.value);
-      li.setAttribute('data-member-name', selectedOption.getAttribute('data-name'));
-      li.setAttribute('data-member-role', selectedOption.getAttribute('data-role'));
+      li.setAttribute('data-member-id', selectedUserId);
+      li.setAttribute('data-member-name', selectedUserName);
+      li.setAttribute('data-member-role-id', selectedRoleOption.value);
+      li.setAttribute('data-member-role-name', selectedRoleOption.textContent);
+      li.setAttribute('data-default-role-id', selectedUserDefaultRoleId);
+      li.setAttribute('data-default-role-name', selectedUserDefaultRoleName);
       
       const span = document.createElement('span');
-      span.textContent = `${selectedOption.getAttribute('data-name')} (${selectedOption.getAttribute('data-role')})`;
+      span.textContent = `${selectedUserName} (${selectedRoleOption.textContent})`;
       
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -162,21 +284,21 @@ block content
       li.appendChild(btn);
       membersList.appendChild(li);
 
-      // Quitar del select para evitar duplicados
-      selectedOption.remove();
+      // Quitar del select la opción seleccionada
+      const select = document.getElementById('add_member');
+      const optionToRemove = select.querySelector(`option[value="${selectedUserId}"]`);
+      if (optionToRemove) {
+        optionToRemove.remove();
+      }
+      
+      // Resetear la selección
+      cancelSelection();
       
       // Actualizar inputs hidden
       updateMembersInputs();
     }
 
-    // Inicializar inputs hidden al cargar la página
+    // Inicializar al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
-      // Agregar data attributes a los miembros existentes
-      const existingMembers = document.querySelectorAll('#members-list li:not(#no-members)');
-      existingMembers.forEach((item, index) => {
-        // Necesitamos extraer el ID del miembro del texto o agregarlo desde el servidor
-        // Por ahora, vamos a agregarlo manualmente
-      });
-      
       updateMembersInputs();
     });

@@ -11,6 +11,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import areaRoutes from './routes/areaRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
+import team_rolRoutes from './routes/team_rolRoutes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -20,6 +21,7 @@ import AreaController from './controllers/AreaController.js';
 import RoleController from './controllers/RoleController.js';
 import TaskController from './controllers/TaskController.js';
 import TeamController from './controllers/TeamController.js'; 
+import TeamRolController from './controllers/TeamRolController.js'; 
 
 
 // __dirname en ESM
@@ -117,6 +119,14 @@ app.get('/teams/:id', TeamController.getByIdView);
 app.post('/teams', TeamController.createView);        
 app.put('/teams/:id', TeamController.updateView); 
 
+// Vistas Pug para team_roles
+app.get('/team_roles', TeamRolController.getAllView);          
+app.get('/team_roles/new', TeamRolController.newView);        
+app.get('/team_roles/:id/edit', TeamController.getEditView); 
+app.get('/team_roles/:id', TeamRolController.getByIdView);  
+app.post('/team_roles', TeamRolController.createView);        
+app.put('/team_roles/:id', TeamRolController.updateView); 
+
 
 // || Rutas base (endpoints de la API) ||
 app.use('/api/clients', clientRoutes);
@@ -126,6 +136,7 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/areas', areaRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/teams', teamRoutes);
+app.use('/api/team_roles', team_rolRoutes);
 
 
 // Manejo de errores 404 para rutas no encontradas
