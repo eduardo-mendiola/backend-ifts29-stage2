@@ -33,9 +33,11 @@ block content
         th Estado
         td= item.status
       tr
-        th Manager de Proyecto
-        td=  item.manager_user_id.first_name + " " + item.manager_user_id.last_name
-
+        th Equipo asignado
+        td=  item.team_id ? item.team_id.name : 'N/A'
+      tr
+        th Lider de equipo
+        td=  item.team_id.team_leader.first_name + ' ' + item.team_id.team_leader.last_name
   .mt-3
     a.btn.btn-gray.me-2(href="/projects") Volver a la lista
     a.btn.btn-primary.me-2(href=`/projects/${item.id}/edit`) Editar

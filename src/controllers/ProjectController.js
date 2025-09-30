@@ -1,23 +1,14 @@
 import BaseController from './BaseController.js'
 import Project from '../models/ProjectModel.js'; 
 import Client from '../models/ClientModel.js';
-import User from '../models/UserModel.js';
+import Team from '../models/TeamModel.js';
 
 class ProjectController extends BaseController {
     constructor() {
         super(Project, 'project'); 
     }
 
-    // Método helper para filtrar managers
-    filterManagers = (users) => {
-        return users.filter(user => 
-            user.role_id && 
-            user.role_id._id && 
-            user.role_id._id.toString() === '66f80e051a7b4f5d02e86e02' && 
-            user.is_active === true
-        );
-    }
-
+   
     // Método helper para formatear fechas
     formatDatesForInput = (item) => {
         const formatDate = (date) => {
@@ -41,8 +32,7 @@ class ProjectController extends BaseController {
             if (!project) return res.render('error404', { title: 'Proyecto no encontrado' });
 
             const clients = await Client.findAll(); 
-            const allUsers = await User.findAll();
-            const managers = this.filterManagers(allUsers);
+            const teams = await Team.findAll();
 
             // Formatear fechas antes de enviar a la vista
             const formattedProject = this.formatDatesForInput(this.formatItem(project));
@@ -51,7 +41,7 @@ class ProjectController extends BaseController {
                 title: `Editar Proyecto`,
                 item: formattedProject, // Proyecto con fechas formateadas
                 clients,
-                managers
+                teams
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -62,14 +52,13 @@ class ProjectController extends BaseController {
     newView = async (req, res) => {
         try {
             const clients = await Client.findAll();
-            const allUsers = await User.findAll();
-            const managers = this.filterManagers(allUsers);
+            const teams = await Team.findAll();
 
             res.render(`${this.viewPath}/form`, {
                 title: `Nuevo Proyecto`,
                 item: {}, // objeto vacío porque es nuevo
                 clients,
-                managers
+                teams
             });
         } catch (error) {
             console.error('Error al abrir formulario de proyecto:', error.message);

@@ -10,7 +10,7 @@ const projectSchema = new mongoose.Schema({
     budget: { type: Number },
     billing_type: { type: String, enum: ['hourly', 'fixed'], default: 'fixed' },
     status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    manager_user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    team_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
 }, {
     collection: 'projects' // timestamps automáticos
 });
@@ -21,13 +21,25 @@ class ProjectModel extends BaseModel {
     }
 
     async findAll() {
-        return super.findAll(['client_id', 'manager_user_id']); // populate automático
-    }   
+        return super.findAll([
+            { path: 'client_id' },
+            {
+                path: 'team_id',
+                populate: { path: 'team_leader', model: 'User' } // Populate anidado para team_leader
+            }
+        ]); // populate automático
+    }
 
     async findById(id) {
-        return super.findById(id, ['client_id', 'manager_user_id']); // populate automático
+        return super.findById(id, [
+            { path: 'client_id' },
+            {
+                path: 'team_id',
+                populate: { path: 'team_leader', model: 'User' } // Populate anidado para team_leader
+            }
+        ]); // populate automático
     }
-    
+
 }
 
 export default new ProjectModel();

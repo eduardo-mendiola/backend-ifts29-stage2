@@ -52,15 +52,15 @@ block content
               option(value="in_progress" selected=(item.status === "in_progress")) En progreso
               option(value="completed" selected=(item.status === "completed")) Completado
           .mb-3
-            label.form-label(for="manager_id") Manager
-            select#manager_id.form-select(name="manager_user_id", required)
-              if managers && managers.length > 0
-                each manager in managers
+            label.form-label(for="team_id") Equipo
+            select#team_id.form-select(name="team_id", required)
+              if teams && teams.length > 0
+                each team in teams
                   option(
-                    value=manager._id 
-                    selected=(item.manager_user_id && manager._id.toString() === item.manager_user_id._id.toString())
-                  ) #{manager.first_name + ' ' + manager.last_name}
+                    value=team._id
+                    selected=(item.team_id && team._id.toString() === item.team_id._id.toString())
+                  ) #{team.name}
               else
-                option(value="") No hay managers disponibles
+                option(value="") No hay equipos disponibles
 
       button.btn.btn-success.mt-3(type="submit") Actualizar Proyecto
