@@ -122,7 +122,7 @@ app.put('/teams/:id', TeamController.updateView);
 // Vistas Pug para team_roles
 app.get('/team_roles', TeamRolController.getAllView);          
 app.get('/team_roles/new', TeamRolController.newView);        
-app.get('/team_roles/:id/edit', TeamController.getEditView); 
+app.get('/team_roles/:id/edit', TeamRolController.getEditView); 
 app.get('/team_roles/:id', TeamRolController.getByIdView);  
 app.post('/team_roles', TeamRolController.createView);        
 app.put('/team_roles/:id', TeamRolController.updateView); 

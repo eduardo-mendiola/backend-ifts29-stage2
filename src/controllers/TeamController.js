@@ -97,9 +97,9 @@ class TeamController extends BaseController {
         try {
             const { id } = req.params;
 
-            console.log('=== INICIO UPDATE VIEW ===');
-            console.log('req.body completo:', JSON.stringify(req.body, null, 2));
-            console.log('Claves del body:', Object.keys(req.body));
+            // console.log('=== INICIO UPDATE VIEW ===');
+            // console.log('req.body completo:', JSON.stringify(req.body, null, 2));
+            // console.log('Claves del body:', Object.keys(req.body));
 
             const { name, description, team_leader } = req.body;
 
@@ -117,6 +117,78 @@ class TeamController extends BaseController {
             const leaderId = mongoose.Types.ObjectId.createFromHexString(team_leader);
 
             // Procesar members usando el nuevo formato con team_role_id
+            const finalMembersArray = [];
+            const memberCount = parseInt(membersCount) || 0;
+
+            // console.log(`Procesando ${memberCount} miembros (members_count original: ${JSON.stringify(req.body.members_count)})`);
+
+            for (let i = 0; i < memberCount; i++) {
+                const memberIdKey = `member_${i}_id`;
+                const memberRoleKey = `member_${i}_role`;
+
+                const memberId = req.body[memberIdKey];
+                const memberTeamRoleId = req.body[memberRoleKey];
+
+                // console.log(`Miembro ${i}: ID=${memberId}, TeamRoleId=${memberTeamRoleId}`);
+
+                if (memberId && memberTeamRoleId) {
+                    try {
+                        finalMembersArray.push({
+                            user_id: mongoose.Types.ObjectId.createFromHexString(memberId),
+                            team_role_id: mongoose.Types.ObjectId.createFromHexString(memberTeamRoleId)
+                        });
+                        console.log(`Miembro ${i} procesado correctamente`);
+                    } catch (error) {
+                        console.error(`Error procesando miembro ${i}:`, error.message);
+                    }
+                }
+            }
+
+            // console.log('Final members array:', JSON.stringify(finalMembersArray, null, 2));
+
+            const updateData = {
+                name,
+                description,
+                team_leader: leaderId,
+                members: finalMembersArray
+            };
+
+            // console.log('Datos de actualización:', JSON.stringify(updateData, null, 2));
+
+            const result = await this.model.update(id, updateData);
+
+            // console.log('Resultado de la actualización:', result);
+            res.redirect(`/teams/${id}`);
+
+        } catch (error) {
+            console.error('Error al actualizar team:', error.message);
+            console.error('Stack completo:', error.stack);
+            res.status(500).send(`Error: ${error.message}`);
+        }
+    };
+
+    // Método createView para crear nuevos equipos
+    createView = async (req, res) => {
+        try {
+            console.log('=== INICIO CREATE VIEW ===');
+            console.log('req.body completo:', JSON.stringify(req.body, null, 2));
+
+            const { name, description, team_leader } = req.body;
+
+            // Arreglar members_count - tomar el último valor si es array
+            let membersCount = req.body.members_count;
+            if (Array.isArray(membersCount)) {
+                membersCount = membersCount[membersCount.length - 1];
+            }
+
+            if (!name || !team_leader) {
+                return res.status(400).send('Nombre y líder del equipo son requeridos');
+            }
+
+            // Convertir team_leader a ObjectId
+            const leaderId = mongoose.Types.ObjectId.createFromHexString(team_leader);
+
+            // Procesar members
             const finalMembersArray = [];
             const memberCount = parseInt(membersCount) || 0;
 
@@ -138,67 +210,6 @@ class TeamController extends BaseController {
                             team_role_id: mongoose.Types.ObjectId.createFromHexString(memberTeamRoleId)
                         });
                         console.log(`Miembro ${i} procesado correctamente`);
-                    } catch (error) {
-                        console.error(`Error procesando miembro ${i}:`, error.message);
-                    }
-                }
-            }
-
-            console.log('Final members array:', JSON.stringify(finalMembersArray, null, 2));
-
-            const updateData = {
-                name,
-                description,
-                team_leader: leaderId,
-                members: finalMembersArray
-            };
-
-            console.log('Datos de actualización:', JSON.stringify(updateData, null, 2));
-
-            const result = await this.model.update(id, updateData);
-
-            console.log('Resultado de la actualización:', result);
-            res.redirect(`/teams/${id}`);
-
-        } catch (error) {
-            console.error('Error al actualizar team:', error.message);
-            console.error('Stack completo:', error.stack);
-            res.status(500).send(`Error: ${error.message}`);
-        }
-    };
-
-    // Método createView para crear nuevos equipos
-    createView = async (req, res) => {
-        try {
-            console.log('=== INICIO CREATE VIEW ===');
-            console.log('req.body completo:', JSON.stringify(req.body, null, 2));
-
-            const { name, description, team_leader, members_count } = req.body;
-
-            if (!name || !team_leader) {
-                return res.status(400).send('Nombre y líder del equipo son requeridos');
-            }
-
-            // Convertir team_leader a ObjectId
-            const leaderId = mongoose.Types.ObjectId.createFromHexString(team_leader);
-
-            // Procesar members
-            const finalMembersArray = [];
-            const memberCount = parseInt(members_count) || 0;
-
-            for (let i = 0; i < memberCount; i++) {
-                const memberIdKey = `member_${i}_id`;
-                const memberRoleKey = `member_${i}_role`;
-
-                const memberId = req.body[memberIdKey];
-                const memberTeamRoleId = req.body[memberRoleKey];
-
-                if (memberId && memberTeamRoleId) {
-                    try {
-                        finalMembersArray.push({
-                            user_id: mongoose.Types.ObjectId.createFromHexString(memberId),
-                            team_role_id: mongoose.Types.ObjectId.createFromHexString(memberTeamRoleId)
-                        });
                     } catch (error) {
                         console.error(`Error procesando miembro ${i}:`, error.message);
                     }
