@@ -1,0 +1,41 @@
+extends ../layout.pug
+//- views/team/details.pug
+block content
+  h1.mb-4 Equipo: #{item.name}
+
+  table.table.table-dark
+    tbody
+      tr
+        th ID
+        td= item.id
+      tr
+        th Nombre
+        td= item.name
+      tr
+        th Descripción
+        td= item.description
+      tr
+        th Lider de proyecto
+        td= item.team_leader.first_name + " " + item.team_leader.last_name
+      tr
+        th Miembros
+        td
+          if item.members && item.members.length > 0
+            ul
+              each member in item.members
+                li= member.user_id.first_name + " " + member.user_id.last_name + " (" + member.role_in_team + ")"
+          else
+            span.text-muted Sin miembros
+      tr
+        th Fecha de Creación
+        td= item.created_at ? item.created_at.toLocaleDateString() : 'N/A'
+      tr
+        th Última Actualización
+        td= item.updated_at ? item.updated_at.toLocaleDateString() : 'N/A'
+
+  .mt-3
+    a.btn.btn-gray.me-2(href="/teams") Volver a la lista
+    //- a.btn.btn-primary.me-2(href=`/teams/${item.id}/edit`) Editar
+    //- form(action=`/api/teams/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+    //-   input(type="hidden", name="_method", value="DELETE")
+    //-   button.btn.btn-danger-soft(type="submit") Eliminar

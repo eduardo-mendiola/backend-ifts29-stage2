@@ -4,6 +4,7 @@ import BaseModel from './BaseModel.js';
 const teamSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String },
+    team_leader: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 
     members: [
         {
             user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -20,13 +21,13 @@ class TeamModel extends BaseModel {
         super(teamSchema, 'Team');
     }
 
-    // Ejemplo: obtener todos los equipos con los datos de los usuarios poblados
+    // Obtener todos los equipos con líderes y miembros poblados
     async findAll() {
-        return super.findAll(['members.user_id']);
+        return super.findAll(['team_leader', 'members.user_id']);
     }
 
     async findById(id) {
-        return super.findById(id, ['members.user_id']);
+        return super.findById(id, ['team_leader', 'members.user_id']);
     }
 }
 

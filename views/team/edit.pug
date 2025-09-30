@@ -1,0 +1,182 @@
+extends ../layout.pug
+//- views/team/edit.pug
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/teams/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Editar Equipo
+        a.btn.btn-gray(href="/teams") Volver a la lista
+
+      // Contenedor de 2 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="name") Nombre del Equipo
+            input#name.form-control(type="text", name="name", value=item.name || "", required)          
+          .mb-3
+            label.form-label(for="description") Descripción
+            textarea#description.form-control(name="description", required)= item.description || ""
+          .mb-3
+            label.form-label(for="team_leader") Líder del Equipo
+            select#team_leader.form-select(name="team_leader", required)
+              if managers && managers.length > 0
+                each manager in managers
+                  option(
+                    value=manager._id
+                    selected=(item.team_leader && manager._id.toString() === item.team_leader._id.toString())
+                  ) #{manager.first_name} #{manager.last_name}
+              else
+                option(value="") No hay líderes disponibles
+
+        // Columna derecha
+        .col-md-6    
+          // Miembros actuales
+          .mb-3
+            label.form-label Miembros del equipo
+            ul#members-list.list-group
+              if item.members && item.members.length > 0
+                each member, index in item.members
+                  li.list-group-item.d-flex.justify-content-between.align-items-center(
+                    data-member-id=member.user_id._id
+                    data-member-name=`${member.user_id.first_name} ${member.user_id.last_name}`
+                    data-member-role=member.role_in_team
+                  )
+                    span #{member.user_id.first_name} #{member.user_id.last_name} (#{member.role_in_team})
+                    button.btn.btn-sm.btn-danger(type="button", onclick="removeMember(this)") Quitar
+              else
+                li#no-members.list-group-item No hay miembros aún
+                
+            // Inputs hidden para miembros existentes
+            if item.members && item.members.length > 0
+              each member in item.members
+                input(type="hidden", name="members", value=member.user_id._id)
+
+          // Agregar miembros
+          .mb-3
+            label.form-label Agregar miembro
+            select#add_member.form-select
+              option(value="") Seleccionar usuario...
+              if users && users.length > 0
+                each user in users
+                  //- Evitar duplicar al líder
+                  if !item.team_leader || user._id.toString() !== item.team_leader._id.toString()
+                    option(value=user._id, data-name=`${user.first_name} ${user.last_name}`, data-role=user.role_id.name) #{user.first_name} #{user.last_name} - #{user.role_id.name}
+              else
+                option(value="") No hay usuarios disponibles
+            button.btn.btn-sm.btn-primary.mt-2(type="button", onclick="addMember()") Agregar
+
+      button.btn.btn-success.mt-3(type="submit") Actualizar Equipo
+
+  //- Scripts para agregar y quitar miembros dinámicamente
+  script.
+    // Función para actualizar los inputs hidden
+    function updateMembersInputs() {
+      // Remover todos los inputs hidden existentes
+      const existingInputs = document.querySelectorAll('input[name="members"]');
+      existingInputs.forEach(input => input.remove());
+      
+      // Agregar inputs hidden para cada miembro visible
+      const membersList = document.getElementById('members-list');
+      const memberItems = membersList.querySelectorAll('li:not(#no-members)');
+      
+      memberItems.forEach((item, index) => {
+        const memberId = item.getAttribute('data-member-id');
+        if (memberId) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'members';
+          input.value = memberId;
+          document.querySelector('form').appendChild(input);
+        }
+      });
+    }
+
+    // Función para remover miembro
+    function removeMember(button) {
+      const listItem = button.parentElement;
+      const membersList = document.getElementById('members-list');
+      
+      // Remover el elemento de la lista
+      listItem.remove();
+      
+      // Si no quedan miembros, mostrar mensaje
+      if (membersList.children.length === 0) {
+        const noMembersLi = document.createElement('li');
+        noMembersLi.id = 'no-members';
+        noMembersLi.className = 'list-group-item';
+        noMembersLi.textContent = 'No hay miembros aún';
+        membersList.appendChild(noMembersLi);
+      }
+      
+      // Volver a agregar la opción al select
+      const memberId = listItem.getAttribute('data-member-id');
+      const memberName = listItem.getAttribute('data-member-name');
+      const memberRole = listItem.getAttribute('data-member-role');
+      
+      const select = document.getElementById('add_member');
+      const option = document.createElement('option');
+      option.value = memberId;
+      option.setAttribute('data-name', memberName);
+      option.setAttribute('data-role', memberRole);
+      option.textContent = `${memberName} - ${memberRole}`;
+      select.appendChild(option);
+      
+      // Actualizar inputs hidden
+      updateMembersInputs();
+    }
+
+    // Función para agregar miembro
+    function addMember() {
+      const select = document.getElementById('add_member');
+      const selectedOption = select.options[select.selectedIndex];
+      
+      if (!selectedOption || selectedOption.value === "") return;
+
+      const membersList = document.getElementById('members-list');
+      const noMembersItem = document.getElementById('no-members');
+      
+      // Remover mensaje de "no hay miembros" si existe
+      if (noMembersItem) {
+        noMembersItem.remove();
+      }
+
+      // Crear nuevo elemento de lista
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.setAttribute('data-member-id', selectedOption.value);
+      li.setAttribute('data-member-name', selectedOption.getAttribute('data-name'));
+      li.setAttribute('data-member-role', selectedOption.getAttribute('data-role'));
+      
+      const span = document.createElement('span');
+      span.textContent = `${selectedOption.getAttribute('data-name')} (${selectedOption.getAttribute('data-role')})`;
+      
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-sm btn-danger';
+      btn.textContent = 'Quitar';
+      btn.onclick = () => removeMember(btn);
+      
+      li.appendChild(span);
+      li.appendChild(btn);
+      membersList.appendChild(li);
+
+      // Quitar del select para evitar duplicados
+      selectedOption.remove();
+      
+      // Actualizar inputs hidden
+      updateMembersInputs();
+    }
+
+    // Inicializar inputs hidden al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+      // Agregar data attributes a los miembros existentes
+      const existingMembers = document.querySelectorAll('#members-list li:not(#no-members)');
+      existingMembers.forEach((item, index) => {
+        // Necesitamos extraer el ID del miembro del texto o agregarlo desde el servidor
+        // Por ahora, vamos a agregarlo manualmente
+      });
+      
+      updateMembersInputs();
+    });
