@@ -12,7 +12,7 @@ const taskSchema = new mongoose.Schema({
     project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
 }, {
     collection: 'tasks',
-    timestamps: { createdAt: 'created_at' } // timestamps automáticos
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
 });
 
 class TaskModel extends BaseModel {
