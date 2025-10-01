@@ -4,14 +4,14 @@ import { dirname, join } from 'path';
 import methodOverride from 'method-override';
 
 // Importar rutas de cada entidad
-import clientRoutes from './routes/clientRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import roleRoutes from './routes/roleRoutes.js';
-import projectRoutes from './routes/projectRoutes.js';
-import areaRoutes from './routes/areaRoutes.js';
-import taskRoutes from './routes/taskRoutes.js';
-import teamRoutes from './routes/teamRoutes.js';
-import teamRolRoutes from './routes/teamRolRoutes.js';
+import clientRoutes from './routes/client-routes.js';
+import userRoutes from './routes/user-routes.js';
+import roleRoutes from './routes/role-routes.js';
+import projectRoutes from './routes/project-routes.js';
+import areaRoutes from './routes/area-routes.js';
+import taskRoutes from './routes/task-routes.js';
+import teamRoutes from './routes/team-routes.js';
+import teamRolRoutes from './routes/team-rol-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -44,7 +44,7 @@ app.use(express.static(join(__dirname, 'public')))
 // Middleware para soportar otros métodos HTTP como DELETE y PUT
 app.use(methodOverride('_method'));
 
-// || Rutas para las vistas del CRUD (HTML) - Pug ||
+// ||----------------------------------- Rutas para las vistas Pug -----------------------------------------||
 
 // Ruta de bienvenida 
 app.get('/', (req, res) => {
@@ -62,7 +62,7 @@ app.get('/admin/dashboard', (req, res) => {
   res.render('admin', { title: 'Dashboard Admin' });
 });
 
-
+// ||--------------------------- Rutas para las vistas del CRUD (HTML) - Pug -------------------------------||
 // Client
 app.get('/clients/new', ClientController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
 app.post('/clients', ClientController.createView);
@@ -128,7 +128,12 @@ app.post('/team_roles', TeamRolController.createView);
 app.put('/team_roles/:id', TeamRolController.updateView); 
 
 
-// || Rutas base (endpoints de la API) ||
+
+
+
+
+
+// || -----------------------------Rutas base (endpoints de la API) ------------------------------||
 app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
