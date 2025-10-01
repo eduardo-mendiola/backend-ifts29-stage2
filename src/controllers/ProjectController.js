@@ -54,7 +54,7 @@ class ProjectController extends BaseController {
             const clients = await Client.findAll();
             const teams = await Team.findAll();
 
-            res.render(`${this.viewPath}/form`, {
+            res.render(`${this.viewPath}/new`, {
                 title: `Nuevo Proyecto`,
                 item: {}, // objeto vacío porque es nuevo
                 clients,

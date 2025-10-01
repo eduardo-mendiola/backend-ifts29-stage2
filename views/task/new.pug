@@ -1,5 +1,5 @@
 extends ../layout.pug
-//- views/task/form.pug
+//- views/task/new.pug
 block content
   .d-flex.justify-content-center
     form.bg-dark.text-white.p-4.rounded.shadow(action="/tasks", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
@@ -45,7 +45,7 @@ block content
             input#due_date.form-control(type="date", name="due_date", value=item.due_date || "")
           .mb-3
             label.form-label(for="status") Estado
-            select#status.form-select(name="priority", required)
+            select#status.form-select(name="status", required)
               option(value="pending" selected=(item.status === "pending")) Pendiente
               option(value="in_progress" selected=(item.status === "in_progress")) En Progreso
               option(value="completed" selected=(item.status === "completed")) Finalizado

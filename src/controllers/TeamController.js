@@ -79,7 +79,7 @@ class TeamController extends BaseController {
             const TeamRole = await import('../models/TeamRoleModel.js');
             const teamRoles = await TeamRole.default.findAll();
 
-            res.render(`${this.viewPath}/form`, {
+            res.render(`${this.viewPath}/new`, {
                 title: 'Crear Nuevo Equipo',
                 item: {},
                 users,

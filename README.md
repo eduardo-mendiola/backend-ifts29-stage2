@@ -183,7 +183,7 @@ En esta etapa, el foco principal estuvo en la migración de la aplicación desde
 
 * **Nuevas Vistas CRUD:**
 
-  * Creación de plantillas para las entidades **Role** y **Area**, incluyendo **list.pug**, **details.pug**, **form.pug** y **edit.pug**.
+  * Creación de plantillas para las entidades **Role** y **Area**, incluyendo **index.pug**, **show.pug**, **new.pug** y **edit.pug**.
 
 
   * Integración de formularios adaptados a la lógica de **MongoDB**, con validaciones de entrada y mensajes de error dinámicos.

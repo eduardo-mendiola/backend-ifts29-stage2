@@ -53,7 +53,7 @@ class TaskController extends BaseController {
             const users = await User.findAll();
             const projects = await Project.findAll();
 
-            res.render(`${this.viewPath}/form`, {
+            res.render(`${this.viewPath}/new`, {
                 title: `Nueva Tarea`,
                 item: {}, // objeto vacío porque es nuevo
                 users,

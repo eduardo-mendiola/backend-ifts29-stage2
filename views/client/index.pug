@@ -1,31 +1,31 @@
 extends ../layout.pug
-//- views/project/list.pug
+//- views/client/index.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-0 Lista de Proyectos
-    a.btn.btn-primary(href="/projects/new") Nuevo Proyecto
+    h1.mb-0 Lista de Clientes
+    a.btn.btn-primary(href="/clients/new") Nuevo Cliente
 
   table.table.table-hover.table-dark
     thead
       tr
         th №
         th ID
-        th Nombre de Proyecto 
-        th Cliente
-        th status
+        th Nombre
+        th Contacto
+        th Email
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
-        tr(data-id=item.id, data-name=`${item.name}`, data-client=`${item.client_id}`, data-status=`${item.status}`)
+        tr(data-id=item.id, data-name=`${item.name}`, data-contatct_name=`${item.contact_name}`, data-email=`${item.email}`)
           td= index + 1
           td= item.id
           td= item.name
-          td= item.client_id.name
-          td= item.status
+          td= item.contact_name
+          td= item.email
           td.text-end
-            a.btn.btn-gray.btn-sm.me-2(href=`/projects/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/projects/${item.id}/edit`) Editar
-            form(action=`/api/projects/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+            a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}/edit`) Editar
+            form(action=`/api/clients/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
               input(type="hidden", name="_method", value="DELETE")
               button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
 
@@ -34,10 +34,10 @@ block content
     div.modal-dialog.modal-dialog-centered
       div.modal-content.bg-dark.text-white
         div.modal-header
-          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un proyecto
+          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un cliente
           button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
         div.modal-body
-          p ¿Está seguro de que desea eliminar este proyecto?
+          p ¿Está seguro de que desea eliminar este cliente?
           p#nameToDelete.font-weight-bold.mt-3
         div.modal-footer
           button#confirmYes.btn.btn-danger Eliminar
@@ -75,7 +75,7 @@ block content
         confirmYes.addEventListener('click', async () => {
           if (idToDelete) {
             try {
-              const response = await fetch(`/api/projects/${idToDelete}`, {
+              const response = await fetch(`/api/clients/${idToDelete}`, {
                 method: 'DELETE',
               });
 
@@ -83,11 +83,11 @@ block content
                 rowToDelete.remove(); // Eliminar la fila de la tabla
                 //alert('Usuario eliminado correctamente.');
               } else {
-                alert('Error al eliminar el proyecto.');
+                alert('Error al eliminar el cliente.');
               }
             } catch (error) {
               console.error('Error:', error);
-              alert('Error al eliminar el proyecto.');
+              alert('Error al eliminar el cliente.');
             }
           }
 

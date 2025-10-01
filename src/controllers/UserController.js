@@ -35,7 +35,7 @@ class UserController extends BaseController {
             const roles = await Role.findAll();
             const areas = await Area.findAll();
 
-            res.render(`${this.viewPath}/form`, {
+            res.render(`${this.viewPath}/new`, {
                 title: `Nuevo Usuario`,
                 item: {}, // objeto vacío porque es nuevo
                 roles,

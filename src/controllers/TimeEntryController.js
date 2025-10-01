@@ -54,7 +54,7 @@ class TimeEntryController extends BaseController {
             const users = await User.findAll();
             const tasks = await Task.findAll();
 
-            res.render(`${this.viewPath}/form`, {
+            res.render(`${this.viewPath}/new`, {
                 title: `Nueva Tarea`,
                 item: {}, // objeto vacío porque es nuevo
                 users,

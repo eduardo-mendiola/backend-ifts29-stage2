@@ -1,9 +1,9 @@
 extends ../layout.pug
-//- views/team/list.pug
+//- views/role/index.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-0 Lista de Equipos
-    a.btn.btn-primary(href="/teams/new") Nuevo Equipo
+    h1.mb-0 Lista de Roles
+    a.btn.btn-primary(href="/roles/new") Nuevo Rol
 
   table.table.table-hover.table-dark
     thead
@@ -11,20 +11,17 @@ block content
         th №
         th ID
         th Nombre
-        th Descripción
-        //- th Miembros
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
-        tr(data-id=item.id, data-title=`${item.name}`)
+        tr(data-id=item.id, data-name=`${item.name}`)
           td= index + 1
           td= item.id
           td= item.name
-          td= item.description
           td.text-end
-            a.btn.btn-gray.btn-sm.me-2(href=`/teams/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/teams/${item.id}/edit`) Editar
-            form(action=`/api/teams/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+            a.btn.btn-gray.btn-sm.me-2(href=`/roles/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/roles/${item.id}/edit`) Editar
+            form(action=`/api/roles/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
               input(type="hidden", name="_method", value="DELETE")
               button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
 
@@ -33,10 +30,10 @@ block content
     div.modal-dialog.modal-dialog-centered
       div.modal-content.bg-dark.text-white
         div.modal-header
-          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un equipo
+          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un rol
           button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
         div.modal-body
-          p ¿Está seguro de que desea eliminar este equipo?
+          p ¿Está seguro de que desea eliminar este rol?
           p#nameToDelete.font-weight-bold.mt-3
         div.modal-footer
           button#confirmYes.btn.btn-danger Eliminar
@@ -60,11 +57,11 @@ block content
             idToDelete = event.target.dataset.id;
             rowToDelete = row;
 
-            // Obtener el nombre del equipo
-            const name = row.dataset.title;
+            // Obtener el nombre y apellido del usuario
+            const name = row.dataset.name;
 
             // Actualizar el contenido del modal
-            nameToDelete.textContent = `Equipo: ${name}`;
+            nameToDelete.textContent = `Nombre: ${name}`;
 
             // Mostrar el modal
             modal.show();
@@ -74,18 +71,19 @@ block content
         confirmYes.addEventListener('click', async () => {
           if (idToDelete) {
             try {
-              const response = await fetch(`/api/teams/${idToDelete}`, {
+              const response = await fetch(`/api/roles/${idToDelete}`, {
                 method: 'DELETE',
               });
 
               if (response.ok) {
                 rowToDelete.remove(); // Eliminar la fila de la tabla
+                //alert('Usuario eliminado correctamente.');
               } else {
-                alert('Error al eliminar el equipo.');
+                alert('Error al eliminar el rol.');
               }
             } catch (error) {
               console.error('Error:', error);
-              alert('Error al eliminar el equipo.');
+              alert('Error al eliminar el rol.');
             }
           }
 

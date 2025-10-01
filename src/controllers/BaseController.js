@@ -99,7 +99,7 @@ class BaseController {
     getAllView = async (req, res) => {
         try {
             const items = await this.model.findAll();
-            res.render(`${this.viewPath}/list`, {
+            res.render(`${this.viewPath}/index`, {
                 title: `Lista de ${this.viewPath}`,
                 items: this.formatItems(items)
             });
@@ -118,12 +118,12 @@ class BaseController {
             const formattedItem = this.formatItem(item);
 
             if (req.originalUrl.includes('/edit')) {
-                res.render(`${this.viewPath}/form`, {
+                res.render(`${this.viewPath}/new`, {
                     title: `Editar ${this.viewPath}`,
                     item: formattedItem
                 });
             } else {
-                res.render(`${this.viewPath}/details`, {
+                res.render(`${this.viewPath}/show`, {
                     title: `Detalles del ${this.viewPath}`,
                     item: formattedItem
                 });
@@ -146,7 +146,7 @@ class BaseController {
 
     newView = async (req, res) => {
         try {
-            res.render(`${this.viewPath}/form`, {
+            res.render(`${this.viewPath}/new`, {
                 title: `Nuevo ${this.viewPath}`,
                 item: {}
             });
