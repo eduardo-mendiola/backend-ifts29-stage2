@@ -3,7 +3,7 @@ import TeamRoleModel from '../models/TeamRoleModel.js';
 
 class TeamRoleController extends BaseController {
     constructor() {
-        super(TeamRoleModel, 'team_role');
+        super(TeamRoleModel, 'team-role');
     }
 
     // Sobrescribimos createView

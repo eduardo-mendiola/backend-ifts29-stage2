@@ -12,6 +12,7 @@ import areaRoutes from './routes/area-routes.js';
 import taskRoutes from './routes/task-routes.js';
 import teamRoutes from './routes/team-routes.js';
 import teamRolRoutes from './routes/team-rol-routes.js';
+import timeEntryRoutes from './routes/time-entry-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -22,6 +23,7 @@ import RoleController from './controllers/RoleController.js';
 import TaskController from './controllers/TaskController.js';
 import TeamController from './controllers/TeamController.js'; 
 import TeamRolController from './controllers/TeamRolController.js'; 
+import TimeEntryController from './controllers/TimeEntryController.js';
 
 
 // __dirname en ESM
@@ -128,15 +130,12 @@ app.post('/team-roles', TeamRolController.createView);
 app.put('/team-roles/:id', TeamRolController.updateView); 
 
 // Vistas Pug para time_entries
-app.get('/team-roles', TeamRolController.getAllView);          
-app.get('/team-roles/new', TeamRolController.newView);        
-app.get('/team-roles/:id/edit', TeamRolController.getEditView); 
-app.get('/team-roles/:id', TeamRolController.getByIdView);  
-app.post('/team-roles', TeamRolController.createView);        
-app.put('/team-roles/:id', TeamRolController.updateView); 
-
-
-
+app.get('/time-entries', TimeEntryController.getAllView);          
+app.get('/time-entries/new', TimeEntryController.newView);        
+app.get('/time-entries/:id/edit', TimeEntryController.getEditView); 
+app.get('/time-entries/:id', TimeEntryController.getByIdView);  
+app.post('/time-entries', TimeEntryController.createView);        
+app.put('/time-entries/:id', TimeEntryController.updateView); 
 
 
 
@@ -150,6 +149,7 @@ app.use('/api/areas', areaRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/team-roles', teamRolRoutes);
+app.use('/api/time-entries', timeEntryRoutes);
 
 
 // Manejo de errores 404 para rutas no encontradas

@@ -1,33 +1,38 @@
 import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
-const taskSchema = new mongoose.Schema({
-    title: { type: String, required: true },
+const timeEntrySchema = new mongoose.Schema({
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    task_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Task', required: true },
     description: { type: String },
-    priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },
-    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    estimated_hours: { type: Number },
-    due_date: { type: Date },
-    project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
+    date: { type: Date },
+    hours_worked: { type: Number },
+    description: { type: String, required: true },
+    billable: { type: Boolean, default: true }
 }, {
-    collection: 'tasks',
+    collection: 'time_entries',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
 });
 
-class TaskModel extends BaseModel {
+class TimeEntryModel extends BaseModel {
     constructor() {
-        super(taskSchema, 'Task'); // Nombre del modelo único
+        super(timeEntrySchema, 'TimeEntry'); // Nombre del modelo único
     }
 
     async findAll() {
-        return super.findAll(['assigned_to', 'project_id']); // populate automático
+        return super.findAll([
+            'user_id',
+            { path: 'task_id', populate: { path: 'project_id' } }
+        ]); // populate automático
     }   
 
     async findById(id) {
-        return super.findById(id, ['assigned_to', 'project_id']); // populate automático
+        return super.findById(id, [
+            'user_id',
+            { path: 'task_id', populate: { path: 'project_id' } }
+        ]); // populate automático
     }
     
 }
 
-export default new TaskModel();
+export default new TimeEntryModel();

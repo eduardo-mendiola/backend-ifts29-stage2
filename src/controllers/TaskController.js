@@ -23,7 +23,7 @@ class TaskController extends BaseController {
         };
     }
 
-    // Sobrescribimos getEditView para incluir roles y áreas
+    // Sobrescribimos getEditView para incluir usuarios y proyectos
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;

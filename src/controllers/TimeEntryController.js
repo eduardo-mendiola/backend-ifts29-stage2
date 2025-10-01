@@ -1,11 +1,11 @@
 import BaseController from './BaseController.js'
+import TimeEntry from '../models/TimeEntryModel.js';
 import Task from '../models/TaskModel.js';
-import Project from '../models/ProjectModel.js'; 
 import User from '../models/UserModel.js';
 
-class TaskController extends BaseController {
+class TimeEntryController extends BaseController {
     constructor() {
-        super(Task, 'task'); 
+        super(TimeEntry, 'time-entry');
     }
 
     // Método helper para formatear fechas
@@ -23,7 +23,7 @@ class TaskController extends BaseController {
         };
     }
 
-    // Sobrescribimos getEditView para incluir roles y áreas
+    // Sobrescribimos getEditView para incluir usuarios y tareas
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;
@@ -31,16 +31,16 @@ class TaskController extends BaseController {
             if (!task) return res.render('error404', { title: 'Tarea no encontrado' });
 
             const users = await User.findAll();
-            const projects = await Project.findAll();
+            const tasks = await Task.findAll();
 
             // Formatear fechas antes de enviar a la vista
             const formattedTask = this.formatDatesForInput(this.formatItem(task));
 
             res.render(`${this.viewPath}/edit`, {
-                title: `Editar Task`,
+                title: `Editar Time Entry: ${formattedTask.title}`,
                 item: formattedTask, // Tarea con fecha formateada
                 users,
-                projects
+                tasks
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -48,16 +48,17 @@ class TaskController extends BaseController {
         }
     };
 
+
     newView = async (req, res) => {
         try {
             const users = await User.findAll();
-            const projects = await Project.findAll();
+            const tasks = await Task.findAll();
 
             res.render(`${this.viewPath}/form`, {
                 title: `Nueva Tarea`,
                 item: {}, // objeto vacío porque es nuevo
                 users,
-                projects
+                tasks
             });
         } catch (error) {
             console.error('Error al abrir formulario de tareas:', error.message);
@@ -66,4 +67,4 @@ class TaskController extends BaseController {
     };
 }
 
-export default new TaskController();
+export default new TimeEntryController();
