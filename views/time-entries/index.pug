@@ -16,7 +16,7 @@ block content
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
-        tr(data-id=item.id, data-title=`${item.title}`, data-assigned_to=`${item.assigned_to}`, data-status=`${item.status}`)
+        tr(data-id=item.id, data-code=`${item.code}`)
           td= index + 1
           td= item.code
           td= item.date ? new Date(item.date).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : 'N/A'
@@ -34,10 +34,10 @@ block content
     div.modal-dialog.modal-dialog-centered
       div.modal-content.bg-dark.text-white
         div.modal-header
-          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar una tarea
+          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un registro 
           button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
         div.modal-body
-          p ¿Está seguro de que desea eliminar esta tarea?
+          p ¿Está seguro de que desea eliminar este registro?
           p#nameToDelete.font-weight-bold.mt-3
         div.modal-footer
           button#confirmYes.btn.btn-danger Eliminar
@@ -62,10 +62,10 @@ block content
             rowToDelete = row;
 
             // Obtener el nombre y apellido del usuario
-            const name = row.dataset.title;
+            const name = row.dataset.code;
 
             // Actualizar el contenido del modal
-            nameToDelete.textContent = `Nombre: ${name}`;
+            nameToDelete.textContent = `Registro de actividades código: ${name}`;
 
             // Mostrar el modal
             modal.show();
@@ -83,11 +83,11 @@ block content
                 rowToDelete.remove(); // Eliminar la fila de la tabla
                 //alert('Usuario eliminado correctamente.');
               } else {
-                alert('Error al eliminar un Registro de actividad.');
+                alert('Error al eliminar el registro de actividad.');
               }
             } catch (error) {
               console.error('Error:', error);
-              alert('Error al eliminar la tarea.');
+              alert('Error al eliminar el registro de actividad.');
             }
           }
 

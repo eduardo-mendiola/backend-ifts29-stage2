@@ -1,7 +1,11 @@
+import CodeGenerator from '../utils/CodeGenerator.js';
+
 class BaseController {
-    constructor(model, viewPath) {
+    constructor(model, viewPath, codePrefix) {
         this.model = model;
         this.viewPath = viewPath;
+        this.codePrefix = codePrefix;
+        this.codeGenerator = new CodeGenerator(model);
     }
 
     formatItem = (item) => {
@@ -25,8 +29,20 @@ class BaseController {
 
     create = async (req, res) => {
         try {
-            const newItem = await this.model.create(req.body);
-            res.status(201).json(this.formatItem(newItem));
+            const newItem = { ...req.body };
+
+            // 1. Crear el documento SIN el código
+            const createdItem = await this.model.create(newItem);
+
+            // 2. Generar el código usando el ObjectId real del documento creado
+            if (this.codePrefix) {
+                const code = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
+                // 3. Actualizar el documento con el código correcto
+                const updatedItem = await this.model.update(createdItem._id, { code });
+                res.status(201).json(this.formatItem(updatedItem));
+            } else {
+                res.status(201).json(this.formatItem(createdItem));
+            }
         } catch (error) {
             console.error('Error al crear:', error.message);
             if (error.name === 'ValidationError') {
@@ -35,6 +51,8 @@ class BaseController {
             res.status(500).json({ message: 'Error interno del servidor al crear.' });
         }
     };
+
+
 
     getAll = async (req, res) => {
         try {
@@ -136,13 +154,27 @@ class BaseController {
 
     createView = async (req, res) => {
         try {
-            const newItem = await this.model.create(req.body);
-            res.redirect(`/${this.viewPath}/${newItem._id}`);
+            const newItem = { ...req.body };
+
+            // 1. Crear el documento SIN el código
+            const createdItem = await this.model.create(newItem);
+
+            // 2. Generar el código usando el ObjectId real del documento creado
+            if (this.codePrefix) {
+                const code = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
+                // 3. Actualizar el documento con el código correcto
+                await this.model.update(createdItem._id, { code });
+            }
+
+            res.redirect(`/${this.viewPath}/${createdItem._id}`);
         } catch (error) {
             console.error(`Error al crear ${this.viewPath}:`, error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
+
+
+
 
     newView = async (req, res) => {
         try {

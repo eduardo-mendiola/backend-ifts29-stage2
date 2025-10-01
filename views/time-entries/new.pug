@@ -1,65 +1,78 @@
 extends ../layout.pug
-//- views/time-entry/new.pug
+//- views/time-entries/new.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action="/tasks", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/time-entries", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 Crear Nueva Tarea
-        a.btn.btn-gray(href="/tasks") Volver a la lista
+        h1.mb-0 Crear Registro de Actividad
+        a.btn.btn-gray(href="/time-entries") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
         // Columna izquierda
         .col-md-6
           .mb-3
-            label.form-label(for="title") Título
-            input#title.form-control(type="text", name="title", value=item.title || "", required)
+            label.form-label(for="date") Fecha de Realización
+            input#date.form-control(type="date", name="date", value=item.date || new Date().toISOString().split('T')[0])
           .mb-3
-          label.form-label(for="project_id") Proyecto
-          select#project_id.form-select(name="project_id", required)
-            if projects && projects.length > 0
-              each project in projects
-                option(
-                  value=project._id 
-                  selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
-                ) #{project.name}
-            else
-              option(value="") No hay proyectos disponibles
+            label.form-label(for="task_id") Tarea Asociada
+            select#task_id.form-select(name="task_id", required)
+              if tasks && tasks.length > 0
+                each task in tasks
+                  option(
+                    value=task._id 
+                    selected=(item.task_id && task._id.toString() === item.task_id._id.toString())
+                  ) #{task.title} (#{task._id}) - Proyecto: #{task.project_id ? task.project_id.name : 'N/A'}
+              else
+                option(value="") No hay proyectos disponibles
           .mb-3
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", required)= item.description || ""
           .mb-3
-            label.form-label(for="priority") Prioridad
-            select#priority.form-select(name="priority", required)
-              option(value="baja" selected=(item.priority === "baja")) Baja
-              option(value="media" selected=(item.priority === "media")) Media
-              option(value="alta" selected=(item.priority === "alta")) Alta
-
-        // Columna derecha
-        .col-md-6
-          .mb-3
-            label.form-label(for="estimated_hours") Estimación (horas)
-            input#estimated_hours.form-control(type="number", name="estimated_hours", value=item.estimated_hours || "")
-          .mb-3
-            label.form-label(for="due_date") Fecha de Vencimiento
-            input#due_date.form-control(type="date", name="due_date", value=item.due_date || "")
-          .mb-3
-            label.form-label(for="status") Estado
-            select#status.form-select(name="priority", required)
-              option(value="pending" selected=(item.status === "pending")) Pendiente
-              option(value="in_progress" selected=(item.status === "in_progress")) En Progreso
-              option(value="completed" selected=(item.status === "completed")) Finalizado
-          .mb-3
-            label.form-label(for="assigned_to") Asignado
-            select#assigned_to.form-select(name="assigned_to", required)
+            label.form-label(for="user_id") Usuario
+            select#user_id.form-select(name="user_id", required)
               if users && users.length > 0
                 each user in users
                   option(
                     value=user._id 
-                    selected=(item.assigned_to && user._id.toString() === item.assigned_to._id.toString())
+                    selected=(item.user_id && user._id.toString() === item.user_id._id.toString())
                   ) #{user.first_name + ' ' + user.last_name}  
               else
-                option(value="") No hay usuarios disponibles 
+                option(value="") No hay usuarios disponibles
+          .mb-3
+            label.form-label(for="hours_worked") Horas trabajadas
+            input#hours_worked.form-control(
+              type="number", 
+              name="hours_worked", 
+              value=item.hours_worked || "", 
+              step="any"
+            )
 
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="billable") Facturable
+            select#billable.form-select(name="billable", required)
+              option(value="true" selected=(item.billable === true)) Si
+              option(value="false" selected=(item.billable === false)) No
+          .mb-3
+            label.form-label(for="approved") Aprobado
+            select#approved.form-select(name="approvede", required)
+              option(value="true" selected=(item.approved === true)) Si
+              option(value="false" selected=(item.approved === false)) No
+          .mb-3
+            label.form-label(for="approved_by") Aprobado por
+            select#approved_by.form-select(name="approved_by", required)
+              if managers && managers.length > 0
+                each manager in managers
+                  option(
+                    value=manager._id
+                    selected=(item.approved_by && manager._id.toString() === item.approved_by._id.toString())
+                  ) #{manager.first_name} #{manager.last_name}
+              else
+                option(value="") No hay líderes disponibles
+          .mb-3
+            label.form-label(for="supervisor_comment") Comentario del supervisor
+            textarea#supervisor_comment.form-control(name="supervisor_comment", required)= item.supervisor_comment || ""
 
-      button.btn.btn-primary.mt-3(type="submit") Crear Tarea
+      button.btn.btn-primary.mt-3(type="submit") Crear Registro

@@ -5,11 +5,13 @@ import User from '../models/UserModel.js';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
+
 class TimeEntryController extends BaseController {
     constructor() {
-        super(TimeEntry, 'time-entries');
+        super(TimeEntry, 'time-entries', 'ATC-');
     }
 
+    
     // Sobrescribimos getEditView para incluir usuarios y tareas
     getEditView = async (req, res) => {
         try {
@@ -44,12 +46,15 @@ class TimeEntryController extends BaseController {
         try {
             const users = await User.findAll();
             const tasks = await Task.findAll();
+            const approved_by = await User.findAll();
+            const managers = filterManagers(approved_by);
 
             res.render(`${this.viewPath}/new`, {
                 title: `Nueva Tarea`,
                 item: {}, // objeto vacío porque es nuevo
                 users,
-                tasks
+                tasks,
+                managers
             });
         } catch (error) {
             console.error('Error al abrir formulario de tareas:', error.message);
