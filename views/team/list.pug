@@ -8,17 +8,16 @@ block content
   table.table.table-hover.table-dark
     thead
       tr
+        th №
         th ID
         th Nombre
         th Descripción
         //- th Miembros
         th.text-end.pe-5 Acciones
     tbody
-      each item in items
-        tr(
-          data-id=item.id, 
-          data-title=`${item.name}`
-        )
+      each item, index in items
+        tr(data-id=item.id, data-title=`${item.name}`)
+          td= index + 1
           td= item.id
           td= item.name
           td= item.description

@@ -11,7 +11,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import areaRoutes from './routes/areaRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
-import team_rolRoutes from './routes/team_rolRoutes.js';
+import teamRolRoutes from './routes/teamRolRoutes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -136,7 +136,7 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/areas', areaRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/teams', teamRoutes);
-app.use('/api/team_roles', team_rolRoutes);
+app.use('/api/team_roles', teamRolRoutes);
 
 
 // Manejo de errores 404 para rutas no encontradas
