@@ -7,7 +7,7 @@ block content
     )
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nuevo Rol de Equipo
-        a.btn.btn-gray(href="/team_roles") Volver a la lista
+        a.btn.btn-gray(href="/team-roles") Volver a la lista
 
       .row.g-3
         .col-md-6
@@ -39,7 +39,7 @@ block content
         formData.forEach((value, key) => data[key] = value);
 
         try {
-          const response = await fetch('/team_roles', {
+          const response = await fetch('/team-roles', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -61,7 +61,7 @@ block content
             alertContainer.appendChild(div);
           } else {
             // Redirigir directamente si todo está bien
-            //window.location.href = `/team_roles/${itemId}`;
+            //window.location.href = `/team-roles/${itemId}`;
             window.location.href = result.redirectUrl;
           }
 

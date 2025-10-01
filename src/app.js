@@ -72,20 +72,20 @@ app.get('/clients/:id/edit', ClientController.getEditView); // Ruta para mostrar
 app.put('/clients/:id', ClientController.updateView); // Ruta para procesar la actualización
 
 // User
-app.get('/users/new', UserController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
+app.get('/users/new', UserController.newView); 
 app.post('/users', UserController.createView);
 app.get('/users', UserController.getAllView);
 app.get('/users/:id', UserController.getByIdView);
-app.get('/users/:id/edit', UserController.getEditView); // Ruta para mostrar formulario de edición
-app.put('/users/:id', UserController.updateView); // Ruta para procesar la actualización
+app.get('/users/:id/edit', UserController.getEditView); 
+app.put('/users/:id', UserController.updateView); 
 
 // Project
-app.get('/projects/new', ProjectController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
+app.get('/projects/new', ProjectController.newView); 
 app.post('/projects', ProjectController.createView);
 app.get('/projects', ProjectController.getAllView);
 app.get('/projects/:id', ProjectController.getByIdView);
-app.get('/projects/:id/edit', ProjectController.getEditView); // Ruta para mostrar formulario de edición
-app.put('/projects/:id', ProjectController.updateView); // Ruta para procesar la actualización
+app.get('/projects/:id/edit', ProjectController.getEditView); 
+app.put('/projects/:id', ProjectController.updateView); 
 
 // Vistas Pug para áreas
 app.get('/areas', AreaController.getAllView);
@@ -120,12 +120,20 @@ app.post('/teams', TeamController.createView);
 app.put('/teams/:id', TeamController.updateView); 
 
 // Vistas Pug para team_roles
-app.get('/team_roles', TeamRolController.getAllView);          
-app.get('/team_roles/new', TeamRolController.newView);        
-app.get('/team_roles/:id/edit', TeamRolController.getEditView); 
-app.get('/team_roles/:id', TeamRolController.getByIdView);  
-app.post('/team_roles', TeamRolController.createView);        
-app.put('/team_roles/:id', TeamRolController.updateView); 
+app.get('/team-roles', TeamRolController.getAllView);          
+app.get('/team-roles/new', TeamRolController.newView);        
+app.get('/team-roles/:id/edit', TeamRolController.getEditView); 
+app.get('/team-roles/:id', TeamRolController.getByIdView);  
+app.post('/team-roles', TeamRolController.createView);        
+app.put('/team-roles/:id', TeamRolController.updateView); 
+
+// Vistas Pug para time_entries
+app.get('/team-roles', TeamRolController.getAllView);          
+app.get('/team-roles/new', TeamRolController.newView);        
+app.get('/team-roles/:id/edit', TeamRolController.getEditView); 
+app.get('/team-roles/:id', TeamRolController.getByIdView);  
+app.post('/team-roles', TeamRolController.createView);        
+app.put('/team-roles/:id', TeamRolController.updateView); 
 
 
 
@@ -141,7 +149,7 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/areas', areaRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/teams', teamRoutes);
-app.use('/api/team_roles', teamRolRoutes);
+app.use('/api/team-roles', teamRolRoutes);
 
 
 // Manejo de errores 404 para rutas no encontradas

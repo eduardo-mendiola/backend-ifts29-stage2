@@ -30,7 +30,7 @@ class TeamRoleController extends BaseController {
             return res.status(201).json({
                 success: true,
                 message: 'Rol creado correctamente',
-                redirectUrl: `/team_roles/${created._id}`,
+                redirectUrl: `/team-roles/${created._id}`,
                 data: created
             });
 

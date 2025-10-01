@@ -3,7 +3,7 @@ extends ../layout.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-0 Lista de Roles de Equipo
-    a.btn.btn-primary(href="/team_roles/new") Nuevo Rol
+    a.btn.btn-primary(href="/team-roles/new") Nuevo Rol
 
   table.table.table-hover.table-dark
     thead
@@ -19,9 +19,9 @@ block content
           td= item.id
           td= item.name
           td.text-end
-            a.btn.btn-gray.btn-sm.me-2(href=`/team_roles/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/team_roles/${item.id}/edit`) Editar
-            form(action=`/api/team_roles/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+            a.btn.btn-gray.btn-sm.me-2(href=`/team-roles/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/team-roles/${item.id}/edit`) Editar
+            form(action=`/api/team-roles/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
               input(type="hidden", name="_method", value="DELETE")
               button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
 
@@ -71,7 +71,7 @@ block content
         confirmYes.addEventListener('click', async () => {
           if (idToDelete) {
             try {
-              const response = await fetch(`/api/team_roles/${idToDelete}`, {
+              const response = await fetch(`/api/team-roles/${idToDelete}`, {
                 method: 'DELETE',
               });
 
