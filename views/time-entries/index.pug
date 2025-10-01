@@ -1,5 +1,5 @@
 extends ../layout.pug
-//- views/task/index.pug
+//- views/time-entry/index.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-0 Registro de actividades
@@ -18,8 +18,8 @@ block content
       each item, index in items
         tr(data-id=item.id, data-title=`${item.title}`, data-assigned_to=`${item.assigned_to}`, data-status=`${item.status}`)
           td= index + 1
-          td= item.task_code
-          td= new Date(item.date).toLocaleDateString('es-AR')
+          td= item.code
+          td= item.date ? new Date(item.date).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : 'N/A'
           td= item.user_id.first_name + " " + item.user_id.last_name
           td= item.task_id.project_id.name
           td.text-end

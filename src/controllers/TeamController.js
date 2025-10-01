@@ -2,33 +2,17 @@ import BaseController from './BaseController.js';
 import TeamModel from '../models/TeamModel.js';
 import User from '../models/UserModel.js';
 import mongoose from 'mongoose';
+import { filterManagers } from '../utils/userHelpers.js';
+import { formatDatesForInput } from '../utils/dateHelpers.js';
+
+
 
 class TeamController extends BaseController {
     constructor() {
-        super(TeamModel, 'team');
+        super(TeamModel, 'teams');
     }
 
-    // Método helper para filtrar managers
-    filterManagers = (users) => {
-        return users.filter(user =>
-            user.role_id &&
-            (user.role_id.name === 'Gerente de Proyecto' ||
-                user.role_id.name === 'Administrador' ||
-                user.role_id.name === 'CEO')
-        );
-    }
-
-    // Método helper para formatear fechas (para inputs de tipo date)
-    formatDatesForInput = (item) => {
-        if (item.created_at) {
-            item.created_at = new Date(item.created_at).toISOString().split('T')[0];
-        }
-        if (item.updated_at) {
-            item.updated_at = new Date(item.updated_at).toISOString().split('T')[0];
-        }
-        return item;
-    }
-
+     
     // Vista de edición de un equipo
     getEditView = async (req, res) => {
         try {
@@ -38,13 +22,14 @@ class TeamController extends BaseController {
 
             const users = await User.findAll();
             const allUsers = await User.findAll();
-            const managers = this.filterManagers(allUsers);
+            const managers = filterManagers(allUsers);
 
             // Cargar todos los roles de equipo disponibles
             const TeamRole = await import('../models/TeamRoleModel.js');
             const teamRoles = await TeamRole.default.findAll();
 
-            const formattedTeam = this.formatDatesForInput(this.formatItem(team));
+            const formattedTeam = formatDatesForInput(this.formatItem(team), ['created_at', 'updated_at']);
+
 
             // Filtrar usuarios disponibles (excluir líder y miembros actuales)
             const availableUsers = users.filter(user => {
@@ -73,7 +58,7 @@ class TeamController extends BaseController {
     newView = async (req, res) => {
         try {
             const users = await User.findAll();
-            const managers = this.filterManagers(users);
+            const managers = filterManagers(users);
 
             // Cargar todos los roles de equipo disponibles
             const TeamRole = await import('../models/TeamRoleModel.js');

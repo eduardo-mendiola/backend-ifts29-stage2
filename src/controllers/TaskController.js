@@ -2,25 +2,11 @@ import BaseController from './BaseController.js'
 import Task from '../models/TaskModel.js';
 import Project from '../models/ProjectModel.js'; 
 import User from '../models/UserModel.js';
+import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class TaskController extends BaseController {
     constructor() {
-        super(Task, 'task'); 
-    }
-
-    // Método helper para formatear fechas
-    formatDatesForInput = (item) => {
-        const formatDate = (date) => {
-            if (!date) return '';
-            const d = new Date(date);
-            return d.toISOString().split('T')[0]; // Convierte a YYYY-MM-DD
-        };
-
-        return {
-            ...item,
-            due_date: formatDate(item.due_date),
-            created_at: formatDate(item.created_at)
-        };
+        super(Task, 'tasks'); 
     }
 
     // Sobrescribimos getEditView para incluir usuarios y proyectos
@@ -34,7 +20,7 @@ class TaskController extends BaseController {
             const projects = await Project.findAll();
 
             // Formatear fechas antes de enviar a la vista
-            const formattedTask = this.formatDatesForInput(this.formatItem(task));
+            const formattedTask = formatDatesForInput(this.formatItem(task), ['due_date', 'created_at']);
 
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Task`,

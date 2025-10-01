@@ -2,45 +2,36 @@ import BaseController from './BaseController.js'
 import TimeEntry from '../models/TimeEntryModel.js';
 import Task from '../models/TaskModel.js';
 import User from '../models/UserModel.js';
+import { filterManagers } from '../utils/userHelpers.js';
+import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class TimeEntryController extends BaseController {
     constructor() {
-        super(TimeEntry, 'time-entry');
-    }
-
-    // Método helper para formatear fechas
-    formatDatesForInput = (item) => {
-        const formatDate = (date) => {
-            if (!date) return '';
-            const d = new Date(date);
-            return d.toISOString().split('T')[0]; // Convierte a YYYY-MM-DD
-        };
-
-        return {
-            ...item,
-            due_date: formatDate(item.due_date),
-            created_at: formatDate(item.created_at)
-        };
+        super(TimeEntry, 'time-entries');
     }
 
     // Sobrescribimos getEditView para incluir usuarios y tareas
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;
-            const task = await this.model.findById(id);
-            if (!task) return res.render('error404', { title: 'Tarea no encontrado' });
+            const time_entry = await this.model.findById(id);
+            if (!time_entry) return res.render('error404', { title: 'Registro no encontrado' });
 
             const users = await User.findAll();
             const tasks = await Task.findAll();
+            const approved_by = await User.findAll();
+            const managers = filterManagers(approved_by);
 
             // Formatear fechas antes de enviar a la vista
-            const formattedTask = this.formatDatesForInput(this.formatItem(task));
+            const formattedTimeEntry = formatDatesForInput(this.formatItem(time_entry), ['date']);
 
             res.render(`${this.viewPath}/edit`, {
-                title: `Editar Time Entry: ${formattedTask.title}`,
-                item: formattedTask, // Tarea con fecha formateada
+                title: `Editar Time Entry: ${formattedTimeEntry.code}`,
+                item: formattedTimeEntry, // Tarea con fecha formateada
                 users,
-                tasks
+                tasks,
+                managers
+               
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -65,6 +56,7 @@ class TimeEntryController extends BaseController {
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
+    
 }
 
 export default new TimeEntryController();

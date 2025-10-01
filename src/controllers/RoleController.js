@@ -3,7 +3,7 @@ import Role from '../models/RoleModel.js';
 
 class RoleController extends BaseController {
     constructor() {
-        super(Role, 'role');
+        super(Role, 'roles');
     }
 }
 

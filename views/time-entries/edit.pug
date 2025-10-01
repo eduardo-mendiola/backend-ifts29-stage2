@@ -1,0 +1,79 @@
+extends ../layout.pug
+//- views/tiem-entry/edit.pug
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/time-entries/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Editar Registro de Actividad #{item.code}
+        a.btn.btn-gray(href="/time-entries") Volver a la lista
+
+      // Contenedor de 2 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="date") Fecha de Realización
+            input#date.form-control(type="date", name="date", value=item.date || "")
+          .mb-3
+            label.form-label(for="task_id") Tarea Asociada
+            select#task_id.form-select(name="task_id", required)
+              if tasks && tasks.length > 0
+                each task in tasks
+                  option(
+                    value=task._id 
+                    selected=(item.task_id && task._id.toString() === item.task_id._id.toString())
+                  ) #{task.title} (#{task._id}) - Proyecto: #{task.project_id ? task.project_id.name : 'N/A'}
+              else
+                option(value="") No hay proyectos disponibles
+          .mb-3
+            label.form-label(for="description") Descripción
+            textarea#description.form-control(name="description", required)= item.description || ""
+          .mb-3
+            label.form-label(for="user_id") Usuario
+            select#user_id.form-select(name="user_id", required)
+              if users && users.length > 0
+                each user in users
+                  option(
+                    value=user._id 
+                    selected=(item.user_id && user._id.toString() === item.user_id._id.toString())
+                  ) #{user.first_name + ' ' + user.last_name}  
+              else
+                option(value="") No hay usuarios disponibles
+          .mb-3
+            label.form-label(for="hours_worked") Horas trabajadas
+            input#hours_worked.form-control(
+              type="number", 
+              name="hours_worked", 
+              value=item.hours_worked || "", 
+              step="any"
+            )
+
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="billable") Facturable
+            select#billable.form-select(name="billable", required)
+              option(value="true" selected=(item.billable === true)) Si
+              option(value="false" selected=(item.billable === false)) No
+          .mb-3
+            label.form-label(for="approved") Aprobado
+            select#approved.form-select(name="approvede", required)
+              option(value="true" selected=(item.approved === true)) Si
+              option(value="false" selected=(item.approved === false)) No
+          .mb-3
+            label.form-label(for="approved_by") Aprobado por
+            select#approved_by.form-select(name="approved_by", required)
+              if managers && managers.length > 0
+                each manager in managers
+                  option(
+                    value=manager._id
+                    selected=(item.approved_by && manager._id.toString() === item.approved_by._id.toString())
+                  ) #{manager.first_name} #{manager.last_name}
+              else
+                option(value="") No hay líderes disponibles
+          .mb-3
+            label.form-label(for="supervisor_comment") Comentario del supervisor
+            textarea#supervisor_comment.form-control(name="supervisor_comment", required)= item.supervisor_comment || ""
+        
+
+      button.btn.btn-success.mt-3(type="submit") Actualizar Registro de Actividad

@@ -1,0 +1,57 @@
+extends ../layout.pug
+//- views/time-entry/show.pug
+block content
+  h1.mb-4 #{item.title} 
+
+  table.table.table-dark
+    tbody
+      tr
+        th ID
+        td= item.id
+      tr
+        th Código
+        td= item.code
+      tr 
+        th Tarea Asociada
+        td= item.task_id ? `${item.task_id.title} (${item.task_id._id})` : 'N/A'
+      //- tr
+      //-   th Fecha de Realización
+      //-   td= item.date ? new Date(item.date).toLocaleDateString('es-AR') : 'N/A'
+      tr
+        th Fecha de Realización
+        td= item.date ? new Date(item.date).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : 'N/A'
+      tr 
+        th Usuario
+        td= item.user_id.first_name + " " + item.user_id.last_name
+      tr
+        th Horas Trabajadas
+        td= item.hours_worked + ' hrs'
+      tr
+        th Descripción
+        td= item.description
+      tr
+        th Facturable
+        td= item.billable ? 'Sí' : 'No'
+      tr
+        th Comentario del supervisor
+        td= item.supervisor_comment || 'N/A'
+      tr 
+        th Aprobado
+        td= item.approve ? 'Sí' : 'No'
+      tr 
+        th Aprobado por
+        td= item.approved_by ? item.approved_by.first_name + " " + item.approved_by.last_name : 'N/A'
+      tr
+        th Fecha de Creación
+        td=  td= item.created_at ? new Date(item.created_at).toLocaleString('es-AR', { timeZone: 'UTC' }) : 'N/A'
+      tr
+        th Fecha de Modificación
+        td= td= item.updated_at ? new Date(item.updated_at).toLocaleString('es-AR', { timeZone: 'UTC' }) : 'N/A'
+      
+
+  .mt-3
+    a.btn.btn-gray.me-2(href="/time-entries") Volver a la lista
+    a.btn.btn-primary.me-2(href=`/time-entries/${item.id}/edit`) Editar
+    //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+    //-   input(type="hidden", name="_method", value="DELETE")
+    //-   button.btn.btn-danger-soft(type="submit") Eliminar

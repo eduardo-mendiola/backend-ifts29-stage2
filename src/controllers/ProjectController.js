@@ -2,28 +2,14 @@ import BaseController from './BaseController.js'
 import Project from '../models/ProjectModel.js'; 
 import Client from '../models/ClientModel.js';
 import Team from '../models/TeamModel.js';
+import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class ProjectController extends BaseController {
     constructor() {
-        super(Project, 'project'); 
+        super(Project, 'projects'); 
     }
 
    
-    // Método helper para formatear fechas
-    formatDatesForInput = (item) => {
-        const formatDate = (date) => {
-            if (!date) return '';
-            const d = new Date(date);
-            return d.toISOString().split('T')[0]; // Convierte a YYYY-MM-DD
-        };
-
-        return {
-            ...item,
-            start_date: formatDate(item.start_date),
-            end_date: formatDate(item.end_date)
-        };
-    }
-
     // Sobrescribimos getEditView para incluir roles y áreas
     getEditView = async (req, res) => {
         try {
@@ -34,8 +20,9 @@ class ProjectController extends BaseController {
             const clients = await Client.findAll(); 
             const teams = await Team.findAll();
 
+            
             // Formatear fechas antes de enviar a la vista
-            const formattedProject = this.formatDatesForInput(this.formatItem(project));
+            const formattedProject = formatDatesForInput(this.formatItem(project), ['start_date', 'end_date']);
 
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Proyecto`,
