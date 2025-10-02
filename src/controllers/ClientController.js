@@ -3,7 +3,7 @@ import Client from '../models/ClientModel.js';
 
 class ClientController extends BaseController {
     constructor() {
-        super(Client, 'clients'); 
+        super(Client, 'clients', 'CLI-'); 
     }
 }
 

@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const userSchema = new mongoose.Schema({
+    code: { type: String, unique: true },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     email: { type: String, required: true, unique: true },

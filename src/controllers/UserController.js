@@ -5,7 +5,7 @@ import Area from '../models/AreaModel.js';
 
 class UserController extends BaseController {
     constructor() {
-        super(User, 'users');
+        super(User, 'users', 'USR-');
     }
 
     // Sobrescribimos getEditView para incluir roles y áreas

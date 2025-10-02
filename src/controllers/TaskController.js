@@ -6,7 +6,7 @@ import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class TaskController extends BaseController {
     constructor() {
-        super(Task, 'tasks'); 
+        super(Task, 'tasks', 'TSK-'); 
     }
 
     // Sobrescribimos getEditView para incluir usuarios y proyectos

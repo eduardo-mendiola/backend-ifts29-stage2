@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const areaSchema = new mongoose.Schema({
+    code: { type: String, unique: true },
     name_area: { type: String, required: true },
     description: { type: String }
 }, { 

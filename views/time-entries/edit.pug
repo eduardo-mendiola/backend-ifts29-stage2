@@ -22,7 +22,7 @@ block content
                   option(
                     value=task._id 
                     selected=(item.task_id && task._id.toString() === item.task_id._id.toString())
-                  ) #{task.title} (#{task._id}) - Proyecto: #{task.project_id ? task.project_id.name : 'N/A'}
+                  ) #{task.title} (#{task.code}) - Proyecto: #{task.project_id ? task.project_id.name : 'N/A'}
               else
                 option(value="") No hay proyectos disponibles
           .mb-3

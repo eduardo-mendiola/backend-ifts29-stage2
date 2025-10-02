@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const taskSchema = new mongoose.Schema({
+    code: { type: String, unique: true },
     title: { type: String, required: true },
     description: { type: String },
     priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },

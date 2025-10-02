@@ -2,14 +2,9 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const teamRoleSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    description: {
-        type: String
-    }
+    code: { type: String, unique: true },
+    name: { type: String, required: true, unique: true },
+    description: { type: String }
 }, {
     collection: 'team_roles'
 });

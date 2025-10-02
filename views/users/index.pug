@@ -9,7 +9,7 @@ block content
     thead
       tr
         th №
-        th ID
+        th Código
         th Nombre
         th Apellido
         th.text-end.pe-5 Acciones
@@ -17,7 +17,7 @@ block content
       each item, index in items
         tr(data-id=item.id, data-name=`${item.first_name} ${item.last_name}`)
           td= index + 1
-          td= item.id
+          td= item.code
           td= item.first_name
           td= item.last_name
           td.text-end

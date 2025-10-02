@@ -3,9 +3,10 @@ import TeamRoleModel from '../models/TeamRoleModel.js';
 
 class TeamRoleController extends BaseController {
     constructor() {
-        super(TeamRoleModel, 'team-roles');
+        super(TeamRoleModel, 'team-roles', 'TER-');
     }
 
+    
     // Sobrescribimos createView
     createView = async (req, res) => {
         try {
@@ -15,18 +16,27 @@ class TeamRoleController extends BaseController {
                 return res.status(400).json({ success: false, message: 'El nombre del rol es requerido' });
             }
 
+            // Verificar nombre duplicado
             const existingRole = await this.model.findByName(name.trim());
             if (existingRole) {
                 return res.status(400).json({ success: false, message: 'Nombre de rol existente, intente otro' });
             }
 
+            // 1️ Crear el documento sin código
             const created = await this.model.create({
                 name: name.trim(),
-                description: description ? description.trim() : ''
+                description: description ? description.trim() : '',
+                code: 'TEMP-' + new Date().getTime() // valor temporal único para evitar duplicados
             });
 
-            // return res.status(201).json({ success: true, message: 'Rol creado correctamente', data: created });
+            // 2️ Generar código definitivo
+            if (this.codePrefix) {
+                const code = this.codeGenerator.generateCodeFromId(created._id, this.codePrefix);
+                await this.model.update(created._id, { code });
+                created.code = code; // para que la respuesta JSON lo incluya
+            }
 
+            // 3️ Responder con éxito
             return res.status(201).json({
                 success: true,
                 message: 'Rol creado correctamente',
@@ -34,12 +44,12 @@ class TeamRoleController extends BaseController {
                 data: created
             });
 
-
         } catch (error) {
             console.error('Error al crear rol de equipo:', error.message);
             return res.status(500).json({ success: false, message: 'Error interno al crear el rol' });
         }
-    }
+    };
+
 
 
     // Sobrescribimos updateView

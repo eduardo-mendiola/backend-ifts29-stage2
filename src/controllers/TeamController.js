@@ -9,10 +9,10 @@ import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class TeamController extends BaseController {
     constructor() {
-        super(TeamModel, 'teams');
+        super(TeamModel, 'teams', 'TEM-');
     }
 
-     
+
     // Vista de edición de un equipo
     getEditView = async (req, res) => {
         try {
@@ -153,6 +153,76 @@ class TeamController extends BaseController {
     };
 
     // Método createView para crear nuevos equipos
+    // createView = async (req, res) => {
+    //     try {
+
+    //         console.log('=== INICIO CREATE VIEW ===');
+    //         console.log('req.body completo:', JSON.stringify(req.body, null, 2));
+
+    //         const { name, description, team_leader } = req.body;
+
+    //         // Arreglar members_count - tomar el último valor si es array
+    //         let membersCount = req.body.members_count;
+    //         if (Array.isArray(membersCount)) {
+    //             membersCount = membersCount[membersCount.length - 1];
+    //         }
+
+    //         if (!name || !team_leader) {
+    //             return res.status(400).send('Nombre y líder del equipo son requeridos');
+    //         }
+
+    //         // Convertir team_leader a ObjectId
+    //         const leaderId = mongoose.Types.ObjectId.createFromHexString(team_leader);
+
+    //         // Procesar members
+    //         const finalMembersArray = [];
+    //         const memberCount = parseInt(membersCount) || 0;
+
+    //         console.log(`Procesando ${memberCount} miembros (members_count original: ${JSON.stringify(req.body.members_count)})`);
+
+    //         for (let i = 0; i < memberCount; i++) {
+    //             const memberIdKey = `member_${i}_id`;
+    //             const memberRoleKey = `member_${i}_role`;
+
+    //             const memberId = req.body[memberIdKey];
+    //             const memberTeamRoleId = req.body[memberRoleKey];
+
+    //             console.log(`Miembro ${i}: ID=${memberId}, TeamRoleId=${memberTeamRoleId}`);
+
+    //             if (memberId && memberTeamRoleId) {
+    //                 try {
+    //                     finalMembersArray.push({
+    //                         user_id: mongoose.Types.ObjectId.createFromHexString(memberId),
+    //                         team_role_id: mongoose.Types.ObjectId.createFromHexString(memberTeamRoleId)
+    //                     });
+    //                     console.log(`Miembro ${i} procesado correctamente`);
+    //                 } catch (error) {
+    //                     console.error(`Error procesando miembro ${i}:`, error.message);
+    //                 }
+    //             }
+    //         }
+
+    //         const createData = {
+    //             name,
+    //             description,
+    //             team_leader: leaderId,
+    //             members: finalMembersArray
+    //         };
+
+    //         console.log('Datos de creación:', JSON.stringify(createData, null, 2));
+
+    //         const result = await this.model.create(createData);
+    //         console.log('Resultado de la creación:', result);
+
+    //         res.redirect(`/teams/${result._id}`);
+
+    //     } catch (error) {
+    //         console.error('Error al crear team:', error.message);
+    //         res.status(500).send(`Error: ${error.message}`);
+    //     }
+    // };
+
+    // Método createView para crear nuevos equipos
     createView = async (req, res) => {
         try {
             console.log('=== INICIO CREATE VIEW ===');
@@ -201,25 +271,36 @@ class TeamController extends BaseController {
                 }
             }
 
+            // 🔹 1. Crear el documento SIN el código
             const createData = {
                 name,
                 description,
                 team_leader: leaderId,
-                members: finalMembersArray
+                members: finalMembersArray,
+                code: new mongoose.Types.ObjectId().toString()  // valor único temporal
             };
 
             console.log('Datos de creación:', JSON.stringify(createData, null, 2));
+            const createdItem = await this.model.create(createData);
 
-            const result = await this.model.create(createData);
-            console.log('Resultado de la creación:', result);
+            //  2. Generar el código usando el ObjectId real
+            if (this.codePrefix) {
+                const code = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
+                await this.model.update(createdItem._id, { code });
+            }
 
-            res.redirect(`/teams/${result._id}`);
+            console.log('Equipo creado con ID y code:', createdItem._id);
+
+            // 🔹 3. Redirigir al detalle
+            res.redirect(`/teams/${createdItem._id}`);
 
         } catch (error) {
             console.error('Error al crear team:', error.message);
             res.status(500).send(`Error: ${error.message}`);
         }
     };
+
+
 }
 
 export default new TeamController();

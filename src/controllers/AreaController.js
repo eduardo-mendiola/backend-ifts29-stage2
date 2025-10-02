@@ -3,7 +3,7 @@ import Area from '../models/AreaModel.js';
 
 class AreaController extends BaseController {
     constructor() {
-        super(Area, 'areas');
+        super(Area, 'areas', 'ARE-');
     }
 }
 

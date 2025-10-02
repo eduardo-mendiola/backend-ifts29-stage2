@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const timeEntrySchema = new mongoose.Schema({
-    code: { type: String },
+    code: { type: String, unique: true },
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     task_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Task', required: true },
     description: { type: String },

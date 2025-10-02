@@ -6,7 +6,7 @@ import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class ProjectController extends BaseController {
     constructor() {
-        super(Project, 'projects'); 
+        super(Project, 'projects', 'PRJ-'); 
     }
 
    

@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 const teamSchema = new mongoose.Schema({
+    code: { type: String, unique: true },
     name: { type: String, required: true },
     description: { type: String },
     team_leader: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 

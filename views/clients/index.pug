@@ -9,7 +9,7 @@ block content
     thead
       tr
         th №
-        th ID
+        th Código
         th Nombre
         th Contacto
         th Email
@@ -18,7 +18,7 @@ block content
       each item, index in items
         tr(data-id=item.id, data-name=`${item.name}`, data-contatct_name=`${item.contact_name}`, data-email=`${item.email}`)
           td= index + 1
-          td= item.id
+          td= item.code
           td= item.name
           td= item.contact_name
           td= item.email
