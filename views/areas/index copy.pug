@@ -1,0 +1,93 @@
+extends ../layout.pug
+//- views/area/index.pug
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.mb-0 Lista de Areas
+    a.btn.btn-primary(href="/areas/new") Nuevo Area
+
+  table.table.table-hover.table-dark
+    thead
+      tr
+        th №
+        th Código
+        th Nombre
+        th.text-end.pe-5 Acciones
+    tbody
+      each item, index in items
+        tr(data-id=item.id, data-name=`${item.name_area}`)
+          td= index + 1
+          td= item.code
+          td= item.name_area
+          td.text-end
+            a.btn.btn-gray.btn-sm.me-2(href=`/areas/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/areas/${item.id}/edit`) Editar
+            form(action=`/api/areas/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+              input(type="hidden", name="_method", value="DELETE")
+              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+
+  // Modal de confirmación con Bootstrap
+  div#confirmModal.modal.fade(tabindex="-1", aria-labelledby="confirmModalLabel", aria-hidden="true")
+    div.modal-dialog.modal-dialog-centered
+      div.modal-content.bg-dark.text-white
+        div.modal-header
+          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un area
+          button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
+        div.modal-body
+          p ¿Está seguro de que desea eliminar este area?
+          p#nameToDelete.font-weight-bold.mt-3
+        div.modal-footer
+          button#confirmYes.btn.btn-danger Eliminar
+          button.btn.btn-secondary(data-bs-dismiss="modal") Cancelar
+
+  script.
+      document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const modalElement = document.getElementById('confirmModal');
+        const modal = new bootstrap.Modal(modalElement);
+        const confirmYes = document.getElementById('confirmYes');
+        const nameToDelete = document.getElementById('nameToDelete');
+        let idToDelete = null;
+        let rowToDelete = null;
+
+        deleteButtons.forEach(button => {
+          button.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevenir el envío del formulario
+
+            const row = event.target.closest('tr');
+            idToDelete = event.target.dataset.id;
+            rowToDelete = row;
+
+            // Obtener el nombre del area
+            const name = row.dataset.name;
+
+            // Actualizar el contenido del modal
+            nameToDelete.textContent = `Nombre: ${name}`;
+
+            // Mostrar el modal
+            modal.show();
+          });
+        });
+
+        confirmYes.addEventListener('click', async () => {
+          if (idToDelete) {
+            try {
+              const response = await fetch(`/api/areas/${idToDelete}`, {
+                method: 'DELETE',
+              });
+
+              if (response.ok) {
+                rowToDelete.remove(); // Eliminar la fila de la tabla
+                //alert('Usuario eliminado correctamente.');
+              } else {
+                alert('Error al eliminar el area.');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Error al eliminar el area.');
+            }
+          }
+
+          // Ocultar el modal
+          modal.hide();
+        });
+      });

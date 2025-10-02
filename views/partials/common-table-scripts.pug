@@ -1,0 +1,82 @@
+//- Barra de búsqueda
+.mb-3
+  input.search-input.form-control(type="text", placeholder="Buscar por código...")
+
+// Modal de confirmación
+div#confirmModal.modal.fade(tabindex="-1", aria-labelledby="confirmModalLabel", aria-hidden="true")
+  div.modal-dialog.modal-dialog-centered
+    div.modal-content.bg-dark.text-white
+      div.modal-header
+        h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un registro 
+        button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
+      div.modal-body
+        p ¿Está seguro de que desea eliminar este usuario?
+        p#textToDelete1.font-weight-bold.mt-3
+        p#textToDelete2.font-weight-bold.mt-3
+      div.modal-footer
+        button#confirmYes.btn.btn-danger Eliminar
+        button.btn.btn-secondary(data-bs-dismiss="modal") Cancelar
+
+// Script genérico para búsqueda y eliminación
+script.
+  document.addEventListener('DOMContentLoaded', () => {
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    const modalElement = document.getElementById('confirmModal');
+    const modal = new bootstrap.Modal(modalElement);
+    const confirmYes = document.getElementById('confirmYes');
+    const textToDelete1 = document.getElementById('textToDelete1');
+    const textToDelete2 = document.getElementById('textToDelete2');
+    let rowToDelete = null;
+
+    // ---- Búsqueda por código ----
+    const searchInput = document.querySelector('.search-input');
+    const tableRows = document.querySelectorAll('tbody tr');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        const filter = searchInput.value.toLowerCase();
+        tableRows.forEach(row => {
+          const code = row.dataset.code?.toLowerCase() || '';
+          row.style.display = code.includes(filter) ? '' : 'none';
+        });
+      });
+    }
+
+    // ---- Configurar botones de eliminación ----
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const row = event.target.closest('tr');
+        rowToDelete = row;
+
+        // Guardamos el form correspondiente al registro
+        rowToDelete.formToDelete = event.target.closest('form');
+
+        // Mostrar textos en el modal
+        const text1 = row.dataset.textmodal1 || '';
+        const text2 = row.dataset.textmodal2 || '';
+        textToDelete1.textContent = text1;
+        textToDelete2.textContent = text2;
+
+        modal.show();
+      });
+    });
+
+    // ---- Confirmar eliminación ----
+    confirmYes.addEventListener('click', async () => {
+      if (rowToDelete?.formToDelete) {
+        try {
+          const formAction = rowToDelete.formToDelete.action;
+          const response = await fetch(formAction, { method: 'DELETE' });
+
+          if (response.ok) rowToDelete.remove();
+          else alert('Error al eliminar el registro.');
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error al eliminar el registro.');
+        }
+      }
+      modal.hide();
+    });
+  });

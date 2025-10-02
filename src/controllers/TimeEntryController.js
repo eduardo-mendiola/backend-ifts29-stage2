@@ -8,7 +8,7 @@ import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class TimeEntryController extends BaseController {
     constructor() {
-        super(TimeEntry, 'time-entries', 'ATC-');
+        super(TimeEntry, 'time-entries', 'ACT-');
     }
 
     

@@ -1,10 +1,14 @@
 extends ../layout.pug
-//- views/time-entry/index.pug
+
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-0 Registro de actividades
     a.btn.btn-primary(href="/time-entries/new") Nueva Registro
 
+  //- Incluir barra de búsqueda, modal y JS común
+  include ../partials/common-table-scripts.pug
+
+  //- Tabla específica de este index
   table.table.table-hover.table-dark
     thead
       tr
@@ -16,7 +20,7 @@ block content
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
-        tr(data-id=item.id, data-code=`${item.code}`)
+        tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Registro Código: ${item.code}`, data-textmodal2 =`Usuario: ${item.user_id.first_name} ${item.user_id.last_name}`)
           td= index + 1
           td= item.code
           td= item.date ? new Date(item.date).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : 'N/A'
@@ -29,69 +33,4 @@ block content
               input(type="hidden", name="_method", value="DELETE")
               button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
 
-  // Modal de confirmación con Bootstrap
-  div#confirmModal.modal.fade(tabindex="-1", aria-labelledby="confirmModalLabel", aria-hidden="true")
-    div.modal-dialog.modal-dialog-centered
-      div.modal-content.bg-dark.text-white
-        div.modal-header
-          h5#confirmModalLabel.modal-title.text-danger Está a punto de eliminar un registro 
-          button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
-        div.modal-body
-          p ¿Está seguro de que desea eliminar este registro?
-          p#nameToDelete.font-weight-bold.mt-3
-        div.modal-footer
-          button#confirmYes.btn.btn-danger Eliminar
-          button.btn.btn-secondary(data-bs-dismiss="modal") Cancelar
-
-  script.
-      document.addEventListener('DOMContentLoaded', () => {
-        const deleteButtons = document.querySelectorAll('.delete-btn');
-        const modalElement = document.getElementById('confirmModal');
-        const modal = new bootstrap.Modal(modalElement);
-        const confirmYes = document.getElementById('confirmYes');
-        const nameToDelete = document.getElementById('nameToDelete');
-        let idToDelete = null;
-        let rowToDelete = null;
-
-        deleteButtons.forEach(button => {
-          button.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevenir el envío del formulario
-
-            const row = event.target.closest('tr');
-            idToDelete = event.target.dataset.id;
-            rowToDelete = row;
-
-            // Obtener el nombre y apellido del usuario
-            const name = row.dataset.code;
-
-            // Actualizar el contenido del modal
-            nameToDelete.textContent = `Registro de actividades código: ${name}`;
-
-            // Mostrar el modal
-            modal.show();
-          });
-        });
-
-        confirmYes.addEventListener('click', async () => {
-          if (idToDelete) {
-            try {
-              const response = await fetch(`/api/time-entries/${idToDelete}`, {
-                method: 'DELETE',
-              });
-
-              if (response.ok) {
-                rowToDelete.remove(); // Eliminar la fila de la tabla
-                //alert('Usuario eliminado correctamente.');
-              } else {
-                alert('Error al eliminar el registro de actividad.');
-              }
-            } catch (error) {
-              console.error('Error:', error);
-              alert('Error al eliminar el registro de actividad.');
-            }
-          }
-
-          // Ocultar el modal
-          modal.hide();
-        });
-      });
+ 
