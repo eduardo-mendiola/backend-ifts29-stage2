@@ -114,24 +114,33 @@ class ProjectController extends BaseController {
         }
     };
 
+ 
+
 
 
     // Vista de nuevo equipo
     newView = async (req, res) => {
         try {
-            const teams = await User.findAll();
-            const managers = filterManagers(teams);
+            // Traer todos los usuarios para filtrar managers
+            const allUsers = await User.findAll();
+            const managers = filterManagers(allUsers);
 
-            // Cargar todos los roles de equipo disponibles
-            const TeamRole = await import('../models/TeamRoleModel.js');
-            const teamRoles = await TeamRole.default.findAll();
+            // Traer todos los equipos disponibles
+            const allTeams = await Team.findAll();
+
+            // Traer todos los clientes disponibles
+            const clients = await Client.findAll();
+
+            // // Armar lista de IDs de equipos actuales para marcar en el select
+            // const selectedTeamIds = formattedProject.teams.map(t => t.team_id._id.toString());
 
             res.render(`${this.viewPath}/new`, {
-                title: 'Crear Nuevo Equipo',
-                item: {},
-                teams,
+                title: `Crear Nuevo Proyecto`,
+                item: {}, // objeto vacío porque es nuevo
                 managers,
-                teamRoles
+                allTeams,
+                clients
+                // selectedTeamIds
             });
         } catch (error) {
             console.error('Error en newView:', error.message);
@@ -139,83 +148,85 @@ class ProjectController extends BaseController {
         }
     };
 
-    // Método createView para crear nuevos equipos
-    createView = async (req, res) => {
-        try {
-            console.log('=== INICIO CREATE VIEW ===');
-            console.log('req.body completo:', JSON.stringify(req.body, null, 2));
+    // Método createView para crear un nuevo proyecto
+   createView = async (req, res) => {
+  try {
+    console.log('=== INICIO CREATE VIEW ===');
+    console.log('req.body completo:', JSON.stringify(req.body, null, 2));
 
-            const { name, description, team_leader } = req.body;
+    const { name, description, project_manager, client_id, start_date, end_date, budget, billing_type, status } = req.body;
 
-            // Arreglar members_count - tomar el último valor si es array
-            let membersCount = req.body.members_count;
-            if (Array.isArray(membersCount)) {
-                membersCount = membersCount[membersCount.length - 1];
-            }
+    console.log('Datos principales:', { name, project_manager, client_id, start_date, end_date, budget, billing_type, status });
 
-            if (!name || !team_leader) {
-                return res.status(400).send('Nombre y líder del equipo son requeridos');
-            }
+    if (!name || !project_manager) {
+      console.log('Falta nombre o project_manager');
+      return res.status(400).send('Nombre y Project Manager son requeridos');
+    }
 
-            // Convertir team_leader a ObjectId
-            const leaderId = mongoose.Types.ObjectId.createFromHexString(team_leader);
+    console.log('Project Manager recibido:', project_manager);
+    const managerId = mongoose.Types.ObjectId.createFromHexString(project_manager);
+    console.log('Project Manager ObjectId:', managerId);
 
-            // Procesar members
-            const finalMembersArray = [];
-            const memberCount = parseInt(membersCount) || 0;
+    let clientObjectId = null;
+    if (client_id) {
+      if (mongoose.Types.ObjectId.isValid(client_id)) {
+        clientObjectId = mongoose.Types.ObjectId.createFromHexString(client_id); 
+        console.log('Client ObjectId:', clientObjectId);
+      } else {
+        console.log('client_id no válido:', client_id);
+      }
+    }
 
-            console.log(`Procesando ${memberCount} miembros (members_count original: ${JSON.stringify(req.body.members_count)})`);
+    const teamsCount = parseInt(req.body.teams_count) || 0;
+    console.log('teamsCount:', teamsCount);
+    const teamsArray = [];
 
-            for (let i = 0; i < memberCount; i++) {
-                const memberIdKey = `member_${i}_id`;
-                const memberRoleKey = `member_${i}_role`;
+    for (let i = 0; i < teamsCount; i++) {
+      const teamId = req.body[`team_${i}`];
+      console.log(`team_${i}:`, teamId);
 
-                const memberId = req.body[memberIdKey];
-                const memberTeamRoleId = req.body[memberRoleKey];
+      if (teamId && mongoose.Types.ObjectId.isValid(teamId)) {
+        teamsArray.push({ team_id: mongoose.Types.ObjectId.createFromHexString(teamId) });
+      } else {
+        console.log(`team_${i} inválido o undefined:`, teamId);
+      }
+    }
 
-                console.log(`Miembro ${i}: ID=${memberId}, TeamRoleId=${memberTeamRoleId}`);
+    console.log('Teams array final:', teamsArray);
 
-                if (memberId && memberTeamRoleId) {
-                    try {
-                        finalMembersArray.push({
-                            user_id: mongoose.Types.ObjectId.createFromHexString(memberId),
-                            team_role_id: mongoose.Types.ObjectId.createFromHexString(memberTeamRoleId)
-                        });
-                        console.log(`Miembro ${i} procesado correctamente`);
-                    } catch (error) {
-                        console.error(`Error procesando miembro ${i}:`, error.message);
-                    }
-                }
-            }
-
-            // 🔹 1. Crear el documento SIN el código
-            const createData = {
-                name,
-                description,
-                team_leader: leaderId,
-                members: finalMembersArray,
-                code: new mongoose.Types.ObjectId().toString()  // valor único temporal
-            };
-
-            console.log('Datos de creación:', JSON.stringify(createData, null, 2));
-            const createdItem = await this.model.create(createData);
-
-            //  2. Generar el código usando el ObjectId real
-            if (this.codePrefix) {
-                const code = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
-                await this.model.update(createdItem._id, { code });
-            }
-
-            console.log('Equipo creado con ID y code:', createdItem._id);
-
-            // 🔹 3. Redirigir al detalle
-            res.redirect(`/teams/${createdItem._id}`);
-
-        } catch (error) {
-            console.error('Error al crear project:', error.message);
-            res.status(500).send(`Error: ${error.message}`);
-        }
+    const createData = {
+      name,
+      description,
+      project_manager: managerId,
+      client_id: clientObjectId,
+      start_date: start_date || null,
+      end_date: end_date || null,
+      budget: budget ? parseFloat(budget) : 0,
+      billing_type: billing_type || 'fixed',
+      status: status || 'pending',
+      teams: teamsArray,
+      code: new mongoose.Types.ObjectId().toString() // temporal
     };
+
+    console.log('createData a crear:', JSON.stringify(createData, null, 2));
+
+    const createdItem = await this.model.create(createData);
+    console.log('Proyecto creado con _id:', createdItem._id);
+
+    if (this.codePrefix) {
+      const code = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
+      console.log('Código generado:', code);
+      await this.model.update(createdItem._id, { code });
+    }
+
+    res.redirect(`/projects/${createdItem._id}`);
+  } catch (error) {
+    console.error('Error al crear project:', error.message);
+    console.error('Stack completo:', error.stack);
+    res.status(500).send(`Error: ${error.message}`);
+  }
+};
+
 
 
 
