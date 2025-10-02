@@ -2,7 +2,11 @@ extends ../layout.pug
 
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=`/projects/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(
+      action=`/projects/${item.id}?_method=PUT`, 
+      method="POST",
+      style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;"
+    )
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Proyecto
         a.btn.btn-gray(href="/projects") Volver a la lista
@@ -15,25 +19,8 @@ block content
             label.form-label(for="name") Nombre de Proyecto
             input#name.form-control(type="text", name="name", value=item.name || "", required)
           .mb-3
-            label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description", required)= item.description || ""
-          .mb-3
             label.form-label(for="start_date") Fecha de inicio
             input#start_date.form-control(type="date", name="start_date", value=item.start_date || "")
-          .mb-3
-            label.form-label(for="client_id") Cliente
-            select#client_id.form-select(name="client_id", required)
-              if clients && clients.length > 0
-                each client in clients
-                  option(
-                    value=client._id 
-                    selected=(item.client_id && client._id.toString() === item.client_id._id.toString())
-                  ) #{client.name}
-              else
-                option(value="") No hay clientes disponibles
-
-        // Columna derecha
-        .col-md-6
           .mb-3
             label.form-label(for="end_date") Fecha de fin
             input#end_date.form-control(type="date", name="end_date", value=item.end_date || "")
@@ -51,16 +38,171 @@ block content
               option(value="pending" selected=(item.status === "pending")) Pendiente
               option(value="in_progress" selected=(item.status === "in_progress")) En progreso
               option(value="completed" selected=(item.status === "completed")) Completado
+
+        // Columna derecha
+        .col-md-6
           .mb-3
-            label.form-label(for="team_id") Equipo
-            select#team_id.form-select(name="team_id", required)
-              if teams && teams.length > 0
-                each team in teams
+            label.form-label(for="client_id") Cliente
+            select#client_id.form-select(name="client_id", required)
+              if clients && clients.length > 0
+                each client in clients
+                  option(
+                    value=client._id 
+                    selected=(item.client_id && client._id.toString() === item.client_id._id.toString())
+                  ) #{client.name}
+              else
+                option(value="") No hay clientes disponibles
+
+          .mb-3
+            label.form-label(for="description") Descripción
+            textarea#description.form-control(name="description", required)= item.description || ""
+
+          .mb-3
+            label.form-label(for="project_manager") Project Manager
+            select#project_manager.form-select(name="project_manager", required)
+              if managers && managers.length > 0
+                each manager in managers
+                  option(
+                    value=manager._id
+                    selected=(item.project_manager && manager._id.toString() === item.project_manager._id.toString())
+                  ) #{manager.full_name}
+              else
+                option(value="") No hay managers disponibles
+
+          .mb-3
+            label.form-label Equipos asignados
+            ul#teams-list.list-group
+              if item.teams && item.teams.length > 0
+                each team, index in item.teams
+                  li.list-group-item.d-flex.justify-content-between.align-items-center(
+                    data-team-id=team.team_id._id
+                    data-team-name=team.team_id.name
+                    data-team-leader-name=team.team_id.team_leader.full_name
+                  )
+                    span #{team.team_id.name} - Líder: #{team.team_id.team_leader.full_name}
+                    button.btn.btn-sm.btn-danger(type="button", onclick="removeTeam(this)") Quitar
+              else
+                li#no-teams.list-group-item No hay equipos aún
+
+          .mb-3
+            label.form-label Agregar equipo
+            select#add_team.form-select(onchange="handleTeamSelection()")
+              option(value="") Seleccionar equipo...
+              if allTeams && allTeams.length > 0
+                each team in allTeams
                   option(
                     value=team._id
-                    selected=(item.team_id && team._id.toString() === item.team_id._id.toString())
-                  ) #{team.name}
+                    data-leader-name=team.team_leader.full_name
+                  ) #{team.name} - Líder: #{team.team_leader.full_name}
               else
                 option(value="") No hay equipos disponibles
 
       button.btn.btn-success.mt-3(type="submit") Actualizar Proyecto
+
+  //- Scripts para manejar equipos
+  script.
+    let selectedTeamId = null;
+    let selectedTeamName = null;
+    let selectedTeamLeaderName = null;
+
+    function handleTeamSelection() {
+      const select = document.getElementById('add_team');
+      const selectedOption = select.options[select.selectedIndex];
+      if (!selectedOption.value) return;
+
+      selectedTeamId = selectedOption.value;
+      selectedTeamName = selectedOption.textContent.split(' - ')[0];
+      selectedTeamLeaderName = selectedOption.getAttribute('data-leader-name');
+      addTeam();
+    }
+
+    function addTeam() {
+      if (!selectedTeamId) return;
+
+      const teamsList = document.getElementById('teams-list');
+      const noTeamsItem = document.getElementById('no-teams');
+      if (noTeamsItem) noTeamsItem.remove();
+
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.setAttribute('data-team-id', selectedTeamId);
+      li.setAttribute('data-team-name', selectedTeamName);
+      li.setAttribute('data-team-leader-name', selectedTeamLeaderName);
+
+      const span = document.createElement('span');
+      span.textContent = `${selectedTeamName} - Líder: ${selectedTeamLeaderName}`;
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-sm btn-danger';
+      btn.textContent = 'Quitar';
+      btn.onclick = () => removeTeam(btn);
+
+      li.appendChild(span);
+      li.appendChild(btn);
+      teamsList.appendChild(li);
+
+      // Quitar opción del select
+      const optionToRemove = document.querySelector(`#add_team option[value="${selectedTeamId}"]`);
+      if (optionToRemove) optionToRemove.remove();
+
+      selectedTeamId = null;
+      selectedTeamName = null;
+      selectedTeamLeaderName = null;
+
+      updateTeamsInputs();
+    }
+
+    function removeTeam(button) {
+      const li = button.parentElement;
+      li.remove();
+
+      const teamsList = document.getElementById('teams-list');
+      if (!teamsList.querySelector('li')) {
+        const noTeamsLi = document.createElement('li');
+        noTeamsLi.id = 'no-teams';
+        noTeamsLi.className = 'list-group-item';
+        noTeamsLi.textContent = 'No hay equipos aún';
+        teamsList.appendChild(noTeamsLi);
+      }
+
+      const teamId = li.getAttribute('data-team-id');
+      const teamName = li.getAttribute('data-team-name');
+      const teamLeaderName = li.getAttribute('data-team-leader-name');
+
+      const select = document.getElementById('add_team');
+      const option = document.createElement('option');
+      option.value = teamId;
+      option.setAttribute('data-leader-name', teamLeaderName);
+      option.textContent = `${teamName} - Líder: ${teamLeaderName}`;
+      select.appendChild(option);
+
+      updateTeamsInputs();
+    }
+
+    function updateTeamsInputs() {
+      const form = document.querySelector('form');
+      // Eliminar inputs previos
+      form.querySelectorAll('input[name^="team_"], input[name="teams_count"]').forEach(i => i.remove());
+
+      const teamsList = document.getElementById('teams-list');
+      const items = teamsList.querySelectorAll('li:not(#no-teams)');
+
+      items.forEach((li, index) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `team_${index}`;
+        input.value = li.getAttribute('data-team-id');
+        form.appendChild(input);
+      });
+
+      const countInput = document.createElement('input');
+      countInput.type = 'hidden';
+      countInput.name = 'teams_count';
+      countInput.value = items.length;
+      form.appendChild(countInput);
+    }
+
+    // Actualizar inputs al cargar la página y antes de enviar
+    document.addEventListener('DOMContentLoaded', updateTeamsInputs);
+    document.querySelector('form').addEventListener('submit', updateTeamsInputs);

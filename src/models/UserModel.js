@@ -17,6 +17,15 @@ const userSchema = new mongoose.Schema({
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
+// Virtuals
+userSchema.virtual('full_name').get(function () {
+    return `${this.first_name} ${this.last_name}`;
+});
+
+// Para que siempre se incluyan los virtuals
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
+
 class UserModel extends BaseModel {
     constructor() {
         super(userSchema, 'User'); // Nombre del modelo único

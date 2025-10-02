@@ -11,36 +11,44 @@ const projectSchema = new mongoose.Schema({
     budget: { type: Number },
     billing_type: { type: String, enum: ['hourly', 'fixed'], default: 'fixed' },
     status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    team_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
+    project_manager: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    teams: [
+        {
+            team_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
+        }
+    ]
 }, {
-    collection: 'projects' // timestamps automáticos
+    collection: 'projects'
 });
 
 class ProjectModel extends BaseModel {
     constructor() {
-        super(projectSchema, 'Project'); // Nombre del modelo único
+        super(projectSchema, 'Project');
     }
 
     async findAll() {
         return super.findAll([
             { path: 'client_id' },
+            { path: 'project_manager', model: 'User', select: 'first_name last_name' }, 
             {
-                path: 'team_id',
-                populate: { path: 'team_leader', model: 'User' } // Populate anidado para team_leader
+                path: 'teams.team_id',
+                select: 'name team_leader', // traigo el nombre del equipo y el líder
+                populate: { path: 'team_leader', model: 'User', select: 'first_name last_name' } // anidado
             }
-        ]); // populate automático
+        ]);
     }
 
     async findById(id) {
         return super.findById(id, [
             { path: 'client_id' },
+            { path: 'project_manager', model: 'User', select: 'first_name last_name' },
             {
-                path: 'team_id',
-                populate: { path: 'team_leader', model: 'User' } // Populate anidado para team_leader
+                path: 'teams.team_id',
+                select: 'name team_leader',
+                populate: { path: 'team_leader', model: 'User', select: 'first_name last_name' }
             }
-        ]); // populate automático
+        ]);
     }
-
 }
 
 export default new ProjectModel();

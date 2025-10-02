@@ -21,11 +21,20 @@ block content
         th Descripción
         td= item.description
       tr
-        th Fecha de inicio
-        td= item.start_date
+        th Lider de proyecto
+        td=  item.project_manager.full_name
       tr
-        th Fecha de fin
-        td= item.end_date
+        th Equipos de Trabajo
+        td
+          if item.teams && item.teams.length > 0
+            ul
+              each team in item.teams
+                li= `${team.team_id.name} - Team Leader: ${team.team_id.team_leader.full_name}`
+          else
+            span.text-muted Sin miembros
+      tr
+        th Estado
+        td= item.status
       tr
         th Presupuesto
         td= item.budget
@@ -33,14 +42,12 @@ block content
         th Facturación
         td= item.billing_type
       tr
-        th Estado
-        td= item.status
+        th Fecha de inicio
+        td= item.start_date
       tr
-        th Equipo asignado
-        td=  item.team_id ? item.team_id.name : 'N/A'
-      tr
-        th Lider de equipo
-        td=  item.team_id.team_leader.first_name + ' ' + item.team_id.team_leader.last_name
+        th Fecha de fin
+        td= item.end_date
+    
   .mt-3
     a.btn.btn-gray.me-2(href="/projects") Volver a la lista
     a.btn.btn-primary.me-2(href=`/projects/${item.id}/edit`) Editar
