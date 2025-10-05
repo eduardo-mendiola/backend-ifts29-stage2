@@ -13,16 +13,22 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="first_name") Nombre
-            input#first_name.form-control(type="text", name="first_name", value=item.first_name || "", required)
+            input#first_name.form-control(type="text", name="first_name", value=item.first_name || "", required, tabindex="1")
+          .mb-3
+            label.form-label(for="dni") DNI
+            input#dni.form-control(type="text", name="dni", value=item.dni || "", required, tabindex="3")
           .mb-3
             label.form-label(for="email") Email
-            input#email.form-control(type="email", name="email", value=item.email || "", required)
+            input#email.form-control(type="email", name="email", value=item.email || "", required, tabindex="5")
           .mb-3
             label.form-label(for="phone") Teléfono
-            input#phone.form-control(type="text", name="phone", value=item.phone || "")
+            input#phone.form-control(type="text", name="phone", value=item.phone || "", required, tabindex="7")
+          .mb-3
+            label.form-label(for="username") Nombre de usuario
+            input#username.form-control(type="text", name="username", value=item.username || "", required, tabindex="9")
           .mb-3
             label.form-label(for="role_id") Rol
-            select#role_id.form-select(name="role_id", required)
+            select#role_id.form-select(name="role_id", required, tabindex="11")
               each role in roles
                 option(
                   value=role._id 
@@ -33,13 +39,10 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="last_name") Apellido
-            input#last_name.form-control(type="text", name="last_name", value=item.last_name || "", required)
-          .mb-3
-            label.form-label(for="password_hash") Contraseña
-            input#password_hash.form-control(type="password", name="password_hash", value=item.password_hash || "", required)
+            input#last_name.form-control(type="text", name="last_name", value=item.last_name || "", required, tabindex="2")
           .mb-3
             label.form-label(for="area_id") Área
-            select#area_id.form-select(name="area_id", required)
+            select#area_id.form-select(name="area_id", required, tabindex="4")
               each area in areas
                 option(
                   value=area._id 
@@ -47,11 +50,16 @@ block content
                 ) #{area.name_area}
           .mb-3
             label.form-label(for="monthly_salary") Salario Mensual
-            input#monthly_salary.form-control(type="number", name="monthly_salary", value=item.monthly_salary || "", required)
+            input#monthly_salary.form-control(type="number", name="monthly_salary", value=item.monthly_salary || "", required, tabindex="6", min="0")
           .mb-3
             label.form-label(for="is_active") Estado
-            select#is_active.form-select(name="is_active", required)
+            select#is_active.form-select(name="is_active", required, tabindex="8")
               option(value="true" selected=(item.is_active === true)) Activo
               option(value="false" selected=(item.is_active === false)) Inactivo
+          .mb-3
+            label.form-label(for="password_hash") Contraseña
+            input#password_hash.form-control(type="password", name="password_hash", value=item.password_hash || "", required, tabindex="10")
 
-      button.btn.btn-success.mt-3(type="submit") Actualizar Usuario
+      button.btn.btn-success.mt-3(type="submit", tabindex="12") Actualizar Usuario
+
+    

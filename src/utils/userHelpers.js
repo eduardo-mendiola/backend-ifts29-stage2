@@ -9,4 +9,3 @@ export function filterManagers(users) {
         managerRoles.includes(user.role_id.name)
     );
 }
-

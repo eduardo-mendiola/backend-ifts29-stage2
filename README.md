@@ -5,7 +5,7 @@
 **Materia:** Desarrollo de Sistemas Web (Back End)  
 **Profesor:** Emir Eliezer Garcia Ontiveros  
 **Comisión:** A  
-**Alumno:** - Mendiola, Eduardo E.  
+**Alumno:** Mendiola, Eduardo E.  
 **Fecha de la Entrega:** 28-09-2025 (Estimada)  
 
 ---

@@ -15,6 +15,7 @@ block content
         th Código
         th Nombre
         th Apellido
+        th Rol
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
@@ -23,6 +24,7 @@ block content
           td= item.code
           td= item.first_name
           td= item.last_name
+          td= item.role_id.name
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}`) Ver
             a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}/edit`) Editar
