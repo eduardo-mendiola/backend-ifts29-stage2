@@ -1,19 +1,19 @@
 extends ../layout.pug
-//- views/role/edit.pug
+//- views/positions/edit.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=`/areas/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/positions/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 Editar Area
-        a.btn.btn-gray(href="/areas", tabindex="4") Volver a la lista
+        h1.mb-0 Editar Cargo (Posición)
+        a.btn.btn-gray(href="/positions", tabindex="4") Volver a la lista
 
       // Contenedor de 1 columnas
       .row.g-3
         // Columna izquierda
         .col-md-6
           .mb-3
-            label.form-label(for="name_area") Nombre
-            input#name_area.form-control(type="text", name="name_area", value=item.name_area || "", required, tabindex="1")
+            label.form-label(for="name") Nombre
+            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
           .mb-3
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description" || "", required, tabindex="2").value=item.description

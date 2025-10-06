@@ -3,7 +3,7 @@ import Position from '../models/PositionModel.js';
 
 class PositionController extends BaseController {
     constructor() {
-        super(Position, 'position', 'POS-');
+        super(Position, 'positions', 'POS-');
     }
 }
 
