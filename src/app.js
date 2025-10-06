@@ -13,6 +13,7 @@ import taskRoutes from './routes/task-routes.js';
 import teamRoutes from './routes/team-routes.js';
 import teamRolRoutes from './routes/team-rol-routes.js';
 import timeEntryRoutes from './routes/time-entry-routes.js';
+import positionRoutes from './routes/position-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -24,6 +25,7 @@ import TaskController from './controllers/TaskController.js';
 import TeamController from './controllers/TeamController.js'; 
 import TeamRolController from './controllers/TeamRolController.js'; 
 import TimeEntryController from './controllers/TimeEntryController.js';
+import PositionController from './controllers/PositionController.js';
 
 // ||----------------------------------------------------------------------------------------------------------||
 
@@ -140,6 +142,14 @@ app.get('/time-entries/:id', TimeEntryController.getByIdView);
 app.post('/time-entries', TimeEntryController.createView);        
 app.put('/time-entries/:id', TimeEntryController.updateView); 
 
+// Vistas Pug para positions
+app.get('/positions', PositionController.getAllView);          
+app.get('/positions/new', PositionController.newView);        
+app.get('/positions/:id/edit', PositionController.getEditView); 
+app.get('/positions/:id', PositionController.getByIdView);  
+app.post('/positions', PositionController.createView);        
+app.put('/positions/:id', PositionController.updateView); 
+
 
 
 
@@ -153,6 +163,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/team-roles', teamRolRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
+app.use('/api/positions', positionRoutes);
 
 
 // Manejo de rutas no encontradas (404)

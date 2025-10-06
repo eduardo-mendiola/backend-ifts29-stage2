@@ -35,8 +35,13 @@ block content
                   selected=(item.area_id && area._id.toString() === item.area_id._id.toString())
                 ) #{area.name_area}
           .mb-3
-            label.form-label(for="position") Cargo
-            input#position.form-control(type="text", name="position", value="CEO", tabindex="17")
+            label.form-label(for="position_id") Cargo (posición)
+            select#position_id.form-select(name="position_id", required, tabindex="17")
+              each position in positions
+                option(
+                  value=position._id 
+                  selected=(item.position_id && position._id.toString() === item.position_id._id.toString())
+                ) #{position.name}
           .mb-3
             label.form-label(for="role_id") Rol (acceso)
             select#role_id.form-select(name="role_id", required, tabindex="19")

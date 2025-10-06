@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   },
   gender: { type: String, enum: ['male', 'female', 'other'] },
   hire_date: { type: Date },
-  position: { type: String },
+  position_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Position' },
   employment_type: { type: String, enum: ['full-time', 'part-time', 'contractor'] },
   supervisor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   profile_image: { type: String },
@@ -51,11 +51,11 @@ class UserModel extends BaseModel {
   }
 
   async findAll() {
-    return super.findAll(['role_id', 'area_id', 'supervisor_id']); // populate automático
+    return super.findAll(['role_id', 'area_id', 'supervisor_id', 'position_id']); // populate automático
   }
 
   async findById(id) {
-    return super.findById(id, ['role_id', 'area_id', 'supervisor_id']);
+    return super.findById(id, ['role_id', 'area_id', 'supervisor_id', 'position_id']); // populate automático
   }
 }
 

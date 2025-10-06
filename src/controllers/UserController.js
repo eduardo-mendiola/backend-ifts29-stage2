@@ -2,6 +2,8 @@ import BaseController from './BaseController.js';
 import User from '../models/UserModel.js';
 import Role from '../models/RoleModel.js';
 import Area from '../models/AreaModel.js';
+import Position from '../models/PositionModel.js';
+import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class UserController extends BaseController {
@@ -16,9 +18,11 @@ class UserController extends BaseController {
             const user = await this.model.findById(id); // populate automático (role_id, area_id, supervisor_id)
             if (!user) return res.render('error404', { title: 'Usuario no encontrado' });
 
+            const allUsers = await User.findAll(); 
             const roles = await Role.findAll();
             const areas = await Area.findAll();
-            const supervisors = await User.findAll(); // otros usuarios para seleccionar supervisor
+            const positions = await Position.findAll();
+            const supervisors = await filterManagers(allUsers); 
 
             // enums disponibles
             const genderOptions = ['male', 'female', 'other'];
@@ -32,6 +36,7 @@ class UserController extends BaseController {
                 item: formattedUser,
                 roles,
                 areas,
+                positions,
                 supervisors,
                 genderOptions,
                 employmentTypes
@@ -45,18 +50,22 @@ class UserController extends BaseController {
     // Sobrescribimos newView para incluir listas y enums
     newView = async (req, res) => {
         try {
+            const allUsers = await User.findAll();
             const roles = await Role.findAll();
             const areas = await Area.findAll();
-            const supervisors = await User.findAll();
+            const positions = await Position.findAll();
+            const supervisors = await filterManagers(allUsers); 
 
             const genderOptions = ['male', 'female', 'other'];
             const employmentTypes = ['full-time', 'part-time', 'contractor'];
 
+            
             res.render(`${this.viewPath}/new`, {
                 title: `Nuevo Usuario`,
                 item: {},
                 roles,
                 areas,
+                positions,
                 supervisors,
                 genderOptions,
                 employmentTypes

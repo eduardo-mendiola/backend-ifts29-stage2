@@ -50,7 +50,7 @@ block content
         td= item.role_id.name
       tr
         th Posición
-        td= item.position
+        td= item.position_id ? item.position_id.name : 'N/A'
       tr
         th Tipo de contrato
         td= item.employment_type
