@@ -20,36 +20,6 @@ block content
       tr 
         th DNI
         td= item.dni
-      tr 
-        th Nombre de usuario
-        td= item.username
-      tr 
-        th Contraseña
-        td= item.password_hash
-      tr
-        th Email
-        td= item.email
-      tr
-        th Teléfono
-        td= item.phone
-      tr
-        th Rol
-        td= item.role_id.name
-      tr
-        th Área
-        td= item.area_id.name_area
-      tr
-        th Posición
-        td= item.position
-      tr
-        th Tipo de empleo
-        td= item.employment_type
-      tr
-        th Supervisor
-        td= item.supervisor_id ? `${item.supervisor_id.first_name} ${item.supervisor_id.last_name}` : 'N/A'
-      tr
-        th Género
-        td= item.gender
       tr
         th Nacionalidad
         td= item.nationality
@@ -57,14 +27,14 @@ block content
         th Fecha de nacimiento
         td= item.birth_date ? new Date(item.birth_date).toLocaleDateString('es-AR') : 'N/A'
       tr
-        th Fecha de ingreso
-        td= item.hire_date ? new Date(item.hire_date).toLocaleDateString('es-AR') : 'N/A'
+        th Género
+        td= item.gender
       tr
-        th Salario mensual
-        td= item.monthly_salary
+        th Email
+        td= item.email
       tr
-        th Estado
-        td= item.is_active ? 'Activo' : 'Inactivo'
+        th Teléfono
+        td= item.phone
       tr
         th Dirección
         td
@@ -72,6 +42,33 @@ block content
             | #{item.address.street} #{item.address.number}, #{item.address.city}, #{item.address.province}, #{item.address.country}, CP #{item.address.postal_code}
           else
             | N/A
+      tr
+        th Área
+        td= item.area_id.name_area
+      tr
+        th Rol
+        td= item.role_id.name
+      tr
+        th Posición
+        td= item.position
+      tr
+        th Tipo de contrato
+        td= item.employment_type
+      tr
+        th Fecha de ingreso
+        td= item.hire_date ? new Date(item.hire_date).toLocaleDateString('es-AR') : 'N/A'
+      tr
+        th Salario mensual
+        td= item.monthly_salary
+      tr
+        th Supervisor
+        td= item.supervisor_id ? `${item.supervisor_id.first_name} ${item.supervisor_id.last_name}` : 'N/A'
+      tr 
+        th Nombre de usuario
+        td= item.username
+      tr 
+        th Contraseña
+        td= item.password_hash      
       tr
         th Foto de perfil
         td
@@ -82,6 +79,9 @@ block content
       tr
         th Ultimo inicio de sesión
         td= item.last_login ? new Date(item.last_login).toLocaleString('es-AR') : 'N/A'
+      tr
+        th Estado
+        td= item.is_active ? 'Activo' : 'Inactivo'
       tr
         th Fecha de creación
         td= item.created_at
