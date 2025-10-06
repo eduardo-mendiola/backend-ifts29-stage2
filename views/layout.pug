@@ -45,6 +45,35 @@ html(lang="es")
         overflow-y: auto; /* scroll vertical si es necesario */
       }
 
+      /* Estilo general de tablas */
+      .table {
+        table-layout: auto; 
+        width: 100%;
+        word-wrap: break-word; 
+      }
+
+      /* Primera columna numérica (autoajuste) */
+      .table td:first-child,
+      .table th:first-child {
+        width: auto;
+        white-space: nowrap; 
+        text-align: center;  
+      }
+
+      /* Columna de acciones */
+      .table td:last-child,
+      .table th:last-child {
+        width: 20%;
+        white-space: nowrap; 
+        text-align: right;
+      }
+
+      /* Botones */
+      .table .btn {
+        display: inline-block;
+        margin-bottom: 4px; 
+      }
+
   body
     .d-flex.h-100
       // Sidebar

@@ -152,11 +152,6 @@ app.use('/api/team-roles', teamRolRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 
 
-//Manejo de errores 404 para rutas no encontradas
-// app.use((req, res, next) => {
-//     res.render('error404', { title: 'Error'});
-// });
-
 // Manejo de rutas no encontradas (404)
 app.use((req, res) => {
     res.status(404);
