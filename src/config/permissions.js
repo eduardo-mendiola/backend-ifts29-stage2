@@ -1,0 +1,35 @@
+export const allPermissions = [
+  'view_users',
+  'edit_users',
+  'create_users',
+  'delete_users',
+  'view_projects',
+  'edit_projects',
+  'create_projects',
+  'delete_projects',
+  'view_tasks',
+  'edit_tasks',
+  'create_tasks',
+  'delete_tasks',
+  'log_time',
+  'view_reports',
+  'manage_roles',
+];
+
+export const permissionLabels = {
+  view_users: "Usuarios: Ver",
+  edit_users: "Usuarios: Editar",
+  create_users: "Usuarios: Crear",
+  delete_users: "Usuarios: Eliminar",
+  view_projects: "Proyectos: Ver",
+  edit_projects: "Proyectos: Editar",
+  create_projects: "Proyectos: Crear",
+  delete_projects: "Proyectos: Eliminar",
+  view_tasks: "Tareas: Ver",
+  edit_tasks: "Tareas: Editar",
+  create_tasks: "Tareas: Crear",
+  delete_tasks: "Tareas: Eliminar",
+  log_time: "Registrar Horas",
+  view_reports: "Reportes: Ver",
+  manage_roles: "Roles: Gestionar"
+};

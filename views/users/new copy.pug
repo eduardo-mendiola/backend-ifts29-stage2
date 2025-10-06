@@ -1,0 +1,101 @@
+extends ../layout.pug
+
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/users", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Crear Nuevo Usuario
+        a.btn.btn-gray(href="/users", tabindex="13") Volver a la lista
+
+      // Contenedor de 2 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="first_name") Nombre
+            input#first_name.form-control(type="text", name="first_name", required, tabindex="1")
+          .mb-3
+            label.form-label(for="dni") DNI
+            input#dni.form-control(type="text", name="dni", required, tabindex="3")
+          .mb-3
+            label.form-label(for="email") Email
+            input#email.form-control(type="email", name="email", required, tabindex="5")
+          .mb-3
+            label.form-label(for="phone") Teléfono
+            input#phone.form-control(type="text", name="phone", tabindex="7")
+          .mb-3
+            label.form-label(for="username") Nombre de usuario
+            input#username.form-control(type="text", name="username", tabindex="9")
+          .mb-3
+            label.form-label(for="role_id") Rol
+            select#role_id.form-select(name="role_id", required, tabindex="11")
+              each role in roles
+                option(
+                  value=role._id 
+                  selected=(item.role_id && role._id.toString() === item.role_id._id.toString())
+                ) #{role.name}
+
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="last_name") Apellido
+            input#last_name.form-control(type="text", name="last_name", required, tabindex="2")
+          .mb-3
+            label.form-label(for="area_id") Área
+            select#area_id.form-select(name="area_id", required, tabindex="4")
+              each area in areas
+                option(
+                  value=area._id 
+                  selected=(item.area_id && area._id.toString() === item.area_id._id.toString())
+                ) #{area.name_area}
+          .mb-3
+            label.form-label(for="monthly_salary") Salario Mensual
+            input#monthly_salary.form-control(type="number", name="monthly_salary", tabindex="6", min="0")
+          .mb-3
+            label.form-label(for="is_active") Estado
+            select#is_active.form-select(name="is_active", required, tabindex="8")
+              option(value="true" selected=(item.is_active === true)) Activo
+              option(value="false" selected=(item.is_active === false)) Inactivo
+          .mb-3
+            label.form-label(for="password_hash") Contraseña
+            input#password_hash.form-control(type="text", name="password_hash", required, tabindex="10")
+
+      button.btn.btn-primary.mt-3(type="submit", tabindex="12") Crear Usuario
+
+  script.
+    const firstNameInput = document.getElementById('first_name');
+    const lastNameInput = document.getElementById('last_name');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password_hash');
+    const userDefault = "";
+    const passDefault = "";
+
+    function generateRandomPassword(length = 10) {
+      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        password += chars[randomIndex];
+      }
+      return password;
+    }
+
+
+    function generateUsernameAndPass() {
+      const firstName = firstNameInput.value.trim().toLowerCase();
+      const lastName = lastNameInput.value.trim().toLowerCase();
+      const randomNumber = Math.floor(100 + Math.random() * 9999); 
+      if (firstName && lastName) {
+        usernameInput.value = `${firstName}_${lastName}_${randomNumber}`;
+        passwordInput.value = generateRandomPassword(15);
+      } else {
+        usernameInput.value = userDefault;
+        passwordInput.value = userDefault;
+      }
+    }
+
+    firstNameInput.addEventListener('input', generateUsernameAndPass);
+    lastNameInput.addEventListener('input', generateUsernameAndPass);
+    
+
+   

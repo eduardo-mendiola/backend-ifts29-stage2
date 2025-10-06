@@ -7,15 +7,29 @@ block content
         h1.mb-0 Editar Rol
         a.btn.btn-gray(href="/roles", tabindex="4") Volver a la lista
 
-      // Contenedor de 1 columnas
+      // Contenedor de 1 columna
       .row.g-3
-        // Columna izquierda
         .col-md-6
           .mb-3
             label.form-label(for="name") Nombre
-            input#first_name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
+            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
           .mb-3
             label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description" || "", required, tabindex="2").value=item.description
+            textarea#description.form-control(name="description", required, tabindex="2")= item.description
+          .mb-3
+            label.form-label Permisos
+            .d-flex.flex-column
+              each perm in allPermissions
+                .form-check
+                  input.form-check-input(
+                    type="checkbox",
+                    name="permissions",
+                    value=perm,
+                    checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString()))
+                  )
+                  label.form-check-label #{permissionLabels[perm]}
+
+
+
 
       button.btn.btn-success.mt-3(type="submit", tabindex="3") Actualizar Rol
