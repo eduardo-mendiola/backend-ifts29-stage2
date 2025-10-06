@@ -152,9 +152,21 @@ app.use('/api/team-roles', teamRolRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 
 
-// Manejo de errores 404 para rutas no encontradas
-app.use((req, res, next) => {
-    res.render('error404', { tittle: 'Error'});
+//Manejo de errores 404 para rutas no encontradas
+// app.use((req, res, next) => {
+//     res.render('error404', { title: 'Error'});
+// });
+
+// Manejo de rutas no encontradas (404)
+app.use((req, res) => {
+    res.status(404);
+    if (req.accepts('html')) {
+        res.render('error404', { title: 'Página no encontrada' });
+    } else if (req.accepts('json')) {
+        res.json({ message: 'Ruta no encontrada' });
+    } else {
+        res.type('txt').send('Ruta no encontrada');
+    }
 });
 
 // Exportar la instancia de la aplicación
