@@ -5,7 +5,7 @@ block content
     form.bg-dark.text-white.p-4.rounded.shadow(action="/time-entries", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Registro de Actividad
-        a.btn.btn-gray(href="/time-entries") Volver a la lista
+        a.btn.btn-gray(href="/time-entries", tabindex="11") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -13,10 +13,10 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="date") Fecha de Realización
-            input#date.form-control(type="date", name="date", value=item.date || new Date().toISOString().split('T')[0])
+            input#date.form-control(type="date", name="date", value=item.date || new Date().toISOString().split('T')[0], tabindex="1")
           .mb-3
             label.form-label(for="task_id") Tarea Asociada
-            select#task_id.form-select(name="task_id", required)
+            select#task_id.form-select(name="task_id", required, tabindex="3")
               if tasks && tasks.length > 0
                 each task in tasks
                   option(
@@ -27,10 +27,10 @@ block content
                 option(value="") No hay proyectos disponibles
           .mb-3
             label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description", required)= item.description || ""
+            textarea#description.form-control(name="description", required, tabindex="5")
           .mb-3
             label.form-label(for="user_id") Usuario
-            select#user_id.form-select(name="user_id", required)
+            select#user_id.form-select(name="user_id", required, tabindex="7")
               if users && users.length > 0
                 each user in users
                   option(
@@ -44,25 +44,25 @@ block content
             input#hours_worked.form-control(
               type="number", 
               name="hours_worked", 
-              value=item.hours_worked || "", 
-              step="any"
+              step="any",
+              tabindex="9"
             )
 
         // Columna derecha
         .col-md-6
           .mb-3
             label.form-label(for="billable") Facturable
-            select#billable.form-select(name="billable", required)
+            select#billable.form-select(name="billable", required, tabindex="2")
               option(value="true" selected=(item.billable === true)) Si
               option(value="false" selected=(item.billable === false)) No
           .mb-3
             label.form-label(for="approved") Aprobado
-            select#approved.form-select(name="approvede", required)
+            select#approved.form-select(name="approvede", required, tabindex="4")
               option(value="true" selected=(item.approved === true)) Si
               option(value="false" selected=(item.approved === false)) No
           .mb-3
             label.form-label(for="approved_by") Aprobado por
-            select#approved_by.form-select(name="approved_by", required)
+            select#approved_by.form-select(name="approved_by", required, tabindex="6")
               if managers && managers.length > 0
                 each manager in managers
                   option(
@@ -73,6 +73,6 @@ block content
                 option(value="") No hay líderes disponibles
           .mb-3
             label.form-label(for="supervisor_comment") Comentario del supervisor
-            textarea#supervisor_comment.form-control(name="supervisor_comment", required)= item.supervisor_comment || ""
+            textarea#supervisor_comment.form-control(name="supervisor_comment", required, tabindex="8")
 
-      button.btn.btn-primary.mt-3(type="submit") Crear Registro
+      button.btn.btn-primary.mt-3(type="submit", tabindex="10") Crear Registro

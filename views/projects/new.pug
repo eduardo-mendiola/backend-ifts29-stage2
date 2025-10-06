@@ -5,7 +5,7 @@ block content
     form.bg-dark.text-white.p-4.rounded.shadow(action="/projects", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nuevo Proyecto
-        a.btn.btn-gray(href="/projects") Volver a la lista
+        a.btn.btn-gray(href="/projects", tabindex="12") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -13,24 +13,24 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="name") Nombre de Proyecto
-            input#name.form-control(type="text", name="name", value=item.name || "", required)
+            input#name.form-control(type="text", name="name", required, tabindex="1")
           .mb-3
             label.form-label(for="start_date") Fecha de inicio
-            input#start_date.form-control(type="date", name="start_date", value=item.date || new Date().toISOString().split('T')[0])
+            input#start_date.form-control(type="date", name="start_date", value=item.date || new Date().toISOString().split('T')[0], tabindex="3")
           .mb-3
             label.form-label(for="end_date") Fecha de fin
-            input#end_date.form-control(type="date", name="end_date", value=item.end_date || "")
+            input#end_date.form-control(type="date", name="end_date", tabindex="5")
           .mb-3
             label.form-label(for="budget") Presupuesto
-            input#budget.form-control(type="number", name="budget", value=item.budget || "")
+            input#budget.form-control(type="number", name="budget", tabindex="7")
           .mb-3
             label.form-label(for="billing_type") Tipo de facturación
-            select#billing_type.form-select(name="billing_type", required)
+            select#billing_type.form-select(name="billing_type", required, tabindex="9")
               option(value="hourly" selected=(item.billing_type === "hourly")) Por horas
               option(value="fixed" selected=(item.billing_type === "fixed")) Precio fijo
           .mb-3
             label.form-label(for="status") Estado
-            select#status.form-select(name="status", required)
+            select#status.form-select(name="status", required, tabindex="11")
               option(value="pending" selected=(item.status === "pending")) Pendiente
               option(value="in_progress" selected=(item.status === "in_progress")) En progreso
               option(value="completed" selected=(item.status === "completed")) Completado
@@ -39,7 +39,7 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="client_id") Cliente
-            select#client_id.form-select(name="client_id", required)
+            select#client_id.form-select(name="client_id", required, tabindex="2")
               if clients && clients.length > 0
                 each client in clients
                   option(
@@ -51,11 +51,11 @@ block content
 
           .mb-3
             label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description", required)= item.description || ""
+            textarea#description.form-control(name="description", required, tabindex="4")
 
           .mb-3
             label.form-label(for="project_manager") Project Manager
-            select#project_manager.form-select(name="project_manager", required)
+            select#project_manager.form-select(name="project_manager", required, tabindex="6")
               if managers && managers.length > 0
                 each manager in managers
                   option(
@@ -76,13 +76,13 @@ block content
                     data-team-leader-name=team.team_id.team_leader.full_name
                   )
                     span #{team.team_id.name} - Líder: #{team.team_id.team_leader.full_name}
-                    button.btn.btn-sm.btn-danger(type="button", onclick="removeTeam(this)") Quitar
+                    button.btn.btn-sm.btn-danger(type="button", onclick="removeTeam(this)", tabindex="8") Quitar
               else
                 li#no-teams.list-group-item No hay equipos aún
 
           .mb-3
             label.form-label Agregar equipo
-            select#add_team.form-select(onchange="handleTeamSelection()")
+            select#add_team.form-select(onchange="handleTeamSelection()", tabindex="10")
               option(value="") Seleccionar equipo...
               if allTeams && allTeams.length > 0
                 each team in allTeams
@@ -93,7 +93,7 @@ block content
               else
                 option(value="") No hay equipos disponibles
 
-      button.btn.btn-success.mt-3(type="submit") Crear Proyecto
+      button.btn.btn-success.mt-3(type="submit", tabindex="11") Crear Proyecto
 
   //- Scripts dinámicos para equipos
   script.

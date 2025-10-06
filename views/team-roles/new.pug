@@ -7,22 +7,22 @@ block content
     )
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nuevo Rol de Equipo
-        a.btn.btn-gray(href="/team-roles") Volver a la lista
+        a.btn.btn-gray(href="/team-roles", tabindex="4") Volver a la lista
 
       .row.g-3
         .col-md-6
           .mb-3
             label.form-label(for="name") Título del Rol
-            input#name.form-control(type="text", name="name", value=item.name || "", required)
+            input#name.form-control(type="text", name="name", required, tabindex="1")
           .mb-3
             label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description")= item.description || ""
+            textarea#description.form-control(name="description", tabindex="2")
 
       .mb-3
         // Contenedor para mostrar alert dinámico
         div#alertContainer
 
-      button.btn.btn-primary.mt-3(type="submit") Crear Rol
+      button.btn.btn-primary.mt-3(type="submit", tabindex="3") Crear Rol
 
   script.
     document.addEventListener('DOMContentLoaded', () => {

@@ -6,8 +6,10 @@ html(lang="es")
     meta(name="viewport" content="width=device-width, initial-scale=1")
     link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css")
     link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css")
+    link(rel="icon" type="image/x-icon" href="/favicon.ico")    
     style.
       html, body {
+        font-size: 0.9rem;
         height: 100%;
         margin: 0;
       }
@@ -35,7 +37,7 @@ html(lang="es")
         background-color: #1e1e1e;
       }
       .sidebar {
-        width: 200px;
+        width: 180px;
         height: 100vh;
         position: sticky;
         top: 0;
@@ -71,6 +73,13 @@ html(lang="es")
       .table-index .btn {
         display: inline-block;
         margin-bottom: 4px;
+      }
+
+      /* Cambiar color del borde al enfocar inputs */
+      input:focus, textarea:focus, select:focus {
+        border-color: #2db96eff !important; /* Amarillo */
+        box-shadow: 0 0 0 0.2rem rgba(171, 255, 189, 1) !important; /* Resplandor amarillo */
+        outline: none !important;
       }
 
   body

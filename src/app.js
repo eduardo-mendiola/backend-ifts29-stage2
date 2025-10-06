@@ -25,6 +25,8 @@ import TeamController from './controllers/TeamController.js';
 import TeamRolController from './controllers/TeamRolController.js'; 
 import TimeEntryController from './controllers/TimeEntryController.js';
 
+// ||----------------------------------------------------------------------------------------------------------||
+
 
 // __dirname en ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -41,10 +43,11 @@ app.set('view engine', 'pug')
 app.use(express.json()); // Middleware para parsear cuerpos de solicitud en formato JSON
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(join(__dirname, 'public')))
+app.use(express.static(join(__dirname, '..', 'public')));
 
 // Middleware para soportar otros métodos HTTP como DELETE y PUT
 app.use(methodOverride('_method'));
+
 
 // ||----------------------------------- Rutas para las vistas Pug -----------------------------------------||
 

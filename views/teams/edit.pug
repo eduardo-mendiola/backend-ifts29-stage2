@@ -6,7 +6,7 @@ block content
       
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Equipo
-        a.btn.btn-gray(href="/teams") Volver a la lista
+        a.btn.btn-gray(href="/teams", tabindex="6") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -14,13 +14,13 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="name") Nombre del Equipo
-            input#name.form-control(type="text", name="name", value=item.name || "", required)          
+            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")          
           .mb-3
             label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description", required)= item.description || ""
+            textarea#description.form-control(name="description", required, tabindex="3")= item.description || ""
           .mb-3
             label.form-label(for="team_leader") Líder del Equipo
-            select#team_leader.form-select(name="team_leader", required)
+            select#team_leader.form-select(name="team_leader", required, tabindex="5")
               if managers && managers.length > 0
                 each manager in managers
                   option(
@@ -47,7 +47,7 @@ block content
                     data-default-role-name=member.user_id.role_id.name
                   )
                     span #{member.user_id.first_name} #{member.user_id.last_name} (#{member.team_role_id.name})
-                    button.btn.btn-sm.btn-danger(type="button", onclick="removeMember(this)") Quitar
+                    button.btn.btn-sm.btn-danger(type="button", onclick="removeMember(this)", tabindex="2") Quitar
               else
                 li#no-members.list-group-item No hay miembros aún
 
@@ -56,7 +56,7 @@ block content
             label.form-label Agregar miembro
             .row.g-2
               .col-12
-                select#add_member.form-select(onchange="handleMemberSelection()")
+                select#add_member.form-select(onchange="handleMemberSelection()", tabindex="4")
                   option(value="") Seleccionar usuario...
                   if users && users.length > 0
                     each user in users
@@ -81,7 +81,7 @@ block content
                   button.btn.btn-primary(type="button", onclick="addMember()") Agregar Miembro
                   button.btn.btn-secondary(type="button", onclick="cancelSelection()") Cancelar
 
-      button.btn.btn-success.mt-3(type="submit") Actualizar Equipo
+      button.btn.btn-success.mt-3(type="submit", tabindex="5") Actualizar Equipo
 
   //- Scripts para agregar y quitar miembros dinámicamente
   script.
