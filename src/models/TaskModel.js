@@ -11,6 +11,7 @@ const taskSchema = new mongoose.Schema({
     estimated_hours: { type: Number },
     due_date: { type: Date },
     project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
+    time_entries_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TimeEntry' }],
 }, {
     collection: 'tasks',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
@@ -22,11 +23,25 @@ class TaskModel extends BaseModel {
     }
 
     async findAll() {
-        return super.findAll(['assigned_to', 'project_id']); // populate automático
+        return super.findAll([
+            'assigned_to', 
+            'project_id', 
+            {
+                path: 'time_entries_ids', 
+                populate: 'user_id'
+            }
+        ]); // populate automático
     }   
 
     async findById(id) {
-        return super.findById(id, ['assigned_to', 'project_id']); // populate automático
+        return super.findById(id, [
+            'assigned_to', 
+            'project_id', 
+            {
+                path: 'time_entries_ids', 
+                populate: 'user_id'
+            }
+        ]); // populate automático
     }
     
 }

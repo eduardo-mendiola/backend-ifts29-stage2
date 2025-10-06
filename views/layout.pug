@@ -45,33 +45,32 @@ html(lang="es")
         overflow-y: auto; /* scroll vertical si es necesario */
       }
 
-      /* Estilo general de tablas */
+      /* Estilo general de tablas: neutro para todas */
       .table {
-        table-layout: auto; 
         width: 100%;
-        word-wrap: break-word; 
+        background-color: #1e1e1e;
+        table-layout: auto;
+        word-wrap: break-word;
       }
 
-      /* Primera columna numérica (autoajuste) */
-      .table td:first-child,
-      .table th:first-child {
+      /* Estilos específicos para tablas tipo índice/lista */
+      .table-index td:first-child,
+      .table-index th:first-child {
         width: auto;
         white-space: nowrap; 
         text-align: center;  
       }
 
-      /* Columna de acciones */
-      .table td:last-child,
-      .table th:last-child {
+      .table-index td:last-child,
+      .table-index th:last-child {
         width: 20%;
         white-space: nowrap; 
         text-align: right;
       }
 
-      /* Botones */
-      .table .btn {
+      .table-index .btn {
         display: inline-block;
-        margin-bottom: 4px; 
+        margin-bottom: 4px;
       }
 
   body
@@ -143,34 +142,34 @@ html(lang="es")
 
       // Columna derecha (barra de pestañas + contenido)
       .flex-grow-1.d-flex.flex-column
-        // Barra de pestañas
-        header
-          .bg-dark
-            .container-fluid
-              ul.nav.nav-tabs.bg-dark
-                li.nav-item
-                  a.nav-link.active(href="#") Active
-                li.nav-item.dropdown
-                  a.nav-link.dropdown-toggle(data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false") Dropdown
-                  ul.dropdown-menu
-                    li
-                      a.dropdown-item(href="#") Action
-                    li
-                      a.dropdown-item(href="#") Another action
-                    li
-                      a.dropdown-item(href="#") Something else here
-                    li
-                      hr.dropdown-divider
-                    li
-                      a.dropdown-item(href="#") Separated link
-                li.nav-item
-                  a.nav-link(href="#") Link
-                li.nav-item
-                  a.nav-link(href="#") Link 2
-                li.nav-item
-                  a.nav-link.disabled(aria-disabled="true") Disabled
+        //- Barra de pestañas
+        //- header
+        //-   .bg-dark
+        //-     .container-fluid
+        //-       ul.nav.nav-tabs.bg-dark
+        //-         li.nav-item
+        //-           a.nav-link.active(href="#") Active
+        //-         li.nav-item.dropdown
+        //-           a.nav-link.dropdown-toggle(data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false") Dropdown
+        //-           ul.dropdown-menu
+        //-             li
+        //-               a.dropdown-item(href="#") Action
+        //-             li
+        //-               a.dropdown-item(href="#") Another action
+        //-             li
+        //-               a.dropdown-item(href="#") Something else here
+        //-             li
+        //-               hr.dropdown-divider
+        //-             li
+        //-               a.dropdown-item(href="#") Separated link
+        //-         li.nav-item
+        //-           a.nav-link(href="#") Link
+        //-         li.nav-item
+        //-           a.nav-link(href="#") Link 2
+        //-         li.nav-item
+        //-           a.nav-link.disabled(aria-disabled="true") Disabled
 
-        // Contenido principal
+        //- Contenido principal
         main.flex-grow-1.p-4
           block content
 
