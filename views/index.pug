@@ -2,28 +2,29 @@ extends layout-public.pug
 
 block content
   .d-flex.justify-content-center.align-items-center.min-vh-100
-    form.text-center(style="min-width: 350px;" action="/admin" method="POST")
+    form.mt-5.text-center(style="min-width: 350px;" action="/admin" method="POST")
       // Logo de ejemplo
-      img.mb-4(src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="72" height="57")
-      h1.h3.mb-3.fw-normal Please sign in
+      img.mb-4(src="/images/logo_cw.webp" alt="Logo" width="100" height="100")
+      h1.h1.mb-3.fw-normal.text-center ClickWave
+      h2.fs-5.text.mb-3.fw-normal.text-center Please sign in
 
       // Email
       .form-floating.mb-3
-        input.form-control(type="email" id="floatingInput" name="email" placeholder="name@example.com")
-        label(for="floatingInput") Email address
+        input.form-control(type="email" id="floatingInput" name="email" placeholder="nombreDeUsuario")
+        label(for="floatingInput") Usuario
 
       // Password
       .form-floating.mb-3
-        input.form-control(type="password" id="floatingPassword" name="password" placeholder="Password")
-        label(for="floatingPassword") Password
+        input.form-control(type="password" id="floatingPassword" name="password" placeholder="Contraseña")
+        label(for="floatingPassword") Contraseña
 
       // Remember me
       .form-check.text-start.mb-3
         input.form-check-input(type="checkbox" value="remember-me" id="checkDefault")
-        label.form-check-label(for="checkDefault") Remember me
+        label.form-check-label(for="checkDefault") Recuardame
 
       // Submit
-      button.btn.btn-primary.w-100.py-2(type="submit") Sign in
+      button.btn.btn-primary.w-100.py-2(type="submit") Iniciar Sesión
 
       // Pie de página
-      p.mt-5.mb-3.text-body-secondary © 2017–2025
+      p.mt-3.mb-3.text-light-emphasis © 2025 ClickWave - Eduardo Mendiola
