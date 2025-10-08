@@ -1,22 +1,73 @@
 doctype html
 html(lang="es")
   head
-    title= title
+    title ClickWare Admin
     meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css")
-    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css")
-    link(rel="icon" type="image/x-icon" href="/images/favicon.webp")    
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css")
+
     style.
       html, body {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        overflow: hidden;
         font-size: 0.9rem;
-        height: 100%;
-        margin: 0;
       }
+
       body {
         background-color: #121212;
         color: #f0f0f0;
       }
+
+      .main-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Sidebar general */
+      .sidebar {
+        width: 180px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-color: #212529;
+        color: white;
+        position: sticky;
+        top: 0;
+      }
+
+      /* Header de la sidebar */
+      .sidebar-header {
+        flex-shrink: 0;
+      }
+
+      /* Contenido con scroll */
+      .sidebar-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      /* Scrollbar estilizado */
+      .sidebar-content::-webkit-scrollbar {
+        width: 6px;
+      }
+      .sidebar-content::-webkit-scrollbar-thumb {
+        background-color: #444;
+        border-radius: 3px;
+      }
+      .sidebar-content::-webkit-scrollbar-thumb:hover {
+        background-color: #666;
+      }
+
+      /* Footer de la sidebar */
+      .sidebar-footer {
+        flex-shrink: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Estilo de botones */
       .btn-gray {
         background-color: #6c757d;
         color: #fff;
@@ -33,21 +84,44 @@ html(lang="es")
         background-color: #843534;
         color: #fff;
       }
-      table {
-        background-color: #1e1e1e;
+
+      /* Enlaces del menú */
+      .nav-link {
+        color: #ffffffb3;
+        transition: background-color 0.2s, color 0.2s;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
-      .sidebar {
-        width: 180px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
+      .nav-link:hover {
+        background-color: #2db96e33;
+        color: white;
       }
-      main.flex-grow-1 {
-        height: calc(100vh - 56px - 48px); /* altura de barra superior + tabs */
-        overflow-y: auto; /* scroll vertical si es necesario */
+      .nav-link.active,
+      .nav-link[aria-expanded="true"] {
+        background-color: #2db96eff !important;
+        color: #000 !important;
       }
 
-      /* Estilo general de tablas: neutro para todas */
+
+      /* Área principal */
+      main {
+        flex-grow: 1;
+        overflow-y: auto;
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+      }
+
+      main.flex-grow-1 {
+        background-color: #121212;
+      }
+  
+       /* Estilo general de tablas: neutro para todas */
+
+      table {
+        background-color: #1e1e1e;
+      } 
+
       .table {
         width: 100%;
         background-color: #1e1e1e;
@@ -83,108 +157,102 @@ html(lang="es")
       }
 
   body
-    .d-flex.h-100
-      // Sidebar
-      .sidebar.d-flex.flex-column.flex-shrink-0.p-3.text-white.bg-dark
-        a.d-flex.align-items-center.mb-3.mb-md-0.me-md-auto.text-white.text-decoration-none(href="/")
-          i.bi.bi-c-square-fill.fs-2.me-2
-          span.fs-4 ClickWare
-        hr
-        ul.nav.nav-pills.flex-column.mb-auto
-          li.nav-item
-            a.nav-link.text-white(aria-current="page" href="/")
-              i.bi.bi-house-door.me-2
-              | Inicio
-          li
-            a.nav-link.text-white(href="/users")
-              i.bi.bi-people.me-2
-              | Usuarios
-          li
-            a.nav-link.text-white(href="/projects")
-              i.bi.bi-grid.me-2
-              | Proyectos
-          li
-            a.nav-link.text-white(href="/clients")
-              i.bi.bi-table.me-2
-              | Clientes
-          li
-            a.nav-link.text-white(href="/areas")
-              i.bi.bi-people.me-2
-              | Areas
-          li
-            a.nav-link.text-white(href="/roles")
-              i.bi.bi-people.me-2
-              | Roles 
-          li
-            a.nav-link.text-white(href="/positions")
-              i.bi.bi-people.me-2
-              | Cargos (Posiciones)
-          li
-            a.nav-link.text-white(href="/tasks")
-              i.bi.bi-people.me-2
-              | Tareas
-          li
-            a.nav-link.text-white(href="/teams")
-              i.bi.bi-people.me-2
-              | Equipos
-          li
-            a.nav-link.text-white(href="/team-roles")
-              i.bi.bi-people.me-2
-              | Roles de Equipo
-          li
-            a.nav-link.text-white(href="/time-entries")
-              i.bi.bi-people.me-2
-              | Registro de actividades
-        hr
-        .dropdown
-          a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(
-            href="#" data-bs-toggle="dropdown" aria-expanded="false")
-            img.rounded-circle.me-2(src="https://github.com/mdo.png" alt="" width="32" height="32")
-            strong mdo
-          ul.dropdown-menu.dropdown-menu-dark.text-small.shadow(aria-labelledby="dropdownUser1")
-            li
-              a.dropdown-item(href="#") New project...
-            li
-              a.dropdown-item(href="#") Settings
-            li
-              a.dropdown-item(href="#") Profile
-            li
-              hr.dropdown-divider
-            li
-              a.dropdown-item(href="#") Sign out
+    .main-container
+      // SIDEBAR IZQUIERDA
+      .sidebar
+        // Header del sidebar (logo)
+        .sidebar-header.p-3
+          a.d-flex.align-items-center.mb-3.mb-md-0.me-md-auto.text-white.text-decoration-none(href="/admin/dashboard")
+            i.bi.bi-c-square-fill.fs-2.me-2
+            span.fs-4 ClickWare
+          hr
 
-      // Columna derecha (barra de pestañas + contenido)
-      .flex-grow-1.d-flex.flex-column
-        //- Barra de pestañas
-        //- header
-        //-   .bg-dark
-        //-     .container-fluid
-        //-       ul.nav.nav-tabs.bg-dark
-        //-         li.nav-item
-        //-           a.nav-link.active(href="#") Active
-        //-         li.nav-item.dropdown
-        //-           a.nav-link.dropdown-toggle(data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false") Dropdown
-        //-           ul.dropdown-menu
-        //-             li
-        //-               a.dropdown-item(href="#") Action
-        //-             li
-        //-               a.dropdown-item(href="#") Another action
-        //-             li
-        //-               a.dropdown-item(href="#") Something else here
-        //-             li
-        //-               hr.dropdown-divider
-        //-             li
-        //-               a.dropdown-item(href="#") Separated link
-        //-         li.nav-item
-        //-           a.nav-link(href="#") Link
-        //-         li.nav-item
-        //-           a.nav-link(href="#") Link 2
-        //-         li.nav-item
-        //-           a.nav-link.disabled(aria-disabled="true") Disabled
+        // Contenido scrollable
+        .sidebar-content.px-2
+          ul.nav.nav-pills.flex-column.mb-auto
+            li.nav-item
+              a.nav-link.text-white(aria-current="page" href="/admin/dashboard")
+                i.bi.bi-house-door.me-2
+                | Inicio
 
-        //- Contenido principal
-        main.flex-grow-1.p-4
-          block content
+            li
+              a.nav-link.text-white(href="/users")
+                i.bi.bi-person-badge.me-2
+                | Usuarios
 
-    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js")
-    
+            li
+              a.nav-link.text-white(href="/projects")
+                i.bi.bi-grid.me-2
+                | Proyectos
+
+            // CLIENTES Y CONTACTOS
+            li
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button" aria-expanded="false")
+                i.bi.bi-people.me-2
+                | Clientes y contactos ▼
+              ul.collapse#menuClientes.ms-3
+                li
+                  a.nav-link.text-white(href="/clients") Clientes
+                li
+                  a.nav-link.text-white(href="/contacts") Contactos
+
+            // ROLES Y CARGOS
+            li
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button" aria-expanded="false")
+                i.bi.bi-diagram-3.me-2
+                | Roles y Cargos ▼
+              ul.collapse#menuRoles.ms-3
+                li
+                  a.nav-link.text-white(href="/roles") Roles
+                li
+                  a.nav-link.text-white(href="/positions") Cargos<br>(Posiciones)
+
+            // TAREAS Y REGISTROS
+            li
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button" aria-expanded="false")
+                i.bi.bi-list-check.me-2
+                | Actividades ▼
+              ul.collapse#menuTareas.ms-3
+                li
+                  a.nav-link.text-white(href="/tasks") Tareas
+                li
+                  a.nav-link.text-white(href="/time-entries") Registro de<br>actividades
+
+            // EQUIPOS
+            li
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuEquipos" role="button" aria-expanded="false")
+                i.bi.bi-people-fill.me-2
+                | Equipos ▼
+              ul.collapse#menuEquipos.ms-3
+                li
+                  a.nav-link.text-white(href="/teams") Equipos
+                li
+                  a.nav-link.text-white(href="/team-roles") Roles de Equipo
+                li
+                  a.nav-link.text-white(href="/areas") Áreas
+
+        //- Footer (usuario)
+        .sidebar-footer.p-3
+          .dropdown
+            a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(
+              href="#" data-bs-toggle="dropdown" aria-expanded="false")
+              img.rounded-circle.me-2(src="https://github.com/mdo.png" alt="" width="32" height="32")
+              strong mdo
+            ul.dropdown-menu.dropdown-menu-dark.text-small.shadow(aria-labelledby="dropdownUser1")
+              li
+                a.dropdown-item(href="#") New project...
+              li
+                a.dropdown-item(href="#") Settings
+              li
+                a.dropdown-item(href="#") Profile
+              li
+                hr.dropdown-divider
+              li
+                a.dropdown-item(href="#") Sign out
+
+      //- CONTENIDO PRINCIPAL
+      main.flex-grow-1.p-4
+        block content
+         
+
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js")

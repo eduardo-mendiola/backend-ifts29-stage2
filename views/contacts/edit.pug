@@ -1,0 +1,38 @@
+extends ../layout.pug
+//- views/client/edit.pug
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/clients/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Editar Cliente
+        a.btn.btn-gray(href="/clients", tabindex="8") Volver a la lista
+
+      // Contenedor de 2 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="name") Nombre
+            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
+          .mb-3
+            label.form-label(for="address") Dirección
+            input#address.form-control(type="text", name="address", value=item.address || "", tabindex="3")
+          .mb-3
+            label.form-label(for="email") Email
+            input#email.form-control(type="email", name="email", 
+            value=item.email || "", required, tabindex="5")
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="contact_name") Contacto
+            input#name.form-control(type="text", name="contact_name", value=item.contact_name || "", required, tabindex="2")
+          .mb-3
+            label.form-label(for="phone") Teléfono
+            input#phone.form-control(type="text", name="phone", value=item.phone || "", tabindex="4")
+          .mb-3
+            label.form-label(for="is_active") Estado
+            select#is_active.form-select(name="is_active", required, tabindex="6")
+              option(value="true" selected=(item.is_active === true)) Activo
+              option(value="false" selected=(item.is_active === false)) Inactivo
+
+      button.btn.btn-success.mt-3(type="submit", tabindex="7") Actualizar Cliente

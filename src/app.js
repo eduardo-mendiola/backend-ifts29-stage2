@@ -14,6 +14,7 @@ import teamRoutes from './routes/team-routes.js';
 import teamRolRoutes from './routes/team-rol-routes.js';
 import timeEntryRoutes from './routes/time-entry-routes.js';
 import positionRoutes from './routes/position-routes.js';
+import contactRoutes from './routes/contact-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -26,6 +27,7 @@ import TeamController from './controllers/TeamController.js';
 import TeamRolController from './controllers/TeamRolController.js'; 
 import TimeEntryController from './controllers/TimeEntryController.js';
 import PositionController from './controllers/PositionController.js';
+import ContactController from './controllers/ContactController.js';
 
 // ||----------------------------------------------------------------------------------------------------------||
 
@@ -150,6 +152,14 @@ app.get('/positions/:id', PositionController.getByIdView);
 app.post('/positions', PositionController.createView);        
 app.put('/positions/:id', PositionController.updateView); 
 
+// Vistas Pug para contacts
+app.get('/contacts', ContactController.getAllView);          
+app.get('/contacts/new', ContactController.newView);        
+app.get('/contacts/:id/edit', ContactController.getEditView); 
+app.get('/contacts/:id', ContactController.getByIdView);  
+app.post('/contacts', ContactController.createView);        
+app.put('/contacts/:id', ContactController.updateView); 
+
 
 
 
@@ -164,6 +174,7 @@ app.use('/api/teams', teamRoutes);
 app.use('/api/team-roles', teamRolRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 app.use('/api/positions', positionRoutes);
+app.use('/api/contacts', contactRoutes);
 
 
 // Manejo de rutas no encontradas (404)
