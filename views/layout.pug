@@ -37,19 +37,14 @@ html(lang="es")
         top: 0;
       }
 
-      /* Header de la sidebar */
-      .sidebar-header {
-        flex-shrink: 0;
-      }
+      .sidebar-header { flex-shrink: 0; }
 
-      /* Contenido con scroll */
       .sidebar-content {
         flex-grow: 1;
         overflow-y: auto;
         overflow-x: hidden;
       }
 
-      /* Scrollbar estilizado */
       .sidebar-content::-webkit-scrollbar {
         width: 6px;
       }
@@ -61,13 +56,11 @@ html(lang="es")
         background-color: #666;
       }
 
-      /* Footer de la sidebar */
       .sidebar-footer {
         flex-shrink: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Estilo de botones */
       .btn-gray {
         background-color: #6c757d;
         color: #fff;
@@ -85,7 +78,6 @@ html(lang="es")
         color: #fff;
       }
 
-      /* Enlaces del menú */
       .nav-link {
         color: #ffffffb3;
         transition: background-color 0.2s, color 0.2s;
@@ -99,28 +91,20 @@ html(lang="es")
       }
       .nav-link.active,
       .nav-link[aria-expanded="true"] {
-        background-color: #2db96eff !important;
-        color: #000 !important;
+        background-color: #393939ff !important;
+        color: #ffffffff !important;
       }
 
-
-      /* Área principal */
       main {
         flex-grow: 1;
         overflow-y: auto;
-        background-color: #f8f9fa;
+        background-color: #121212;
         padding: 1.5rem;
       }
 
-      main.flex-grow-1 {
-        background-color: #121212;
-      }
-  
-       /* Estilo general de tablas: neutro para todas */
-
       table {
         background-color: #1e1e1e;
-      } 
+      }
 
       .table {
         width: 100%;
@@ -129,18 +113,17 @@ html(lang="es")
         word-wrap: break-word;
       }
 
-      /* Estilos específicos para tablas tipo índice/lista */
       .table-index td:first-child,
       .table-index th:first-child {
         width: auto;
-        white-space: nowrap; 
-        text-align: center;  
+        white-space: nowrap;
+        text-align: center;
       }
 
       .table-index td:last-child,
       .table-index th:last-child {
         width: 20%;
-        white-space: nowrap; 
+        white-space: nowrap;
         text-align: right;
       }
 
@@ -149,10 +132,9 @@ html(lang="es")
         margin-bottom: 4px;
       }
 
-      /* Cambiar color del borde al enfocar inputs */
       input:focus, textarea:focus, select:focus {
-        border-color: #2db96eff !important; /* Amarillo */
-        box-shadow: 0 0 0 0.2rem rgba(171, 255, 189, 1) !important; /* Resplandor amarillo */
+        border-color: #2db96eff !important;
+        box-shadow: 0 0 0 0.2rem rgba(171, 255, 189, 1) !important;
         outline: none !important;
       }
 
@@ -160,14 +142,12 @@ html(lang="es")
     .main-container
       // SIDEBAR IZQUIERDA
       .sidebar
-        // Header del sidebar (logo)
         .sidebar-header.p-3
           a.d-flex.align-items-center.mb-3.mb-md-0.me-md-auto.text-white.text-decoration-none(href="/admin/dashboard")
             i.bi.bi-c-square-fill.fs-2.me-2
             span.fs-4 ClickWare
           hr
 
-        // Contenido scrollable
         .sidebar-content.px-2
           ul.nav.nav-pills.flex-column.mb-auto
             li.nav-item
@@ -185,9 +165,8 @@ html(lang="es")
                 i.bi.bi-grid.me-2
                 | Proyectos
 
-            // CLIENTES Y CONTACTOS
             li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button" aria-expanded="false")
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")
                 i.bi.bi-people.me-2
                 | Clientes y contactos ▼
               ul.collapse#menuClientes.ms-3
@@ -196,31 +175,28 @@ html(lang="es")
                 li
                   a.nav-link.text-white(href="/contacts") Contactos
 
-            // ROLES Y CARGOS
             li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button" aria-expanded="false")
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button")
                 i.bi.bi-diagram-3.me-2
                 | Roles y Cargos ▼
               ul.collapse#menuRoles.ms-3
                 li
                   a.nav-link.text-white(href="/roles") Roles
                 li
-                  a.nav-link.text-white(href="/positions") Cargos<br>(Posiciones)
+                  a.nav-link.text-white(href="/positions") Cargos
 
-            // TAREAS Y REGISTROS
             li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button" aria-expanded="false")
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button")
                 i.bi.bi-list-check.me-2
                 | Actividades ▼
               ul.collapse#menuTareas.ms-3
                 li
                   a.nav-link.text-white(href="/tasks") Tareas
                 li
-                  a.nav-link.text-white(href="/time-entries") Registro de<br>actividades
+                  a.nav-link.text-white(href="/time-entries") Registro de actividades
 
-            // EQUIPOS
             li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuEquipos" role="button" aria-expanded="false")
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuEquipos" role="button")
                 i.bi.bi-people-fill.me-2
                 | Equipos ▼
               ul.collapse#menuEquipos.ms-3
@@ -231,13 +207,12 @@ html(lang="es")
                 li
                   a.nav-link.text-white(href="/areas") Áreas
 
-        //- Footer (usuario)
         .sidebar-footer.p-3
           .dropdown
             a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(
               href="#" data-bs-toggle="dropdown" aria-expanded="false")
               img.rounded-circle.me-2(src="https://github.com/mdo.png" alt="" width="32" height="32")
-              strong mdo
+              strong Admin
             ul.dropdown-menu.dropdown-menu-dark.text-small.shadow(aria-labelledby="dropdownUser1")
               li
                 a.dropdown-item(href="#") New project...
@@ -250,9 +225,20 @@ html(lang="es")
               li
                 a.dropdown-item(href="#") Sign out
 
-      //- CONTENIDO PRINCIPAL
       main.flex-grow-1.p-4
         block content
-         
 
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js")
+
+    script.
+      // Evitar parpadeo inicial aplicando clases antes de renderizar
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.collapse').forEach(el => {
+          const id = el.id;
+          const isOpen = localStorage.getItem(`collapse-${id}`) === 'true';
+          if (isOpen) el.classList.add('show'); // Aplica sin animación
+          const bsCollapse = new bootstrap.Collapse(el, { toggle: false });
+          el.addEventListener('shown.bs.collapse', () => localStorage.setItem(`collapse-${id}`, 'true'));
+          el.addEventListener('hidden.bs.collapse', () => localStorage.setItem(`collapse-${id}`, 'false'));
+        });
+      });
