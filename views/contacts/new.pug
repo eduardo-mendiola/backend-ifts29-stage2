@@ -11,6 +11,12 @@ block content
       .row.g-3
         // Columna izquierda
         .col-md-6
+          .mb-3 
+            label.form-label(for="client_id") Cliente
+            select#client_id.form-select(name="client_id", required, tabindex="5")
+              option(value="" disabled selected) -- Seleccione un cliente --
+              each client in clients
+                option(value=client.id selected=(item.client_id && item.client_id.toString() === client.id.toString()))= client.name
           .mb-3
             label.form-label(for="name") Nombre
             input#name.form-control(type="text", name="name", required, tabindex="1")

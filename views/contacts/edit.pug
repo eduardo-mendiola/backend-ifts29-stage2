@@ -1,38 +1,73 @@
 extends ../layout.pug
-//- views/client/edit.pug
+//- views/contacts/edit.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=`/clients/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/contacts/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 Editar Cliente
-        a.btn.btn-gray(href="/clients", tabindex="8") Volver a la lista
+        h1.mb-0 Editar Contacto
+        a.btn.btn-gray(href="/contacts", tabindex="16") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
         // Columna izquierda
         .col-md-6
           .mb-3
-            label.form-label(for="name") Nombre
-            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
+            label.form-label(for="task_id") Cliente Asociado
+            select#client_id.form-select(name="client_id", required, tabindex="1")
+              if clients && clients.length > 0
+                each client in clients
+                  option(
+                    value=client._id 
+                    selected=(item.client_id && client._id.toString() === item.client_id._id.toString())
+                  ) #{client.name} - Código: (#{client.code}) 
+              else
+                option(value="") No hay clientes disponibles
           .mb-3
-            label.form-label(for="address") Dirección
-            input#address.form-control(type="text", name="address", value=item.address || "", tabindex="3")
+            label.form-label(for="first_name") Nombre
+            input#first_name.form-control(type="text", name="first_name", value=item.first_name || "", required, tabindex="3")
+          .mb-3
+            label.form-label(for="rol") Rol
+            input#rol.form-control(type="text", name="rol", 
+            value=item.role || "", required, tabindex="5")
           .mb-3
             label.form-label(for="email") Email
             input#email.form-control(type="email", name="email", 
-            value=item.email || "", required, tabindex="5")
+            value=item.email || "", required, tabindex="7")
+          .mb-3
+            label.form-label(for="mobile") Teléfono celular
+            input#mobile.form-control(type="text", name="mobile", value=item.mobile || "", tabindex="9")
+          .mb-3
+            label.form-label(for="is_primary") Tipo de contacto
+            select#is_primary.form-select(name="is_primary", required, tabindex="11")
+              option(value="true" selected=(item.is_primary === true)) Primario
+              option(value="false" selected=(item.is_primary === false)) Secundario
         // Columna derecha
         .col-md-6
           .mb-3
-            label.form-label(for="contact_name") Contacto
-            input#name.form-control(type="text", name="contact_name", value=item.contact_name || "", required, tabindex="2")
+            label.form-label(for="department") Departamento
+            input#last_name.form-control(type="text", name="department", value=item.department || "", required, tabindex="2")
           .mb-3
-            label.form-label(for="phone") Teléfono
-            input#phone.form-control(type="text", name="phone", value=item.phone || "", tabindex="4")
+            label.form-label(for="last_name") Apellido
+            input#last_name.form-control(type="text", name="last_name", value=item.last_name || "", required, tabindex="4")
+          .mb-3
+            label.form-label(for="language") Idioma
+            input#language.form-control(type="text", name="language", value=item.language || "", tabindex="6")
+          .mb-3
+            label.form-label(for="phone") Teléfono fijo
+            input#phone.form-control(type="text", name="phone", value=item.phone || "", tabindex="8")
+          .mb-3
+            label.form-label(for="preferred_contact_method") Método de contacto preferido
+            select#preferred_contact_method.form-select(name="preferred_contact_method", required, tabindex="10")
+              each m in contactOptions
+                option(value=m selected=(item.preferred_contact_method === m))= m  
           .mb-3
             label.form-label(for="is_active") Estado
-            select#is_active.form-select(name="is_active", required, tabindex="6")
+            select#is_active.form-select(name="is_active", required, tabindex="12")
               option(value="true" selected=(item.is_active === true)) Activo
               option(value="false" selected=(item.is_active === false)) Inactivo
+          .mb-3
+            label.form-label(for="notes") Notas
+            textarea#notes.form-control(name="notes", required, tabindex="13")= item.notes
 
-      button.btn.btn-success.mt-3(type="submit", tabindex="7") Actualizar Cliente
+      button.btn.btn-success.mt-3(type="submit", tabindex="14") Actualizar Contacto
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/contacts", tabindex="15") Cancelar

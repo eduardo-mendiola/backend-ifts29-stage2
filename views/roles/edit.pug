@@ -5,7 +5,7 @@ block content
     form.bg-dark.text-white.p-4.rounded.shadow(action=`/roles/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Rol
-        a.btn.btn-gray(href="/roles", tabindex="4") Volver a la lista
+        a.btn.btn-gray(href="/roles", tabindex="5") Volver a la lista
 
       // Contenedor de 1 columna
       .row.g-3
@@ -33,3 +33,4 @@ block content
 
 
       button.btn.btn-success.mt-3(type="submit", tabindex="3") Actualizar Rol
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/roles", tabindex="4") Cancelar

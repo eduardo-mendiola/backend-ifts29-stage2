@@ -5,7 +5,7 @@ block content
     form.bg-dark.text-white.p-4.rounded.shadow(action=`/tasks/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Tarea
-        a.btn.btn-gray(href="/tasks", tabindex="10") Volver a la lista
+        a.btn.btn-gray(href="/tasks", tabindex="11") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -63,3 +63,4 @@ block content
         
 
       button.btn.btn-success.mt-3(type="submit", tabindex="9") Actualizar Tarea
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/tasks", tabindex="10") Cancelar

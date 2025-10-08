@@ -6,7 +6,7 @@ block content
       
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Equipo
-        a.btn.btn-gray(href="/teams", tabindex="6") Volver a la lista
+        a.btn.btn-gray(href="/teams", tabindex="7") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -82,6 +82,7 @@ block content
                   button.btn.btn-secondary(type="button", onclick="cancelSelection()") Cancelar
 
       button.btn.btn-success.mt-3(type="submit", tabindex="5") Actualizar Equipo
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/teams", tabindex="6") Cancelar
 
   //- Scripts para agregar y quitar miembros dinámicamente
   script.

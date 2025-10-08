@@ -14,8 +14,8 @@ const contactSchema = new mongoose.Schema({
   is_primary: { type: Boolean, default: true },
   is_active: { type: Boolean, default: true },
   preffer_contact_method: { type: String, enum: ['email', 'phone', 'none'], default: 'email' },
+  language: { type: String },
   notes: { type: String },
-  birth_date: { type: Date },
 }, {
   collection: 'contacts',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
