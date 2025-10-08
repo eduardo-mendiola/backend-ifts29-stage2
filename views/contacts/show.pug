@@ -37,13 +37,13 @@ block content
         td= item.department
       tr
         th Método de contacto preferido
-        td= item.preferred_contact_method 
+        td= item.preffer_contact_method 
       tr 
         th Idioma 
         td= item.language
       tr 
-        th Es contacto principal
-        td= item.is_primary ? 'Sí' : 'No'
+        th Tipo de contacto
+        td= item.is_primary ? 'Primario' : 'Secundario'
       tr 
         th Notas
         td= item.notes

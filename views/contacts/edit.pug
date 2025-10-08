@@ -56,10 +56,10 @@ block content
             label.form-label(for="phone") Teléfono fijo
             input#phone.form-control(type="text", name="phone", value=item.phone || "", tabindex="8")
           .mb-3
-            label.form-label(for="preferred_contact_method") Método de contacto preferido
-            select#preferred_contact_method.form-select(name="preferred_contact_method", required, tabindex="10")
+            label.form-label(for="preffer_contact_method") Método de contacto preferido
+            select#preffer_contact_method.form-select(name="preffer_contact_method", required, tabindex="10")
               each m in contactOptions
-                option(value=m selected=(item.preferred_contact_method === m))= m  
+                option(value=m selected=(item.preffer_contact_method === m))= m  
           .mb-3
             label.form-label(for="is_active") Estado
             select#is_active.form-select(name="is_active", required, tabindex="12")

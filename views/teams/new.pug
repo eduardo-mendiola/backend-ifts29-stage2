@@ -5,7 +5,7 @@ block content
     form.bg-dark.text-white.p-4.rounded.shadow(action="/teams", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nueva Equipo
-        a.btn.btn-gray(href="/teams", tabindex="6") Volver a la lista
+        a.btn.btn-gray(href="/teams", tabindex="7") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -81,6 +81,7 @@ block content
                   button.btn.btn-secondary(type="button", onclick="cancelSelection()") Cancelar
 
       button.btn.btn-success.mt-3(type="submit", tabindex="5") Crear Equipo
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/teams", tabindex="6") Cancelar
 
   //- Scripts para agregar y quitar miembros dinámicamente
   script.

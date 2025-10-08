@@ -5,7 +5,7 @@ block content
     form.bg-dark.text-white.p-4.rounded.shadow(action="/clients", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nuevo Cliente
-        a.btn.btn-gray(href="/clients", tabindex="8") Volver a la lista
+        a.btn.btn-gray(href="/clients", tabindex="9") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -36,3 +36,4 @@ block content
               option(value="false" selected=(item.is_active === false)) Inactivo
 
       button.btn.btn-primary.mt-3(type="submit", tabindex="7") Crear Cliente
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/clients", tabindex="8") Cancelar

@@ -31,26 +31,24 @@ class ContactController extends BaseController {
     };
 
 
-    // getByIdView = async (req, res) => {
-    //     try {
-    //         const { id } = req.params;
-    //         const contact = await this.model.findById(id);
-    //         if (!contact) return res.render('error404', { title: 'Contacto no encontrado' });
+    // Sobrescribimos newView para incluir listas y enums
+    newView = async (req, res) => {
+        try {
+            const clients = await Client.findAll();
 
-    //         const clients = await Client.findAll();
+            const contactOptions = ['Email', 'Télefono fijo', 'Télefono celular', 'Ninguno'];
 
-
-    //         res.render(`${this.viewPath}/show`, {
-    //             title: `Contacto: ${contact.full_name}`,
-    //             item: contact,
-    //             clients
-    //         });
-    //     } catch (error) {
-    //         console.error('Error en getShowView:', error.message);
-    //         res.status(500).render('error500', { title: 'Error del servidor' });
-    //     }
-    // };
-
+            res.render(`${this.viewPath}/new`, {
+                title: `Nuevo Contacto`,
+                item: {},
+                clients,
+                contactOptions
+            });
+        } catch (error) {
+            console.error('Error al abrir formulario de usuario:', error.message);
+            res.status(500).render('error500', { title: 'Error de servidor' });
+        }
+    };
 
 
 

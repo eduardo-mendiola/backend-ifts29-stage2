@@ -13,7 +13,7 @@ const contactSchema = new mongoose.Schema({
   department: { type: String, required: true },
   is_primary: { type: Boolean, default: true },
   is_active: { type: Boolean, default: true },
-  preffer_contact_method: { type: String, enum: ['email', 'phone', 'none'], default: 'email' },
+  preffer_contact_method: { type: String, enum: ['Email', 'Télefono fijo', 'Télefono celular', 'Ninguno'] },
   language: { type: String },
   notes: { type: String },
 }, {
