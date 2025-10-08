@@ -11,21 +11,42 @@ block content
       tr 
         th Código
         td= item.code
+      tr 
+        th Cliente 
+        td= item.client_id.name
       tr
         th Nombre
-        td= item.name
-      tr
-        th Contacto
-        td= item.contact_name
+        td= item.first_name
+      tr 
+        th Apellido
+        td= item.last_name 
       tr
         th Email
         td= item.email
       tr
-        th Teléfono
+        th Teléfono fijo
         td= item.phone
+      tr 
+        th Teléfono móvil
+        td= item.mobile
+      tr 
+        th Rol 
+        td= item.role
+      tr 
+        th Departamento 
+        td= item.department
       tr
-        th Dirección
-        td= item.address
+        th Método de contacto preferido
+        td= item.preferred_contact_method 
+      tr 
+        th Idioma 
+        td= item.language
+      tr 
+        th Es contacto principal
+        td= item.is_primary ? 'Sí' : 'No'
+      tr 
+        th Notas
+        td= item.notes
       tr
         th Estado
         td= item.is_active ? 'Activo' : 'Inactivo'

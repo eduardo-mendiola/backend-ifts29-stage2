@@ -3,7 +3,7 @@ import Contact from '../models/ContactModel.js';
 
 class ContactController extends BaseController {
     constructor() {
-        super(Contact, 'contact', 'CON-'); 
+        super(Contact, 'contacts', 'CON-'); 
     }
 }
 
