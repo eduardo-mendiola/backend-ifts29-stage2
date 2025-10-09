@@ -47,24 +47,7 @@ class RoleController extends BaseController {
         }
     };
 
-    // newView = async (req, res) => {
-    //     try {
-
-    //         const role = await this.model.findAll();
-
-    //         res.render(`${this.viewPath}/edit`, {
-    //             title: `Editar Rol`,
-    //             item: role,
-    //             allPermissions,
-    //             permissionLabels
-    //         });
-    //     } catch (error) {
-    //         console.error('Error en getEditView:', error.message);
-    //         res.status(500).render('error500', { title: 'Error del servidor' });
-    //     }
-    // };
-
-
+    
     newView = async (req, res) => {
         try {
             // Para un rol nuevo no hay item todavía, solo pasamos un objeto vacío

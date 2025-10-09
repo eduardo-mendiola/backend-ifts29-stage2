@@ -1,39 +1,120 @@
 extends ../layout.pug
-//- views/client/edit.pug
+//- views/clients/edit.pug
 block content
   .d-flex.justify-content-center
     form.bg-dark.text-white.p-4.rounded.shadow(action=`/clients/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Cliente
-        a.btn.btn-gray(href="/clients", tabindex="9") Volver a la lista
+        a.btn.btn-gray(href="/clients", tabindex="99") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
         // Columna izquierda
         .col-md-6
           .mb-3
-            label.form-label(for="name") Nombre
-            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
+            label.form-label(for="client_type") Tipo de Cliente
+            select#client_type.form-select(name="client_type", required, tabindex="1")
+              option(value="company" selected=(item.client_type === 'company')) Empresa
+              option(value="person" selected=(item.client_type === 'person')) Persona
+
           .mb-3
-            label.form-label(for="address") Dirección
-            input#address.form-control(type="text", name="address", value=item.address || "", tabindex="3")
+            label.form-label(for="name") Nombre / Empresa
+            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="2")
+
           .mb-3
-            label.form-label(for="email") Email
-            input#email.form-control(type="email", name="email", 
-            value=item.email || "", required, tabindex="5")
+            label.form-label(for="first_name") Nombre (persona)
+            input#first_name.form-control(type="text", name="first_name", value=item.first_name || "", tabindex="3")
+
+          .mb-3
+            label.form-label(for="last_name") Apellido (persona)
+            input#last_name.form-control(type="text", name="last_name", value=item.last_name || "", tabindex="4")
+
+          .mb-3
+            label.form-label(for="id_type") Tipo de documento
+            input#id_type.form-control(type="text", name="id_type", value=item.id_type || "", tabindex="5")
+
+          .mb-3
+            label.form-label(for="id_number") Número de documento
+            input#id_number.form-control(type="text", name="id_number", value=item.id_number || "", tabindex="6")
+
+          .mb-3
+            label.form-label(for="category") Categoría
+            input#category.form-control(type="text", name="category", value=item.category || "", tabindex="7")
+
+          .mb-3
+            label.form-label(for="company_type") Tipo de empresa
+            input#company_type.form-control(type="text", name="company_type", value=item.company_type || "", tabindex="8")
+
+          .mb-3
+            label.form-label(for="website") Sitio web
+            input#website.form-control(type="text", name="website", value=item.website || "", tabindex="9")
+
+          .mb-3
+            label.form-label(for="email") Email de facturación
+            input#email.form-control(type="email", name="email", value=item.billing_info && item.billing_info.email || item.email || "", required, tabindex="10")
+
+          .mb-3
+            label.form-label(for="phone") Teléfono
+            input#phone.form-control(type="text", name="phone", value=item.phone || "", tabindex="11")
+
+          .mb-3
+            label.form-label(for="address_street") Calle
+            input#address_street.form-control(type="text", name="address_street", value=item.address && item.address.street || "", tabindex="12")
+
+          .mb-3
+            label.form-label(for="address_city") Ciudad
+            input#address_city.form-control(type="text", name="address_city", value=item.address && item.address.city || "", tabindex="13")
+
+          .mb-3
+            label.form-label(for="address_state") Estado / Provincia
+            input#address_state.form-control(type="text", name="address_state", value=item.address && item.address.state || "", tabindex="14")
+
+          .mb-3
+            label.form-label(for="address_postal_code") Código postal
+            input#address_postal_code.form-control(type="text", name="address_postal_code", value=item.address && item.address.postal_code || "", tabindex="15")
+
+          .mb-3
+            label.form-label(for="address_country") País
+            input#address_country.form-control(type="text", name="address_country", value=item.address && item.address.country || "", tabindex="16")
+
+          .mb-3
+            label.form-label(for="address_country_code") Código país
+            input#address_country_code.form-control(type="text", name="address_country_code", value=item.address && item.address.country_code || "", tabindex="17")
+
+          .mb-3
+            label.form-label(for="billing_payment_terms") Términos de pago
+            input#billing_payment_terms.form-control(type="text", name="billing_payment_terms", value=item.billing_info && item.billing_info.payment_terms || "", tabindex="18")
+
+          .mb-3
+            label.form-label(for="billing_currency") Moneda
+            input#billing_currency.form-control(type="text", name="billing_currency", value=item.billing_info && item.billing_info.currency || "", tabindex="19")
+
         // Columna derecha
         .col-md-6
           .mb-3
             label.form-label(for="contact_name") Contacto
-            input#name.form-control(type="text", name="contact_name", value=item.contact_name || "", required, tabindex="2")
-          .mb-3
-            label.form-label(for="phone") Teléfono
-            input#phone.form-control(type="text", name="phone", value=item.phone || "", tabindex="4")
+            input#contact_name.form-control(type="text", name="contact_name", value=item.contact_name || "", tabindex="20")
+
           .mb-3
             label.form-label(for="is_active") Estado
-            select#is_active.form-select(name="is_active", required, tabindex="6")
+            select#is_active.form-select(name="is_active", required, tabindex="21")
               option(value="true" selected=(item.is_active === true)) Activo
               option(value="false" selected=(item.is_active === false)) Inactivo
 
-      button.btn.btn-success.mt-3(type="submit", tabindex="7") Actualizar Cliente
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/clients", tabindex="8") Cancelar
+      button.btn.btn-success.mt-3(type="submit", tabindex="22") Actualizar Cliente
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/clients", tabindex="23") Cancelar
+
+  //- Script para habilitar/deshabilitar campos según tipo de cliente
+  script.
+    const clientTypeSelect = document.getElementById('client_type');
+    const personaFields = ['first_name','last_name','id_type','id_number','category'];
+    const companyFields = ['company_type','name','website'];
+
+    function toggleFields() {
+      const type = clientTypeSelect.value;
+      personaFields.forEach(f => document.getElementById(f).disabled = type !== 'person');
+      companyFields.forEach(f => document.getElementById(f).disabled = type !== 'company');
+    }
+
+    clientTypeSelect.addEventListener('change', toggleFields);
+    window.addEventListener('DOMContentLoaded', toggleFields);

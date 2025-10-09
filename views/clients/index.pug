@@ -1,5 +1,5 @@
 extends ../layout.pug
-//- views/client/index.pug
+//- views/clients/index.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-0 Lista de Clientes
@@ -13,21 +13,41 @@ block content
       tr
         th №
         th Código
-        th Nombre
-        th Contacto
-        th Email
+        th Tipo
+        th Nombre / Empresa
+        th Ciudad
+        th Email de Facturación
         th.text-end.pe-5 Acciones
     tbody
-      each item, index in items
-        tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Nombre: ${item.name}`)
-          td= index + 1
-          td= item.code
-          td= item.name
-          td= item.contact_name
-          td= item.email
-          td.text-end
-            a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}/edit`) Editar
-            form(action=`/api/clients/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
-              input(type="hidden", name="_method", value="DELETE")
-              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+      if items && items.length
+        each item, index in items
+          tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Nombre: ${item.name}`)
+            td= index + 1
+            td= item.code
+            td= item.client_type === 'company' ? 'Empresa' : 'Persona'
+            td
+              if item.client_type === 'company'
+                = item.name
+              else
+                = (item.first_name || '') + ' ' + (item.last_name || '')
+            td
+              if item.address && item.address.city
+                = item.address.city
+              else
+                | —
+            td
+              if item.billing_info && item.billing_info.email
+                = item.billing_info.email
+              else if item.email
+                = item.email
+              else
+                | —
+            td.text-end
+              a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}`) Ver
+              a.btn.btn-gray.btn-sm.me-2(href=`/clients/${item.id}/edit`) Editar
+              form(action=`/api/clients/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+                input(type="hidden", name="_method", value="DELETE")
+                button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+      else
+        tr
+          td(colspan="7", class="text-center py-4 text-muted") No hay clientes registrados.

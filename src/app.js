@@ -74,9 +74,9 @@ app.get('/admin/dashboard', (req, res) => {
 // ||--------------------------- Rutas para las vistas del CRUD (HTML) - Pug -------------------------------||
 // Client
 app.get('/clients/new', ClientController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
-app.post('/clients', ClientController.createView);
-app.get('/clients', ClientController.getAllView);
-app.get('/clients/:id', ClientController.getByIdView);
+app.post('/clients', ClientController.createView); // Ruta para procesar la creación
+app.get('/clients', ClientController.getAllView); // Ruta para listar todos los clientes
+app.get('/clients/:id', ClientController.getByIdView); // Ruta para mostrar detalles (con contactos asociados)
 app.get('/clients/:id/edit', ClientController.getEditView); // Ruta para mostrar formulario de edición
 app.put('/clients/:id', ClientController.updateView); // Ruta para procesar la actualización
 
