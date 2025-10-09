@@ -213,11 +213,9 @@ html(lang="es")
           .dropdown
             a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(
               href="#" data-bs-toggle="dropdown" aria-expanded="false")
-              img.rounded-circle.me-2(src="https://github.com/mdo.png" alt="" width="32" height="32")
+              img.rounded-circle.me-2(src="/images/user.png" alt="" width="32" height="32")
               strong Admin
             ul.dropdown-menu.dropdown-menu-dark.text-small.shadow(aria-labelledby="dropdownUser1")
-              li
-                a.dropdown-item(href="#") New project...
               li
                 a.dropdown-item(href="#") Settings
               li
@@ -225,7 +223,7 @@ html(lang="es")
               li
                 hr.dropdown-divider
               li
-                a.dropdown-item(href="#") Sign out
+                a.dropdown-item(href="/") Sign out
 
       main.flex-grow-1.p-4
         block content
