@@ -87,13 +87,24 @@ html(lang="es")
         overflow: hidden;
       }
       .nav-link:hover {
-        background-color: #2db96e33;
+        background-color: #60606033;
         color: white;
       }
-      .nav-link.active,
-      .nav-link[aria-expanded="true"] {
-        background-color: #393939ff !important;
-        color: #ffffffff !important;
+
+      .nav-link:active {
+        background-color: #60606033;
+        color: #cececeff !important;
+        font-weight: 500;
+      }
+
+      .nav-link.active {
+        background-color: #88888833 !important;
+        color: #fff !important;
+        font-weight: 500;
+      }
+
+      .nav-link:active {
+
       }
 
       main {
@@ -145,7 +156,6 @@ html(lang="es")
       .sidebar
         .sidebar-header.p-3
           a.d-flex.align-items-center.mb-3.mb-md-0.me-md-auto.text-white.text-decoration-none(href="/admin/dashboard")
-            //- i.bi.bi-c-square-fill.fs-2.me-2
             img.fs-2.me-2(src="/images/favicon.webp" alt="Logo" style="height:30px; width:auto;")
             span.fs-4 ClickWare
           hr
@@ -153,7 +163,7 @@ html(lang="es")
         .sidebar-content.px-2
           ul.nav.nav-pills.flex-column.mb-auto
             li.nav-item
-              a.nav-link.text-white(aria-current="page" href="/admin/dashboard")
+              a.nav-link.text-white(href="/admin/dashboard")
                 i.bi.bi-house-door.me-2
                 | Inicio
 
@@ -170,7 +180,8 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")
                 i.bi.bi-people.me-2
-                | Clientes y contactos ▼
+                | Clientes y contactos 
+                i.bi.bi-caret-down-fill
               ul.collapse#menuClientes.ms-3
                 li
                   a.nav-link.text-white(href="/clients") Clientes
@@ -180,7 +191,8 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button")
                 i.bi.bi-diagram-3.me-2
-                | Roles y Cargos ▼
+                | Roles y Cargos 
+                i.bi.bi-caret-down-fill
               ul.collapse#menuRoles.ms-3
                 li
                   a.nav-link.text-white(href="/roles") Roles
@@ -190,7 +202,8 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button")
                 i.bi.bi-list-check.me-2
-                | Actividades ▼
+                | Actividades 
+                i.bi.bi-caret-down-fill
               ul.collapse#menuTareas.ms-3
                 li
                   a.nav-link.text-white(href="/tasks") Tareas
@@ -200,7 +213,8 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuEquipos" role="button")
                 i.bi.bi-people-fill.me-2
-                | Equipos ▼
+                | Equipos 
+                i.bi.bi-caret-down-fill
               ul.collapse#menuEquipos.ms-3
                 li
                   a.nav-link.text-white(href="/teams") Equipos
@@ -228,17 +242,81 @@ html(lang="es")
       main.flex-grow-1.p-4
         block content
 
+    // --- SCRIPTS ---
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js")
 
     script.
-      // Evitar parpadeo inicial aplicando clases antes de renderizar
+      // Mantener el estado de los menús colapsables y el enlace activo (solo links reales)
       document.addEventListener('DOMContentLoaded', () => {
+        // --- Colapsables ---
         document.querySelectorAll('.collapse').forEach(el => {
           const id = el.id;
           const isOpen = localStorage.getItem(`collapse-${id}`) === 'true';
-          if (isOpen) el.classList.add('show'); // Aplica sin animación
+          if (isOpen) el.classList.add('show');
+
           const bsCollapse = new bootstrap.Collapse(el, { toggle: false });
+
+          // Guardar estado en localStorage
           el.addEventListener('shown.bs.collapse', () => localStorage.setItem(`collapse-${id}`, 'true'));
           el.addEventListener('hidden.bs.collapse', () => localStorage.setItem(`collapse-${id}`, 'false'));
+        });
+
+        // --- Recordar link activo ---
+        const sidebarLinks = document.querySelectorAll('.sidebar a.nav-link[href]:not([data-bs-toggle])');
+
+        sidebarLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            localStorage.setItem('active-link', link.getAttribute('href'));
+          });
+        });
+
+        const activeHref = localStorage.getItem('active-link');
+        if (activeHref) {
+          sidebarLinks.forEach(link => {
+            if (link.getAttribute('href') === activeHref) {
+              link.classList.add('active');
+              const parentCollapse = link.closest('.collapse');
+              if (parentCollapse) {
+                const bsCollapse = new bootstrap.Collapse(parentCollapse, { toggle: false });
+                bsCollapse.show();
+              }
+            } else {
+              link.classList.remove('active');
+            }
+          });
+        } else {
+          // Si no hay link guardado, resaltar el actual según la URL
+          const currentPath = window.location.pathname;
+          sidebarLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+              link.classList.add('active');
+              const parentCollapse = link.closest('.collapse');
+              if (parentCollapse) {
+                const bsCollapse = new bootstrap.Collapse(parentCollapse, { toggle: false });
+                bsCollapse.show();
+              }
+            }
+          });
+        }
+
+        // --- NUEVO: Cambiar íconos de caret según el estado ---
+        document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(trigger => {
+          const icon = trigger.querySelector('i.bi-caret-right-fill, i.bi-caret-down-fill');
+          const targetId = trigger.getAttribute('href')?.replace('#', '');
+          const target = document.getElementById(targetId);
+          if (!icon || !target) return;
+
+          // Estado inicial
+          const isOpen = target.classList.contains('show');
+          icon.classList.toggle('bi-caret-right-fill', isOpen);
+          icon.classList.toggle('bi-caret-down-fill', !isOpen);
+
+          // Escuchar eventos del colapsable
+          target.addEventListener('show.bs.collapse', () => {
+            icon.classList.replace('bi-caret-down-fill', 'bi-caret-right-fill');
+          });
+          target.addEventListener('hide.bs.collapse', () => {
+            icon.classList.replace('bi-caret-right-fill', 'bi-caret-down-fill');
+          });
         });
       });
