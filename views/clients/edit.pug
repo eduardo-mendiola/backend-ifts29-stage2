@@ -108,7 +108,7 @@ block content
   script.
     const clientTypeSelect = document.getElementById('client_type');
     const personaFields = ['first_name','last_name'];
-    const companyFields = ['company_type','name','website','category'];
+    const companyFields = ['company_type','website','category'];
 
     function toggleFields() {
       const type = clientTypeSelect.value;
@@ -136,4 +136,23 @@ block content
 
     clientTypeSelect.addEventListener('change', toggleFields);
     window.addEventListener('DOMContentLoaded', toggleFields);
+
+    const firstNameInput = document.getElementById('first_name');
+    const lastNameInput = document.getElementById('last_name');
+    const fullNameInput = document.getElementById('name');
+    const nameDefault = "";
+
+
+    function generateUsername() {
+      const firstName = firstNameInput.value.trim();
+      const lastName = lastNameInput.value.trim(); 
+      if (firstName && lastName) {
+        fullNameInput.value = `${firstName} ${lastName}`;
+      } else {
+        fullNameInput.value = nameDefault;
+      }
+    }
+
+    firstNameInput.addEventListener('input', generateUsername);
+    lastNameInput.addEventListener('input', generateUsername);
 
