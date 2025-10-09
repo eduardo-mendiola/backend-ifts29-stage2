@@ -7,7 +7,7 @@ const addressSchema = new mongoose.Schema({
   state: String,
   postal_code: String,
   country: String,
-  country_code: String
+  number: String
 }, { _id: false });
 
 const billingInfoSchema = new mongoose.Schema({
@@ -22,7 +22,7 @@ const clientSchema = new mongoose.Schema({
   name: { type: String },
   first_name: { type: String },
   last_name: { type: String },
-  id_type: { type: String },
+  id_type: { type: String, enum: ['DNI', 'CUIL', 'CUIT'] },
   id_number: { type: String },
   category: { type: String },
   company_type: { type: String },

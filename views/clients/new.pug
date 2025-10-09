@@ -1,39 +1,134 @@
 extends ../layout.pug
-//- views/client/new.pug
+//- views/clients/new.pug
 block content
   .d-flex.justify-content-center
     form.bg-dark.text-white.p-4.rounded.shadow(action="/clients", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 Crear Nuevo Cliente
-        a.btn.btn-gray(href="/clients", tabindex="9") Volver a la lista
+        h1.mb-0 Crear Cliente
+        a.btn.btn-gray(href="/clients", tabindex="23") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
         // Columna izquierda
         .col-md-6
           .mb-3
-            label.form-label(for="name") Nombre
-            input#name.form-control(type="text", name="name", required, tabindex="1")
+            label.form-label(for="client_type") Tipo de Cliente
+            select#client_type.form-select(name="client_type", required, tabindex="1")
+              option(value="company") Empresa
+              option(value="person") Persona
+
           .mb-3
-            label.form-label(for="address") Dirección
-            input#address.form-control(type="text", name="address", tabindex="3")
+            label.form-label(for="first_name") Nombre (persona)
+            input#first_name.form-control(type="text", name="first_name", value="", tabindex="3")
+
           .mb-3
-            label.form-label(for="email") Email
-            input#email.form-control(type="email", name="email", required, tabindex="5")
+            label.form-label(for="id_type") Tipo de Documento
+            select#client_type.form-select(name="id_type", required, tabindex="5")
+              option(value="DNI" selected=(item.id_type === 'DNI')) DNI
+              option(value="CUIL" selected=(item.id_type === 'CUIL')) CUIL 
+              option(value="CUIT" selected=(item.id_type === 'CUIT')) CUIT
+
+          .mb-3
+            label.form-label(for="category") Categoría
+            input#category.form-control(type="text", name="category", value="", tabindex="7")
+
+          .mb-3
+            label.form-label(for="address_country") País
+            input#address_country.form-control(type="text", name="address[country]", value="", tabindex="9")
+
+          .mb-3
+            label.form-label(for="address_state") Estado / Provincia
+            input#address_state.form-control(type="text", name="address[state]", value="", tabindex="11")
+
+          .mb-3
+            label.form-label(for="address_street") Calle
+            input#address_street.form-control(type="text", name="address[street]", value="", tabindex="13")
+
+          .mb-3
+            label.form-label(for="billing_payment_terms") Términos de pago
+            input#billing_payment_terms.form-control(type="text", name="billing_info[payment_terms]", value="", tabindex="15")
+
+          .mb-3
+            label.form-label(for="email") Email de facturación
+            input#email.form-control(type="email", name="billing_info[email]", value="", required, tabindex="17")
+
+          .mb-3
+            label.form-label(for="phone") Teléfono
+            input#phone.form-control(type="text", name="phone", value="", tabindex="19")
 
         // Columna derecha
         .col-md-6
           .mb-3
-            label.form-label(for="contact_name") Contacto
-            input#name.form-control(type="text", name="contact_name", required, tabindex="2")
+            label.form-label(for="name") Nombre / Empresa
+            input#name.form-control(type="text", name="name", value="", required, tabindex="2")
+
           .mb-3
-            label.form-label(for="phone") Teléfono
-            input#phone.form-control(type="text", name="phone", tabindex="4")
+            label.form-label(for="last_name") Apellido (persona)
+            input#last_name.form-control(type="text", name="last_name", value="", tabindex="4")
+
+          .mb-3
+            label.form-label(for="id_number") Número de documento
+            input#id_number.form-control(type="text", name="id_number", value="", tabindex="6")
+
+          .mb-3
+            label.form-label(for="company_type") Tipo de empresa
+            input#company_type.form-control(type="text", name="company_type", value="", tabindex="8")
+
+          .mb-3
+            label.form-label(for="address_city") Ciudad
+            input#address_city.form-control(type="text", name="address[city]", value="", tabindex="10")
+
+          .mb-3
+            label.form-label(for="address_postal_code") Código postal
+            input#address_postal_code.form-control(type="text", name="address[postal_code]", value="", tabindex="12")
+
+          .mb-3
+            label.form-label(for="address_number") Número
+            input#address_number.form-control(type="text", name="address[number]", value="", tabindex="14")
+
+          .mb-3
+            label.form-label(for="billing_currency") Moneda
+            input#billing_currency.form-control(type="text", name="billing_info[currency]", value="", tabindex="16")
+
+          .mb-3
+            label.form-label(for="website") Sitio web
+            input#website.form-control(type="text", name="website", value="", tabindex="18")
+
           .mb-3
             label.form-label(for="is_active") Estado
-            select#is_active.form-select(name="is_active", required, tabindex="6")
-              option(value="true" selected=(item.is_active === true)) Activo
-              option(value="false" selected=(item.is_active === false)) Inactivo
+            select#is_active.form-select(name="is_active", required, tabindex="20")
+              option(value="true" selected) Activo
+              option(value="false") Inactivo
 
-      button.btn.btn-primary.mt-3(type="submit", tabindex="7") Crear Cliente
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/clients", tabindex="8") Cancelar
+      button.btn.btn-success.mt-3(type="submit", tabindex="21") Crear Cliente
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/clients", tabindex="22") Cancelar
+
+  //- Script para habilitar/deshabilitar campos según tipo de cliente
+  script.
+    const clientTypeSelect = document.getElementById('client_type');
+    const personaFields = ['first_name','last_name'];
+    const companyFields = ['company_type','name','website','category'];
+
+    function toggleFields() {
+      const type = clientTypeSelect.value;
+
+      function setField(fldId, enabled) {
+        const field = document.getElementById(fldId);
+        field.readOnly = !enabled;
+
+        if(!enabled){
+          field.style.backgroundColor = '#a6a6a6ff';
+          field.style.color = '#555';
+          field.value = '';
+        } else {
+          field.style.backgroundColor = '';
+          field.style.color = '';
+        }
+      }
+
+      personaFields.forEach(f => setField(f, type === 'person'));
+      companyFields.forEach(f => setField(f, type === 'company'));
+    }
+
+    clientTypeSelect.addEventListener('change', toggleFields);
+    window.addEventListener('DOMContentLoaded', toggleFields);
