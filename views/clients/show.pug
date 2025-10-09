@@ -82,8 +82,8 @@ block content
         td= item.updated_at
 
   //- Bloque opcional para mostrar contactos asociados
+  h3.mt-4 Contactos asociados
   if item.contacts && item.contacts.length
-    h3.mt-4 Contactos asociados
     table.table.table-dark
       thead
         tr
@@ -102,6 +102,8 @@ block content
             td= contact.phone
             td= contact.mobile
             td= contact.is_primary ? 'Principal' : 'Secundario'
+  else
+    p Ningún contacto asociado.
 
   .mt-3
     a.btn.btn-gray.me-2(href="/clients") Volver a la lista
