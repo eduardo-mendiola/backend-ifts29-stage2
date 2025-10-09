@@ -160,7 +160,7 @@ html(lang="es")
             span.fs-4 ClickWare
           hr
 
-        .sidebar-content.px-2
+        .sidebar-content.px-1
           ul.nav.nav-pills.flex-column.mb-auto
             li.nav-item
               a.nav-link.text-white(href="/admin/dashboard")
@@ -180,8 +180,9 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")
                 i.bi.bi-people.me-2
-                | Clientes y contactos 
                 i.bi.bi-caret-down-fill
+                |  Clientes y contactos 
+                
               ul.collapse#menuClientes.ms-3
                 li
                   a.nav-link.text-white(href="/clients") Clientes
@@ -191,8 +192,9 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button")
                 i.bi.bi-diagram-3.me-2
-                | Roles y Cargos 
                 i.bi.bi-caret-down-fill
+                |  Roles y Cargos 
+                
               ul.collapse#menuRoles.ms-3
                 li
                   a.nav-link.text-white(href="/roles") Roles
@@ -202,8 +204,9 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button")
                 i.bi.bi-list-check.me-2
-                | Actividades 
                 i.bi.bi-caret-down-fill
+                |  Actividades 
+                
               ul.collapse#menuTareas.ms-3
                 li
                   a.nav-link.text-white(href="/tasks") Tareas
@@ -213,8 +216,9 @@ html(lang="es")
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuEquipos" role="button")
                 i.bi.bi-people-fill.me-2
-                | Equipos 
                 i.bi.bi-caret-down-fill
+                |  Equipos 
+                
               ul.collapse#menuEquipos.ms-3
                 li
                   a.nav-link.text-white(href="/teams") Equipos
@@ -301,22 +305,22 @@ html(lang="es")
 
         // --- NUEVO: Cambiar íconos de caret según el estado ---
         document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(trigger => {
-          const icon = trigger.querySelector('i.bi-caret-right-fill, i.bi-caret-down-fill');
+          const icon = trigger.querySelector('i.bi-caret-down-fill, i.bi-caret-right-fill');
           const targetId = trigger.getAttribute('href')?.replace('#', '');
           const target = document.getElementById(targetId);
           if (!icon || !target) return;
 
           // Estado inicial
           const isOpen = target.classList.contains('show');
-          icon.classList.toggle('bi-caret-right-fill', isOpen);
-          icon.classList.toggle('bi-caret-down-fill', !isOpen);
+          icon.classList.toggle('bi-caret-down-fill', isOpen);
+          icon.classList.toggle('bi-caret-right-fill', !isOpen);
 
           // Escuchar eventos del colapsable
           target.addEventListener('show.bs.collapse', () => {
-            icon.classList.replace('bi-caret-down-fill', 'bi-caret-right-fill');
+            icon.classList.replace('bi-caret-right-fill', 'bi-caret-down-fill');
           });
           target.addEventListener('hide.bs.collapse', () => {
-            icon.classList.replace('bi-caret-right-fill', 'bi-caret-down-fill');
+            icon.classList.replace('bi-caret-down-fill', 'bi-caret-right-fill');
           });
         });
       });
