@@ -1,7 +1,11 @@
 extends ../layout.pug
 //- views/role/show.pug
 block content
-  h1.mb-4 Rol: #{ item.name }
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.mb-4 Rol: #{ item.name }
+    a.btn.btn-gray(href="/roles", tabindex="1") Volver
+ 
+
 
   table.table.table-dark
     tbody
@@ -28,5 +32,5 @@ block content
             | No tiene permisos asignados
 
   .mt-3
-    a.btn.btn-gray.me-2(href="/roles") Volver a la lista
-    a.btn.btn-primary.me-2(href=`/roles/${item.id}/edit`) Editar
+    a.btn.btn-gray.me-2(href="/roles", tabindex="2") Volver a la lista
+    a.btn.btn-primary.me-2(href=`/roles/${item.id}/edit`, tabindex="3") Editar

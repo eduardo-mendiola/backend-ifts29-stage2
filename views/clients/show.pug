@@ -1,7 +1,11 @@
 extends ../layout.pug
 //- views/clients/show.pug
 block content
-  h1.mb-4 Cliente: #{item.name || (item.first_name + ' ' + item.last_name)}
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.mb-4 Cliente: #{item.name || (item.first_name + ' ' + item.last_name)}
+    a.btn.btn-gray(href="/clients", tabindex="1") Volver
+
+    
 
   table.table.table-dark
     tbody
@@ -106,5 +110,5 @@ block content
     p Ningún contacto asociado.
 
   .mt-3
-    a.btn.btn-gray.me-2(href="/clients") Volver a la lista
-    a.btn.btn-primary.me-2(href=`/clients/${item.id}/edit`) Editar
+    a.btn.btn-gray.me-2(href="/clients", tabindex="2") Volver a la lista
+    a.btn.btn-primary.me-2(href=`/clients/${item.id}/edit`, tabindex="3") Editar
