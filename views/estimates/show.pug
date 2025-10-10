@@ -2,7 +2,7 @@ extends ../layout.pug
 //- views/task/show.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-4 #{item.title} 
+    h1.mb-4 Presupuesto Código: #{item.code}
     a.btn.btn-gray(href="/estimates", tabindex="1") Volver
  
 
@@ -32,6 +32,9 @@ block content
       tr 
         th Estado
         td= statusLabels[item.status] || 'N/A'
+      tr
+        th Días de Validez
+        td= item.validity_days + ' días'
       tr 
         th Fecha de Validez
         td= item.valid_until   
