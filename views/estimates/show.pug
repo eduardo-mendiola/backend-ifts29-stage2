@@ -34,7 +34,7 @@ block content
         td= statusLabels[item.status] || 'N/A'
       tr 
         th Fecha de Validez
-        td= item.valid_until ? new Date(item.valid_until).toLocaleDateString('es-AR') : 'N/A'     
+        td= item.valid_until   
       tr
         th Fecha de Creación
         td= item.created_at
