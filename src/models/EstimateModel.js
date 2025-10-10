@@ -8,6 +8,7 @@ const estimateSchema = new mongoose.Schema({
     description: { type: String },
     total_amount: { type: Number },
     status: { type: String, enum: ['draft', 'sent', 'viewed', 'accepted', 'rejected', 'expired', 'converted'], default: 'draft' },
+    validity_days: { type: Number, default: 15 },
     valid_until: { type: Date },
 }, {
     collection: 'estimates',

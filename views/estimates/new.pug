@@ -45,9 +45,12 @@ block content
           .mb-3
             label.form-label(for="total_amount") Monto Total
             input#total_amount.form-control(type="number", name="total_amount",  tabindex="2")
+          .mb-3 
+            label.form-label(for="validity_days") Días de Validez
+            input#validity_days.form-control(type="number", name="validity_days", tabindex="4")
           .mb-3
-            label.form-label(for="valid_until") Fecha de Vencimiento
-            input#valid_until.form-control(type="date", name="valid_until", tabindex="4")
+            label.form-label(for="valid_until") Valido Hasta
+            input#valid_until.form-control(type="date", name="valid_until", readonly)
           .mb-3
             label.form-label(for="status") Estado
             select#status.form-select(name="status", required, tabindex="6")
@@ -113,6 +116,39 @@ block content
       clientSelect.addEventListener('change', () => {
         loadProjectsForClient(clientSelect.value);
       });
+    });
+
+    // Lógica para calcular y actualizar la fecha de vencimiento
+    document.addEventListener('DOMContentLoaded', () => {
+      const validityInput = document.getElementById('validity_days');
+      const dueDateInput = document.getElementById('valid_until');
+
+      // Fecha de creación o fecha actual si es nuevo
+      const creationDate = new Date(!{JSON.stringify(item.created_at || new Date())});
+
+      function updateDueDate() {
+        const days = parseInt(validityInput.value, 10);
+
+        if (!isNaN(days)) {
+          const dueDate = new Date(creationDate);
+          dueDate.setDate(dueDate.getDate() + days);
+
+          // Formatear como yyyy-mm-dd para el input type=date
+          const yyyy = dueDate.getFullYear();
+          const mm = String(dueDate.getMonth() + 1).padStart(2, '0');
+          const dd = String(dueDate.getDate()).padStart(2, '0');
+
+          dueDateInput.value = `${yyyy}-${mm}-${dd}`;
+        } else {
+          dueDateInput.value = '';
+        }
+      }
+
+      // Actualizar al cargar la página
+      updateDueDate();
+
+      // Actualizar cuando cambian los días de validez
+      validityInput.addEventListener('input', updateDueDate);
     });
 
 
