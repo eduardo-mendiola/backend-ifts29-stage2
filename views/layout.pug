@@ -239,6 +239,22 @@ html(lang="es")
                   a.nav-link.text-white(href="/team-roles") Roles de Equipo
                 li
                   a.nav-link.text-white(href="/areas") Áreas
+            
+            li
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuContabilidad" role="button")
+                i.bi.bi-people-fill.me-2
+                i.bi.bi-caret-down-fill
+                |  Contabilidad 
+                
+              ul.collapse#menuContabilidad.ms-3
+                li
+                  a.nav-link.text-white(href="/estimates") Presupuestos
+                li
+                  a.nav-link.text-white(href="/expenses") Gastos
+                li
+                  a.nav-link.text-white(href="/invoices") Facturas
+                li
+                  a.nav-link.text-white(href="/payments") Pagos
 
         .sidebar-footer.p-3
           .dropdown

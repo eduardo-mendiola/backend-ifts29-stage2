@@ -15,6 +15,10 @@ import teamRolRoutes from './routes/team-rol-routes.js';
 import timeEntryRoutes from './routes/time-entry-routes.js';
 import positionRoutes from './routes/position-routes.js';
 import contactRoutes from './routes/contact-routes.js';
+import estimateRoutes from './routes/estimate-routes.js';
+import expenseRoutes from './routes/expense-routes.js';
+import invoiceRoutes from './routes/invoice-routes.js';
+import paymentRoutes from './routes/payment-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -28,6 +32,11 @@ import TeamRolController from './controllers/TeamRolController.js';
 import TimeEntryController from './controllers/TimeEntryController.js';
 import PositionController from './controllers/PositionController.js';
 import ContactController from './controllers/ContactController.js';
+import EstimateController from './controllers/EstimateController.js';
+import ExpenseController from './controllers/ExpenseController.js';
+import InvoiceController from './controllers/InvoiceController.js';
+import PaymentController from './controllers/PaymentController.js';
+
 
 // ||----------------------------------------------------------------------------------------------------------||
 
@@ -160,6 +169,38 @@ app.get('/contacts/:id', ContactController.getByIdView);
 app.post('/contacts', ContactController.createView);        
 app.put('/contacts/:id', ContactController.updateView); 
 
+// Vistas Pug para Estimates
+app.get('/estimates', EstimateController.getAllView);          
+app.get('/estimates/new', EstimateController.newView);        
+app.get('/estimates/:id/edit', EstimateController.getEditView); 
+app.get('/estimates/:id', EstimateController.getByIdView);  
+app.post('/estimates', EstimateController.createView);        
+app.put('/estimates/:id', EstimateController.updateView); 
+
+// Vistas Pug para Expenses
+app.get('/expenses', ExpenseController.getAllView);          
+app.get('/expenses/new', ExpenseController.newView);
+app.get('/expenses/:id/edit', ExpenseController.getEditView);
+app.get('/expenses/:id', ExpenseController.getByIdView);  
+app.post('/expenses', ExpenseController.createView);        
+app.put('/expenses/:id', ExpenseController.updateView);
+
+// Vistas Pug para Invoices
+app.get('/invoices', InvoiceController.getAllView);          
+app.get('/invoices/new', InvoiceController.newView);
+app.get('/invoices/:id/edit', InvoiceController.getEditView);
+app.get('/invoices/:id', InvoiceController.getByIdView);  
+app.post('/invoices', InvoiceController.createView);        
+app.put('/invoices/:id', InvoiceController.updateView);
+
+// Vistas Pug para Payments
+app.get('/payments', PaymentController.getAllView);          
+app.get('/payments/new', PaymentController.newView);
+app.get('/payments/:id/edit', PaymentController.getEditView);
+app.get('/payments/:id', PaymentController.getByIdView);  
+app.post('/payments', PaymentController.createView);        
+app.put('/payments/:id', PaymentController.updateView);
+
 
 
 
@@ -175,6 +216,13 @@ app.use('/api/team-roles', teamRolRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 app.use('/api/positions', positionRoutes);
 app.use('/api/contacts', contactRoutes);
+app.use('/api/estimates', estimateRoutes);
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/invoices', invoiceRoutes);
+app.use('/api/payments', paymentRoutes);
+
+
+// ||--------------------------------------------------------------------------------------------------||
 
 
 // Manejo de rutas no encontradas (404)
