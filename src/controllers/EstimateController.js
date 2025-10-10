@@ -1,32 +1,46 @@
-import BaseController from './BaseController.js'
+import BaseController from './BaseController.js';
 import Estimate from '../models/EstimateModel.js';
-import Project from '../models/ProjectModel.js'; 
+import Project from '../models/ProjectModel.js';
 import User from '../models/UserModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
+const statusLabels = {
+    draft: 'Borrador',
+    sent: 'Enviado',
+    viewed: 'Visto',
+    accepted: 'Aceptado',
+    rejected: 'Rechazado',
+    expired: 'Vencido',
+    converted: 'Convertido'
+};
+
 class EstimateController extends BaseController {
     constructor() {
-        super(Estimate, 'espenses', 'EST-'); 
+        super(Estimate, 'estimates', 'EST-');
     }
 
-    // Sobrescribimos getEditView para incluir usuarios y proyectos
+    // View for editing an estimate
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;
-            const task = await this.model.findById(id);
-            if (!task) return res.render('error404', { title: 'Tarea no encontrado' });
+            const estimate = await this.model.findById(id);
+            if (!estimate) return res.render('error404', { title: 'Presupuesto no encontrado' });
 
             const users = await User.findAll();
             const projects = await Project.findAll();
 
-            // Formatear fechas antes de enviar a la vista
-            const formattedTask = formatDatesForInput(this.formatItem(task), ['due_date', 'created_at']);
+            // Format dates before sending to the view
+            const formattedEstimate = formatDatesForInput(
+                this.formatItem(estimate),
+                ['valid_until', 'updated_at', 'created_at']
+            );
 
             res.render(`${this.viewPath}/edit`, {
-                title: `Editar Task`,
-                item: formattedTask, // Tarea con fecha formateada
+                title: `Editar Presupuesto`,
+                item: formattedEstimate,
                 users,
-                projects
+                projects,
+                statusLabels
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -34,19 +48,21 @@ class EstimateController extends BaseController {
         }
     };
 
+    // View for creating a new estimate
     newView = async (req, res) => {
         try {
             const users = await User.findAll();
             const projects = await Project.findAll();
 
             res.render(`${this.viewPath}/new`, {
-                title: `Nueva Tarea`,
-                item: {}, // objeto vacío porque es nuevo
+                title: `Nuevo Presupuesto`,
+                item: {},
                 users,
-                projects
+                projects,
+                statusLabels
             });
         } catch (error) {
-            console.error('Error al abrir formulario de tareas:', error.message);
+            console.error('Error al abrir formulario de presupuestos:', error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
