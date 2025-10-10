@@ -15,16 +15,16 @@ block content
             label.form-label(for="title") Título
             input#title.form-control(type="text", name="title", required, tabindex="1")
           .mb-3
-          label.form-label(for="project_id") Proyecto
-          select#project_id.form-select(name="project_id", required, tabindex="3")
-            if projects && projects.length > 0
-              each project in projects
-                option(
-                  value=project._id 
-                  selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
-                ) #{project.name}
-            else
-              option(value="") No hay proyectos disponibles
+            label.form-label(for="project_id") Proyecto
+            select#project_id.form-select(name="project_id", required, tabindex="3")
+              if projects && projects.length > 0
+                each project in projects
+                  option(
+                    value=project._id 
+                    selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
+                  ) #{project.name}
+              else
+                option(value="") No hay proyectos disponibles
           .mb-3
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", required, tabindex="5")

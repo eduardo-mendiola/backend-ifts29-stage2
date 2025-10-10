@@ -1,6 +1,7 @@
 import BaseController from './BaseController.js';
 import Client from '../models/ClientModel.js';
 import Contact from '../models/ContactModel.js';
+import Project from '../models/ProjectModel.js';
 
 
 class ClientController extends BaseController {
@@ -22,7 +23,6 @@ class ClientController extends BaseController {
                 const isContanct = contact._id === client._id.toString();
                 return isContanct;
             });
-
 
             // Traer todos los contactos asociados usando tu método del modelo
             // const contacts = await Contact.findAll({ client_id: id }); // tu BaseModel puede necesitar filter así

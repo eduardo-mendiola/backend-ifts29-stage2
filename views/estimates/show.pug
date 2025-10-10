@@ -15,14 +15,14 @@ block content
         th Código
         td= item.code
       tr
+        th Título
+        td= item.title
+      tr
         th Cliente
-        td= item.client_id.name
+        td= (item.project_id && item.project_id.client_id) ? `${item.clientName} - Código: ${item.clientCode}` : 'N/A'
       tr
         th Proyecto
         td= item.project_id.name
-      tr
-        th Título
-        td= item.title
       tr
         th Descripción
         td= item.description
@@ -31,7 +31,7 @@ block content
         td $#{item.total_amount.toFixed(2)}
       tr 
         th Estado
-        td= item.status ? statusLabels[item.status] : 'N/A'
+        td= statusLabels[item.status] || 'N/A'
       tr 
         th Fecha de Validez
         td= item.valid_until ? new Date(item.valid_until).toLocaleDateString('es-AR') : 'N/A'     

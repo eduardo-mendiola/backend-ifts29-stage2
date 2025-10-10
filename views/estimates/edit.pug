@@ -1,11 +1,11 @@
 extends ../layout.pug
-//- views/task/edit.pug
+//- views/estimates/edit.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=`/tasks/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/estimates/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 Editar Tarea
-        a.btn.btn-gray(href="/tasks", tabindex="11") Volver a la lista
+        h1.mb-0 Editar Presupuesto
+        a.btn.btn-gray(href="/estimates", tabindex="11") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -15,16 +15,26 @@ block content
             label.form-label(for="title") Título
             input#title.form-control(type="text", name="title", value=item.title || "", required, tabindex="1")
           .mb-3
-          label.form-label(for="project_id") Proyecto
-          select#project_id.form-select(name="project_id", required, tabindex="3")
-            if projects && projects.length > 0
-              each project in projects
+            label.form-label(for="client_id") Cliente
+            select#client_id.form-select(name="client_id", tabindex="2")
+              option(value="") Seleccionar cliente
+              each client in clients
                 option(
-                  value=project._id 
-                  selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
-                ) #{project.name}
-            else
-              option(value="") No hay proyectos disponibles
+                  value=client._id
+                  selected=(item.project_id && client._id.toString() === item.project_id.client_id._id.toString())
+                ) #{client.name}          
+          .mb-3
+            label.form-label(for="project_id") Proyecto
+            select#project_id.form-select(name="project_id", required, tabindex="3")
+              if projects && projects.length > 0
+                each project in projects
+                  option(
+                    value=project._id
+                    data-client-id=project.client_id._id
+                    selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
+                  ) #{project.name}
+              else
+                option(value="") No hay proyectos disponibles
           .mb-3
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", required, tabindex="5")= item.description || ""
@@ -63,4 +73,36 @@ block content
         
 
       button.btn.btn-success.mt-3(type="submit", tabindex="9") Actualizar Tarea
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/tasks", tabindex="10") Cancelar
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/estimates", tabindex="10") Cancelar
+
+      script.
+        document.addEventListener('DOMContentLoaded', () => {
+          const clientSelect = document.getElementById('client_id');
+          const projectSelect = document.getElementById('project_id');
+
+          if (!clientSelect || !projectSelect) return;
+
+          const allProjects = Array.from(projectSelect.options);
+
+          clientSelect.addEventListener('change', () => {
+            const selectedClientId = clientSelect.value;
+
+            // Limpiar las opciones del select de proyectos
+            projectSelect.innerHTML = '';
+
+            // Filtrar los proyectos que pertenecen al cliente seleccionado
+            const filtered = allProjects.filter(opt => 
+              opt.dataset.clientId === selectedClientId || selectedClientId === ''
+            );
+
+            // Si no hay proyectos, mostrar mensaje
+            if (filtered.length === 0) {
+              const option = document.createElement('option');
+              option.value = '';
+              option.textContent = 'No hay proyectos disponibles para este cliente';
+              projectSelect.appendChild(option);
+            } else {
+              filtered.forEach(opt => projectSelect.appendChild(opt));
+            }
+          });
+        });

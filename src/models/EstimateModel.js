@@ -15,12 +15,12 @@ const estimateSchema = new mongoose.Schema({
 });
 
 // Virtuals
-estimateSchema.virtual('client', {
-    ref: 'Client',
-    localField: 'project_id',
-    foreignField: '_id',
-    justOne: true,
-    options: { populate: 'client_id' } // opcional
+estimateSchema.virtual('clientName').get(function() {
+    return this.project_id?.client_id?.name || 'N/A';
+});
+
+estimateSchema.virtual('clientCode').get(function() {
+    return this.project_id?.client_id?.code || 'N/A';
 });
 
 // Para incluir virtuals automáticamente al convertir a JSON u objeto

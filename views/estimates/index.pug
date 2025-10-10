@@ -2,8 +2,8 @@ extends ../layout.pug
 //- views/estimates/index.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-0 Lista de Tareas
-    a.btn.btn-primary(href="/estimates/new") Nueva Tarea
+    h1.mb-0 Lista de Presupuestos
+    a.btn.btn-primary(href="/estimates/new") Nuevo Presupuesto
     
   //- Incluir barra de búsqueda, modal y JS común
   include ../partials/common-table-scripts.pug
@@ -26,7 +26,7 @@ block content
           td= item.title
           td= item.project_id.name
           td $#{item.total_amount.toFixed(2)}
-          td= item.status
+          td= statusLabels[item.status] || 'N/A'
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/estimates/${item.id}`) Ver
             a.btn.btn-gray.btn-sm.me-2(href=`/estimates/${item.id}/edit`) Editar

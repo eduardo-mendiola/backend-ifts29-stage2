@@ -83,7 +83,7 @@ block content
         td= item.created_at
       tr
         th Última actualización
-        td= item.updated_at
+        td= item.updated_at 
 
   //- Bloque opcional para mostrar contactos asociados
   h3.mt-4 Contactos asociados
@@ -106,6 +106,27 @@ block content
             td= contact.phone
             td= contact.mobile
             td= contact.is_primary ? 'Principal' : 'Secundario'
+  else
+    p Ningún contacto asociado.
+  
+  h3.mt-4 Proyectos asociados
+  if item.projects && item.projects.length
+    table.table.table-dark
+      thead
+        tr
+          th Código
+          th Nombre
+          th Fecha de inicio
+          th Project Manager
+          th Estado
+      tbody
+        each project in item.projects
+          tr
+            td= project.code
+            td= project.name
+            td= project.start_date || 'N/A'  
+            td= project.project_manager.full_name
+            td= project.status
   else
     p Ningún contacto asociado.
 

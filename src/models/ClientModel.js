@@ -46,10 +46,23 @@ clientSchema.virtual('contacts', {
   foreignField: 'client_id' // campo en Contact
 });
 
+// Virtual populate: traer los proyectos de este cliente
+clientSchema.virtual('projects', {
+  ref: 'Project',           // modelo referenciado
+  localField: '_id',        // campo local (Client)
+  foreignField: 'client_id' // campo en Project
+});
+
+
 // Virtual auxiliar (lista de nombres de contactos)
 clientSchema.virtual('contacts_names').get(function () {
   if (!this.contacts || this.contacts.length === 0) return 'Sin contactos';
   return this.contacts.map(c => `${c.first_name} ${c.last_name} - Código: ${c.code}`).join(', ');
+});
+
+clientSchema.virtual('projects_titles').get(function () {
+  if (!this.projects || this.projects.length === 0) return 'Sin proyectos';
+  return this.projects.map(p => `${p.title} - Código: ${p.code}`).join(', ');
 });
 
 
@@ -60,11 +73,17 @@ class ClientModel extends BaseModel {
 
   async findAll() {
     // populate automático con contactos
-    return super.findAll(['contacts']);
+    return super.findAll([
+      'contacts', 
+       { path: 'projects', populate: { path: 'project_manager' } }
+    ]);
   }
 
   async findById(id) {
-    return super.findById(id, ['contacts']);
+    return super.findById(id, [
+      'contacts', 
+       { path: 'projects', populate: { path: 'project_manager' } }
+    ]);
   }
 }
 
