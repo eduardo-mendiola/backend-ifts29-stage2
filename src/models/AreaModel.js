@@ -6,7 +6,8 @@ const areaSchema = new mongoose.Schema({
     name_area: { type: String, required: true },
     description: { type: String }
 }, { 
-    collection: 'areas' 
+    collection: 'areas',
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 
 });
 
 class AreaModel extends BaseModel {

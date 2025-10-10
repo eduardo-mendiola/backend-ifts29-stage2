@@ -7,7 +7,8 @@ const roleSchema = new mongoose.Schema({
     description: { type: String },
     permissions: { type: [String], default: [] } // nuevo campo permissions
 }, { 
-    collection: 'roles' 
+    collection: 'roles',
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 
 });
 
 class RoleModel extends BaseModel {

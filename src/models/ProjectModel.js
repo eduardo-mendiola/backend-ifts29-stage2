@@ -18,7 +18,8 @@ const projectSchema = new mongoose.Schema({
         }
     ]
 }, {
-    collection: 'projects'
+    collection: 'projects',
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
 class ProjectModel extends BaseModel {

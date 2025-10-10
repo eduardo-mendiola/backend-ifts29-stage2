@@ -6,7 +6,8 @@ const positionSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String }
 }, { 
-    collection: 'positions' 
+    collection: 'positions',
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
 class PositionModel extends BaseModel {

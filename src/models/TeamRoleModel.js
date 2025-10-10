@@ -6,7 +6,8 @@ const teamRoleSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
     description: { type: String }
 }, {
-    collection: 'team_roles'
+    collection: 'team_roles',
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
 // Registrar el modelo en mongoose ANTES de crear la clase

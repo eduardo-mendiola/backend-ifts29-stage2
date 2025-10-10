@@ -50,6 +50,12 @@ block content
       tr
         th Fecha de fin
         td= item.end_date
+      tr
+        th Fecha de Creación
+        td= item.created_at
+      tr
+        th Fecha de Modificación
+        td= item.updated_at
     
   .mt-3
     a.btn.btn-gray.me-2(href="/projects", tabindex="2") Volver a la lista

@@ -3,15 +3,13 @@ import BaseModel from './BaseModel.js';
 
 const estimateSchema = new mongoose.Schema({
     code: { type: String, unique: true },
+    client_to: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true },
+    project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
     title: { type: String, required: true },
     description: { type: String },
-    priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },
-    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    estimated_hours: { type: Number },
-    due_date: { type: Date },
-    project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
-    time_entries_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TimeEntry' }],
+    total_amount: { type: Number },
+    status: { type: String, enum: ['enviado', 'aceptado', 'borrador'], default: 'borrador' },
+    valid_until: { type: Date },
 }, {
     collection: 'estimates',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
