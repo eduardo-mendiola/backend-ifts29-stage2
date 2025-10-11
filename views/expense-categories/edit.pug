@@ -1,0 +1,22 @@
+extends ../layout.pug
+//- views/expense-categories/edit.pug
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/expense-categories/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Editar Categoría de Gasto
+        a.btn.btn-gray(href="/expense-categories", tabindex="5") Volver a la lista
+
+      // Contenedor de 1 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="name") Nombre
+            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
+          .mb-3
+            label.form-label(for="description") Descripción
+            textarea#description.form-control(name="description" || "", required, tabindex="2").value=item.description
+
+      button.btn.btn-success.mt-3(type="submit", tabindex="3") Actualizar Categoría
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/expense-categories", tabindex="4") Cancelar

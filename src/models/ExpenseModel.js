@@ -3,15 +3,16 @@ import BaseModel from './BaseModel.js';
 
 const expenseSchema = new mongoose.Schema({
     code: { type: String, unique: true },
-    title: { type: String, required: true },
-    description: { type: String },
-    priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },
-    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    estimated_hours: { type: Number },
-    due_date: { type: Date },
     project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
-    time_entries_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TimeEntry' }],
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    description: { type: String },
+    amount: { type: Number, required: true },
+    currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
+    date: { type: Date },
+    category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Expense_categories', required: true },
+    payment_method: { type: String, enum: ['credit_card', 'cash', 'bank_transfer'], default: 'credit_card' },
+    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    notes: { type: String },
 }, {
     collection: 'expenses',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
@@ -24,23 +25,17 @@ class ExpenseModel extends BaseModel {
 
     async findAll() {
         return super.findAll([
-            'assigned_to', 
             'project_id', 
-            {
-                path: 'time_entries_ids', 
-                populate: 'user_id'
-            }
+            'user_id', 
+            'category_id'
         ]); // populate automático
     }   
 
     async findById(id) {
         return super.findById(id, [
-            'assigned_to', 
             'project_id', 
-            {
-                path: 'time_entries_ids', 
-                populate: 'user_id'
-            }
+            'user_id', 
+            'category_id'
         ]); // populate automático
     }
     

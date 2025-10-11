@@ -19,6 +19,7 @@ import estimateRoutes from './routes/estimate-routes.js';
 import expenseRoutes from './routes/expense-routes.js';
 import invoiceRoutes from './routes/invoice-routes.js';
 import paymentRoutes from './routes/payment-routes.js';
+import expenseCategoryRoutes from './routes/expense-category-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -36,6 +37,7 @@ import EstimateController from './controllers/EstimateController.js';
 import ExpenseController from './controllers/ExpenseController.js';
 import InvoiceController from './controllers/InvoiceController.js';
 import PaymentController from './controllers/PaymentController.js';
+import ExpenseCategoryController from './controllers/ExpenseCategoryController.js';
 
 
 // ||----------------------------------------------------------------------------------------------------------||
@@ -201,6 +203,14 @@ app.get('/payments/:id', PaymentController.getByIdView);
 app.post('/payments', PaymentController.createView);        
 app.put('/payments/:id', PaymentController.updateView);
 
+// Vistas Pug para Expense Categories
+app.get('/expense-categories', ExpenseCategoryController.getAllView);          
+app.get('/expense-categories/new', ExpenseCategoryController.newView);
+app.get('/expense-categories/:id/edit', ExpenseCategoryController.getEditView);
+app.get('/expense-categories/:id', ExpenseCategoryController.getByIdView);  
+app.post('/expense-categories', ExpenseCategoryController.createView);        
+app.put('/expense-categories/:id', ExpenseCategoryController.updateView);
+
 
 
 
@@ -220,6 +230,7 @@ app.use('/api/estimates', estimateRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/expense-categories', expenseCategoryRoutes);
 
 
 // ||--------------------------------------------------------------------------------------------------||

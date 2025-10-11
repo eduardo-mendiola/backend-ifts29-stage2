@@ -1,0 +1,21 @@
+extends ../layout.pug
+//- views/expense-categories/new.pug
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/expense-categories", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Crear Nuevo Categoría
+        a.btn.btn-gray(href="/expense-categories", tabindex="5") Volver a la lista
+
+      // Contenedor de 1 columnas
+      .row.g-3
+        .col-md-6
+          .mb-3
+            label.form-label(for="name") Nombre
+            input#name.form-control(type="text", name="name", required, tabindex="1")
+          .mb-3
+            label.form-label(for="description") Descripción
+            textarea#description.form-control(name="description", required, tabindex="2")
+
+      button.btn.btn-primary.mt-3(type="submit", tabindex="3") Crear Categoría
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/expense-categories", tabindex="4") Cancelar

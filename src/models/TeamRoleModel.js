@@ -22,12 +22,7 @@ class TeamRoleModel extends BaseModel {
     async findAll() {
         return super.findAll();
     }
-
-    // Buscar por nombre
-    // async findByName(name) {
-    //     return this.model.findOne({ name });
-    // }
-
+   
     async findByName(name, excludeId = null) {
         const query = { name };
         if (excludeId) query._id = { $ne: excludeId }; // excluye el mismo id
