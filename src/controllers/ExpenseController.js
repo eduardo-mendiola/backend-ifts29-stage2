@@ -2,6 +2,8 @@ import BaseController from './BaseController.js';
 import Expense from '../models/ExpenseModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
+import User from '../models/UserModel.js';
+import ExpenseCategory from '../models/ExpenseCategoryModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 const statusLabels = {
@@ -10,7 +12,7 @@ const statusLabels = {
     rejected: 'Rechazado'
 };
 
-const paiment_method_labels = {
+const payment_method_labels = {
     credit_card: 'Tarjeta de crédito',
     cash: 'Efectivo',
     bank_transfer: 'Transferencia bancaria'
@@ -35,7 +37,7 @@ class ExpenseController extends BaseController {
                 title: `Lista de ${this.viewPath}`,
                 items: this.formatItems(items),
                 statusLabels,
-                paiment_method_labels,
+                payment_method_labels,
                 currency_labels
             });
         } catch (error) {
@@ -53,15 +55,15 @@ class ExpenseController extends BaseController {
 
             // Format dates before sending to the view
             const formattedExpense = formatDatesForInput(
-                this.formatItem(estimate),
-                ['valid_until', 'updated_at', 'created_at']
+                this.formatItem(expense),
+                ['date', 'updated_at', 'created_at']
             );
 
             res.render(`${this.viewPath}/show`, {
                 title: `Ver Presupuesto`,
                 item: formattedExpense,
                 statusLabels,
-                paiment_method_labels,
+                payment_method_labels,
                 currency_labels
             });
 
@@ -80,6 +82,8 @@ class ExpenseController extends BaseController {
 
             const clients = await Client.findAll();
             const projects = await Project.findAll();
+            const users = await User.findAll();
+            const categories = await ExpenseCategory.findAll();
 
             // Format dates before sending to the view
             const formattedExpense = formatDatesForInput(
@@ -92,8 +96,10 @@ class ExpenseController extends BaseController {
                 item: formattedExpense,
                 clients,
                 projects,
+                users,
+                categories,
                 statusLabels,
-                paiment_method_labels,
+                payment_method_labels,
                 currency_labels
             });
         } catch (error) {
@@ -107,14 +113,18 @@ class ExpenseController extends BaseController {
         try {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
+            const users = await User.findAll();
+            const categories = await ExpenseCategory.findAll();
 
             res.render(`${this.viewPath}/new`, {
                 title: `Nuevo Gasto`,
                 item: {},
                 clients,
                 projects,
+                users,
+                categories,
                 statusLabels,
-                paiment_method_labels,
+                payment_method_labels,
                 currency_labels
             });
         } catch (error) {

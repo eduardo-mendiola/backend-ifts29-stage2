@@ -1,9 +1,9 @@
 extends ../layout.pug
-//- views/task/index.pug
+//- views/expenses/index.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-0 Lista de Tareas
-    a.btn.btn-primary(href="/tasks/new") Nueva Tarea
+    h1.mb-0 Lista de Gastos
+    a.btn.btn-primary(href="/expenses/new") Nuevo Gasto
     
   //- Incluir barra de búsqueda, modal y JS común
   include ../partials/common-table-scripts.pug
@@ -13,21 +13,21 @@ block content
       tr
         th №
         th Código
-        th Título 
-        th Asignado 
-        th status
+        th Proyecto
+        th Categoría
+        th Monto
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
-        tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Título: ${item.title}`)
+        tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Título: ${item.category_id.name}`)
           td= index + 1
           td= item.code
-          td= item.title
-          td= item.assigned_to.first_name + " " + item.assigned_to.last_name
-          td= item.status
+          td= item.project_id.name
+          td= item.category_id.name
+          td $#{item.amount.toFixed(2)}
           td.text-end
-            a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}/edit`) Editar
-            form(action=`/api/tasks/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+            a.btn.btn-gray.btn-sm.me-2(href=`/expenses/${item.id}`) Ver
+            a.btn.btn-gray.btn-sm.me-2(href=`/expenses/${item.id}/edit`) Editar
+            form(action=`/api/expenses/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
               input(type="hidden", name="_method", value="DELETE")
               button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
