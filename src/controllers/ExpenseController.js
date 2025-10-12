@@ -46,7 +46,7 @@ class ExpenseController extends BaseController {
         }
     };
 
-    // View for displaying an estimate by ID (for show.pug)
+    // View for displaying an expense by ID (for show.pug)
     getByIdView = async (req, res) => {
         try {
             const { id } = req.params;
@@ -73,12 +73,12 @@ class ExpenseController extends BaseController {
         }
     };
 
-    // View for editing an estimate
+    // View for editing an expense
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;
-            const estimate = await this.model.findById(id);
-            if (!estimate) return res.render('error404', { title: 'Gasto no encontrado' });
+            const expense = await this.model.findById(id);
+            if (!expense) return res.render('error404', { title: 'Gasto no encontrado' });
 
             const clients = await Client.findAll();
             const projects = await Project.findAll();
@@ -87,7 +87,7 @@ class ExpenseController extends BaseController {
 
             // Format dates before sending to the view
             const formattedExpense = formatDatesForInput(
-                this.formatItem(estimate),
+                this.formatItem(expense),
                 ['date', 'updated_at', 'created_at']
             );
 
@@ -108,7 +108,7 @@ class ExpenseController extends BaseController {
         }
     };
 
-    // View for creating a new estimate
+    // View for creating a new expense
     newView = async (req, res) => {
         try {
             const clients = await Client.findAll();

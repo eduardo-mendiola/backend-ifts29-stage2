@@ -1,32 +1,108 @@
-import BaseController from './BaseController.js'
-import Invoice from '../models/EstimateModel.js';
-import Project from '../models/ProjectModel.js'; 
+import BaseController from './BaseController.js';
+import Invoice from '../models/InvoiceModel.js';
+import Project from '../models/ProjectModel.js';
+import Client from '../models/ClientModel.js';
 import User from '../models/UserModel.js';
+import ExpenseCategory from '../models/ExpenseCategoryModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
-class invoiceController extends BaseController {
+const statusLabels = {
+    draft: 'Borrador',
+    sent: 'Enviada',
+    paid: 'Pagada',
+    overdue: 'Vencida',
+    cancelled: 'Cancelada'
+};
+
+const payment_method_labels = {
+    credit_card: 'Tarjeta de crédito',
+    cash: 'Efectivo',
+    bank_transfer: 'Transferencia bancaria'
+};
+
+const currency_labels = {
+    USD: 'Dólar estadounidense',
+    EUR: 'Euro',
+    GBP: 'Libra esterlina',
+    ARG: 'Peso argentino'
+};
+
+class InvoiceController extends BaseController {
     constructor() {
-        super(Invoice, 'invoices', 'INV-'); 
+        super(Invoice, 'invoices', 'EXP-');
     }
 
-    // Sobrescribimos getEditView para incluir usuarios y proyectos
+    getAllView = async (req, res) => {
+        try {
+            const items = await this.model.findAll();
+            res.render(`${this.viewPath}/index`, {
+                title: `Lista de ${this.viewPath}`,
+                items: this.formatItems(items),
+                statusLabels,
+                payment_method_labels,
+                currency_labels
+            });
+        } catch (error) {
+            console.error(`Error al obtener todos en vista (${this.viewPath}):`, error.message);
+            res.render('error500', { title: 'Error de servidor' });
+        }
+    };
+
+    // View for displaying an invoice by ID (for show.pug)
+    getByIdView = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const invoice = await this.model.findById(id);
+            if (!invoice) return res.render('error404', { title: 'Gasto no encontrado' });
+
+            // Format dates before sending to the view
+            const formattedExpense = formatDatesForInput(
+                this.formatItem(invoice),
+                ['date', 'updated_at', 'created_at']
+            );
+
+            res.render(`${this.viewPath}/show`, {
+                title: `Ver Presupuesto`,
+                item: formattedExpense,
+                statusLabels,
+                payment_method_labels,
+                currency_labels
+            });
+
+        } catch (error) {
+            console.error('Error en getByIdView:', error.message);
+            res.status(500).render('error500', { title: 'Error del servidor' });
+        }
+    };
+
+    // View for editing an invoice
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;
-            const task = await this.model.findById(id);
-            if (!task) return res.render('error404', { title: 'Tarea no encontrado' });
+            const invoice = await this.model.findById(id);
+            if (!invoice) return res.render('error404', { title: 'Gasto no encontrado' });
 
-            const users = await User.findAll();
+            const clients = await Client.findAll();
             const projects = await Project.findAll();
+            const users = await User.findAll();
+            const categories = await ExpenseCategory.findAll();
 
-            // Formatear fechas antes de enviar a la vista
-            const formattedTask = formatDatesForInput(this.formatItem(task), ['due_date', 'created_at']);
+            // Format dates before sending to the view
+            const formattedExpense = formatDatesForInput(
+                this.formatItem(invoice),
+                ['date', 'updated_at', 'created_at']
+            );
 
             res.render(`${this.viewPath}/edit`, {
-                title: `Editar Task`,
-                item: formattedTask, // Tarea con fecha formateada
+                title: `Editar Presupuesto`,
+                item: formattedExpense,
+                clients,
+                projects,
                 users,
-                projects
+                categories,
+                statusLabels,
+                payment_method_labels,
+                currency_labels
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -34,22 +110,30 @@ class invoiceController extends BaseController {
         }
     };
 
+    // View for creating a new invoice
     newView = async (req, res) => {
         try {
-            const users = await User.findAll();
+            const clients = await Client.findAll();
             const projects = await Project.findAll();
+            const users = await User.findAll();
+            const categories = await ExpenseCategory.findAll();
 
             res.render(`${this.viewPath}/new`, {
-                title: `Nueva Tarea`,
-                item: {}, // objeto vacío porque es nuevo
+                title: `Nuevo Gasto`,
+                item: {},
+                clients,
+                projects,
                 users,
-                projects
+                categories,
+                statusLabels,
+                payment_method_labels,
+                currency_labels
             });
         } catch (error) {
-            console.error('Error al abrir formulario de tareas:', error.message);
+            console.error('Error al abrir formulario de gastos:', error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
 }
 
-export default new invoiceController();
+export default new InvoiceController();

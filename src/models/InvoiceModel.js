@@ -3,15 +3,24 @@ import BaseModel from './BaseModel.js';
 
 const invoiceSchema = new mongoose.Schema({
     code: { type: String, unique: true },
-    title: { type: String, required: true },
-    description: { type: String },
-    priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },
-    status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    estimated_hours: { type: Number },
+    estimate_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Estimate' },
+    invoiece_number: { type: String, required: true },
     due_date: { type: Date },
-    project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
-    time_entries_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TimeEntry' }],
+    currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
+    items: [
+        {
+            description: { type: String, required: true },
+            total_amount: { type: Number, required: true }
+        }
+    ],
+    subtotal: { type: Number, required: true },
+    taxes: { type: Number, required: true },
+    discount: { type: Number },
+    total_amount: { type: Number, required: true },
+    paid_amount: { type: Number },
+    balance_due: { type: Number },
+    status: { type: String, enum: ['draft', 'sent', 'paid', 'overdue', 'cancelled'], default: 'draft' },
+    notes: { type: String },
 }, {
     collection: 'invoices',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } // timestamps automáticos
@@ -24,26 +33,26 @@ class InvoiceModel extends BaseModel {
 
     async findAll() {
         return super.findAll([
-            'assigned_to', 
-            'project_id', 
+            'assigned_to',
+            'project_id',
             {
-                path: 'time_entries_ids', 
-                populate: 'user_id'
-            }
-        ]); // populate automático
-    }   
-
-    async findById(id) {
-        return super.findById(id, [
-            'assigned_to', 
-            'project_id', 
-            {
-                path: 'time_entries_ids', 
+                path: 'time_entries_ids',
                 populate: 'user_id'
             }
         ]); // populate automático
     }
-    
+
+    async findById(id) {
+        return super.findById(id, [
+            'assigned_to',
+            'project_id',
+            {
+                path: 'time_entries_ids',
+                populate: 'user_id'
+            }
+        ]); // populate automático
+    }
+
 }
 
 export default new InvoiceModel();
