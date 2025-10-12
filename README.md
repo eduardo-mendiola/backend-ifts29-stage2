@@ -6,7 +6,7 @@
 **Profesor:** Emir Eliezer Garcia Ontiveros  
 **Comisión:** A  
 **Alumno:** Mendiola, Eduardo E.  
-**Fecha de la Entrega:** 26-10-2025 (Estimada)  
+**Fecha de la Entrega:** 20-10-2025  
 
 ---
 
