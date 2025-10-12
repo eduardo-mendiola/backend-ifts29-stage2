@@ -1,11 +1,11 @@
 extends ../layout.pug
-//- views/task/new.pug
+//- views/estimates/new.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action="/tasks", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/estimates", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 Crear Nueva Tarea
-        a.btn.btn-gray(href="/tasks", tabindex="11") Volver a la lista
+        h1.mb-0 Crear Nuevo Presupuesto
+        a.btn.btn-gray(href="/estimates", tabindex="9") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -15,52 +15,140 @@ block content
             label.form-label(for="title") Título
             input#title.form-control(type="text", name="title", required, tabindex="1")
           .mb-3
-          label.form-label(for="project_id") Proyecto
-          select#project_id.form-select(name="project_id", required, tabindex="3")
-            if projects && projects.length > 0
-              each project in projects
+            label.form-label(for="client_id") Cliente
+            select#client_id.form-select(name="client_id", tabindex="3")
+              option(value="") -- Seleccionar cliente --
+              each client in clients
                 option(
-                  value=project._id 
-                  selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
-                ) #{project.name}
-            else
-              option(value="") No hay proyectos disponibles
+                  value=client._id
+                  selected=(item.project_id && client._id.toString() === item.project_id.client_id._id.toString())
+                ) #{client.name}          
+          .mb-3
+            label.form-label(for="project_id") Proyecto
+            select#project_id.form-select(name="project_id", required, tabindex="5")
+              option(value="") -- Selecciona primero un cliente --
+              if projects && projects.length > 0
+                each project in projects
+                  option(
+                    value=project._id
+                    data-client-id=project.client_id._id
+                    selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
+                  ) #{project.name}
+              else
+                option(value="") No hay proyectos disponibles
           .mb-3
             label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description", required, tabindex="5")
-          .mb-3
-            label.form-label(for="priority") Prioridad
-            select#priority.form-select(name="priority", required, tabindex="7")
-              option(value="baja" selected=(item.priority === "baja")) Baja
-              option(value="media" selected=(item.priority === "media")) Media
-              option(value="alta" selected=(item.priority === "alta")) Alta
-
+            textarea#description.form-control(name="description", required, tabindex="7")
+          
         // Columna derecha
         .col-md-6
           .mb-3
-            label.form-label(for="estimated_hours") Estimación (horas)
-            input#estimated_hours.form-control(type="number", name="estimated_hours", tabindex="2")
+            label.form-label(for="total_amount") Monto Total
+            input#total_amount.form-control(type="number", name="total_amount",  tabindex="2")
+          .mb-3 
+            label.form-label(for="validity_days") Días de Validez
+            input#validity_days.form-control(type="number", name="validity_days", tabindex="4")
           .mb-3
-            label.form-label(for="due_date") Fecha de Vencimiento
-            input#due_date.form-control(type="date", name="due_date", tabindex="4")
+            label.form-label(for="valid_until") Valido Hasta
+            input#valid_until.form-control(type="date", name="valid_until", readonly)
           .mb-3
             label.form-label(for="status") Estado
             select#status.form-select(name="status", required, tabindex="6")
-              option(value="pending" selected=(item.status === "pending")) Pendiente
-              option(value="in_progress" selected=(item.status === "in_progress")) En Progreso
-              option(value="completed" selected=(item.status === "completed")) Finalizado
-          .mb-3
-            label.form-label(for="assigned_to") Asignado
-            select#assigned_to.form-select(name="assigned_to", required, tabindex="8")
-              if users && users.length > 0
-                each user in users
+              if statusLabels
+                each label, key in statusLabels
                   option(
-                    value=user._id 
-                    selected=(item.assigned_to && user._id.toString() === item.assigned_to._id.toString())
-                  ) #{user.first_name + ' ' + user.last_name}  
+                    value=key
+                    selected=(item.status && item.status.toString() === key)
+                  ) #{label}
               else
-                option(value="") No hay usuarios disponibles 
+                option(value="") No hay estados disponibles
+
+      button.btn.btn-primary.mt-3(type="submit", tabindex="7") Crear Tarea
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/estimates", tabindex="8") Cancelar
+
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const clientSelect = document.getElementById('client_id');
+      const projectSelect = document.getElementById('project_id');
+
+      const allProjects = !{JSON.stringify(projects || [])};
+
+      // Función para actualizar los proyectos según el cliente seleccionado
+      function loadProjectsForClient(clientId) {
+        projectSelect.innerHTML = ''; // Limpiar opciones
+
+        if (!clientId) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = '-- Selecciona primero un cliente --';
+          projectSelect.appendChild(option);
+          return;
+        }
+
+        const filtered = allProjects.filter(
+          p => p.client_id && p.client_id._id === clientId
+        );
+
+        if (filtered.length === 0) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = 'No hay proyectos disponibles para este cliente';
+          projectSelect.appendChild(option);
+        } else {
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = '-- Seleccionar proyecto --';
+          projectSelect.appendChild(defaultOption);
+
+          filtered.forEach(project => {
+            const option = document.createElement('option');
+            option.value = project._id;
+            option.textContent = project.name;
+            projectSelect.appendChild(option);
+          });
+        }
+      }
+
+      // Estado inicial (sin cliente seleccionado)
+      loadProjectsForClient('');
+
+      // Cuando cambia el cliente
+      clientSelect.addEventListener('change', () => {
+        loadProjectsForClient(clientSelect.value);
+      });
+    });
+
+    // Lógica para calcular y actualizar la fecha de vencimiento
+    document.addEventListener('DOMContentLoaded', () => {
+      const validityInput = document.getElementById('validity_days');
+      const dueDateInput = document.getElementById('valid_until');
+
+      // Fecha de creación o fecha actual si es nuevo
+      const creationDate = new Date(!{JSON.stringify(item.created_at || new Date())});
+
+      function updateDueDate() {
+        const days = parseInt(validityInput.value, 10);
+
+        if (!isNaN(days)) {
+          const dueDate = new Date(creationDate);
+          dueDate.setDate(dueDate.getDate() + days);
+
+          // Formatear como yyyy-mm-dd para el input type=date
+          const yyyy = dueDate.getFullYear();
+          const mm = String(dueDate.getMonth() + 1).padStart(2, '0');
+          const dd = String(dueDate.getDate()).padStart(2, '0');
+
+          dueDateInput.value = `${yyyy}-${mm}-${dd}`;
+        } else {
+          dueDateInput.value = '';
+        }
+      }
+
+      // Actualizar al cargar la página
+      updateDueDate();
+
+      // Actualizar cuando cambian los días de validez
+      validityInput.addEventListener('input', updateDueDate);
+    });
 
 
-      button.btn.btn-primary.mt-3(type="submit", tabindex="9") Crear Tarea
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/tasks", tabindex="10") Cancelar

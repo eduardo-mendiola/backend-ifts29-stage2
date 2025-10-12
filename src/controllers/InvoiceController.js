@@ -2,8 +2,6 @@ import BaseController from './BaseController.js';
 import Invoice from '../models/InvoiceModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
-import User from '../models/UserModel.js';
-import ExpenseCategory from '../models/ExpenseCategoryModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 const statusLabels = {
@@ -12,12 +10,6 @@ const statusLabels = {
     paid: 'Pagada',
     overdue: 'Vencida',
     cancelled: 'Cancelada'
-};
-
-const payment_method_labels = {
-    credit_card: 'Tarjeta de crédito',
-    cash: 'Efectivo',
-    bank_transfer: 'Transferencia bancaria'
 };
 
 const currency_labels = {
@@ -29,8 +21,25 @@ const currency_labels = {
 
 class InvoiceController extends BaseController {
     constructor() {
-        super(Invoice, 'invoices', 'EXP-');
+        super(Invoice, 'invoices', 'INV-');
     }
+
+    // Luego en tu controlador de creación (createInvoice):
+
+    // const { subtotal, discount, taxes, total } = calculateInvoiceTotals(
+    //   req.body.items,
+    //   req.body.discount_percent,
+    //   req.body.tax_percent
+    // );
+    // const invoice = new Invoice({
+    //   ...req.body,
+    //   subtotal,
+    //   discount,
+    //   taxes,
+    //   total_amount: total,
+    //   paid_amount: 0,
+    //   balance_due: total,
+    // });
 
     getAllView = async (req, res) => {
         try {
@@ -39,7 +48,6 @@ class InvoiceController extends BaseController {
                 title: `Lista de ${this.viewPath}`,
                 items: this.formatItems(items),
                 statusLabels,
-                payment_method_labels,
                 currency_labels
             });
         } catch (error) {
@@ -53,19 +61,18 @@ class InvoiceController extends BaseController {
         try {
             const { id } = req.params;
             const invoice = await this.model.findById(id);
-            if (!invoice) return res.render('error404', { title: 'Gasto no encontrado' });
+            if (!invoice) return res.render('error404', { title: 'Factura no encontrada' });
 
             // Format dates before sending to the view
-            const formattedExpense = formatDatesForInput(
+            const formattedInvoice = formatDatesForInput(
                 this.formatItem(invoice),
-                ['date', 'updated_at', 'created_at']
+                ['issue_date', 'due_date', 'updated_at', 'created_at']
             );
 
             res.render(`${this.viewPath}/show`, {
-                title: `Ver Presupuesto`,
-                item: formattedExpense,
+                title: `Ver Factura`,
+                item: formattedInvoice,
                 statusLabels,
-                payment_method_labels,
                 currency_labels
             });
 
@@ -80,28 +87,23 @@ class InvoiceController extends BaseController {
         try {
             const { id } = req.params;
             const invoice = await this.model.findById(id);
-            if (!invoice) return res.render('error404', { title: 'Gasto no encontrado' });
+            if (!invoice) return res.render('error404', { title: 'Factura no encontrado' });
 
             const clients = await Client.findAll();
             const projects = await Project.findAll();
-            const users = await User.findAll();
-            const categories = await ExpenseCategory.findAll();
 
             // Format dates before sending to the view
-            const formattedExpense = formatDatesForInput(
+            const formattedInvoice = formatDatesForInput(
                 this.formatItem(invoice),
-                ['date', 'updated_at', 'created_at']
+                ['issue_date', 'due_date', 'updated_at', 'created_at']
             );
 
             res.render(`${this.viewPath}/edit`, {
-                title: `Editar Presupuesto`,
-                item: formattedExpense,
+                title: `Editar Factura`,
+                item: formattedInvoice,
                 clients,
                 projects,
-                users,
-                categories,
                 statusLabels,
-                payment_method_labels,
                 currency_labels
             });
         } catch (error) {
@@ -115,22 +117,17 @@ class InvoiceController extends BaseController {
         try {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
-            const users = await User.findAll();
-            const categories = await ExpenseCategory.findAll();
 
             res.render(`${this.viewPath}/new`, {
-                title: `Nuevo Gasto`,
+                title: `Nueva Factura`,
                 item: {},
                 clients,
                 projects,
-                users,
-                categories,
                 statusLabels,
-                payment_method_labels,
                 currency_labels
             });
         } catch (error) {
-            console.error('Error al abrir formulario de gastos:', error.message);
+            console.error('Error al abrir formulario de Facturas:', error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };

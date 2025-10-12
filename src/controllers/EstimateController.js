@@ -14,6 +14,13 @@ const statusLabels = {
     converted: 'Convertido'
 };
 
+const currency_labels = {
+    USD: 'Dólar estadounidense',
+    EUR: 'Euro',
+    GBP: 'Libra esterlina',
+    ARG: 'Peso argentino'
+};
+
 class EstimateController extends BaseController {
     constructor() {
         super(Estimate, 'estimates', 'EST-');
@@ -25,7 +32,8 @@ class EstimateController extends BaseController {
             res.render(`${this.viewPath}/index`, {
                 title: `Lista de ${this.viewPath}`,
                 items: this.formatItems(items),
-                statusLabels
+                statusLabels,
+                currency_labels
             });
         } catch (error) {
             console.error(`Error al obtener todos en vista (${this.viewPath}):`, error.message);
@@ -49,7 +57,8 @@ class EstimateController extends BaseController {
             res.render(`${this.viewPath}/show`, {
                 title: `Ver Presupuesto`,
                 item: formattedEstimate,
-                statusLabels
+                statusLabels,
+                currency_labels
             });
 
         } catch (error) {
@@ -79,7 +88,8 @@ class EstimateController extends BaseController {
                 item: formattedEstimate,
                 clients,
                 projects,
-                statusLabels
+                statusLabels,
+                currency_labels
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -98,7 +108,8 @@ class EstimateController extends BaseController {
                 item: {},
                 clients,
                 projects,
-                statusLabels
+                statusLabels,
+                currency_labels
             });
         } catch (error) {
             console.error('Error al abrir formulario de presupuestos:', error.message);

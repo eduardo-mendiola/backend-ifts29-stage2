@@ -30,6 +30,9 @@ block content
         th Monto Total
         td $#{item.total_amount.toFixed(2)}
       tr 
+        th Moneda 
+        td= currency_labels[item.currency] 
+      tr 
         th Estado
         td= statusLabels[item.status] || 'N/A'
       tr

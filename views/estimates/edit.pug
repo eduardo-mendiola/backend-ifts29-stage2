@@ -42,6 +42,18 @@ block content
         // Columna derecha
         .col-md-6
           .mb-3
+            label.form-label(for="currency") Moneda
+            select#currency.form-select(name="currency", required, tabindex="9")
+              option(value="") Seleccionar una Moneda...
+              if currency_labels
+                each label, key in currency_labels
+                  option(
+                    value=key,
+                    selected=(item.currency && item.currency.toString() === key)
+                  ) #{label}
+              else
+                option(value="") No hay monedas disponibles
+          .mb-3
             label.form-label(for="total_amount") Monto Total
             input#total_amount.form-control(type="number", name="total_amount", value=item.total_amount || "", tabindex="2")
           .mb-3 
