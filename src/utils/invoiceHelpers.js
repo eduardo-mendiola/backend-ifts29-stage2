@@ -12,3 +12,7 @@ export function calculateInvoiceTotals(items, discountPercent = 0, taxPercent = 
     return { subtotal, discount, taxes, total };
 };
 
+
+export function calculateBalanceDue(totalAmount, paidAmount = 0) {
+    return totalAmount - paidAmount;
+}

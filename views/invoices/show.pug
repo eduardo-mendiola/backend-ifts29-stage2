@@ -14,6 +14,9 @@ block content
       tr
         th Código
         td= item.code
+      tr 
+        th Tipo de Factura
+        td= item.invoice_type || 'N/A'
       tr
         th № de Factura
         td= item.invoice_number || 'N/A'

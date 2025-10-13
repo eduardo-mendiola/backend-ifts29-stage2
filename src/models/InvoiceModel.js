@@ -4,6 +4,7 @@ import BaseModel from './BaseModel.js';
 const invoiceSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     estimate_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Estimate' },
+    invoice_type: { type: String, enum: ['A', 'B', 'C', 'E'], default: 'B' },
     invoice_number: { type: String, required: true },
     due_date: { type: Date },
     currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
@@ -33,15 +34,15 @@ const invoiceSchema = new mongoose.Schema({
 
 // Virtuals para campos derivados
 invoiceSchema.virtual('project_name').get(function () {
-  return this.estimate_id?.project_id?.name || null;
+    return this.estimate_id?.project_id?.name || null;
 });
 
 invoiceSchema.virtual('client_full_name').get(function () {
-  return this.estimate_id?.project_id?.client_id?.name || null;
+    return this.estimate_id?.project_id?.client_id?.name || null;
 });
 
 invoiceSchema.virtual('client_code').get(function () {
-  return this.estimate_id?.project_id?.client_id?.code || null;
+    return this.estimate_id?.project_id?.client_id?.code || null;
 });
 
 

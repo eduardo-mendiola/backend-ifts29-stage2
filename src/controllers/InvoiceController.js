@@ -3,6 +3,8 @@ import Invoice from '../models/InvoiceModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
+import { calculateInvoiceTotals, calculateBalanceDue } from '../utils/invoiceHelpers.js';
+import { invoiceNumberGenerator } from '../utils/invoiceNumberGenerator.js';
 
 const statusLabels = {
     draft: 'Borrador',
@@ -19,27 +21,15 @@ const currency_labels = {
     ARG: 'Peso argentino'
 };
 
+const invoiceTypes = ['A', 'B', 'C', 'E'];
+
 class InvoiceController extends BaseController {
     constructor() {
         super(Invoice, 'invoices', 'INV-');
     }
 
-    // Luego en tu controlador de creación (createInvoice):
 
-    // const { subtotal, discount, taxes, total } = calculateInvoiceTotals(
-    //   req.body.items,
-    //   req.body.discount_percent,
-    //   req.body.tax_percent
-    // );
-    // const invoice = new Invoice({
-    //   ...req.body,
-    //   subtotal,
-    //   discount,
-    //   taxes,
-    //   total_amount: total,
-    //   paid_amount: 0,
-    //   balance_due: total,
-    // });
+
 
     getAllView = async (req, res) => {
         try {
@@ -92,6 +82,14 @@ class InvoiceController extends BaseController {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
 
+            const { subtotal, discount, taxes, total } = calculateInvoiceTotals(
+                req.body.items,
+                req.body.discount_percent,
+                req.body.tax_percent
+            );
+
+            const balance_due = calculateBalanceDue(total, req.body.paid_amount || 0);
+
             // Format dates before sending to the view
             const formattedInvoice = formatDatesForInput(
                 this.formatItem(invoice),
@@ -101,10 +99,17 @@ class InvoiceController extends BaseController {
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Factura`,
                 item: formattedInvoice,
+                invoiceTypes,
                 clients,
                 projects,
                 statusLabels,
-                currency_labels
+                currency_labels,
+                subtotal,
+                discount,
+                taxes,
+                total_amount: total,
+                paid_amount: 0,
+                balance_due: balance_due,
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -118,13 +123,31 @@ class InvoiceController extends BaseController {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
 
+            const { subtotal, discount, taxes, total } = calculateInvoiceTotals(
+                req.body.items,
+                req.body.discount_percent,
+                req.body.tax_percent
+            );
+
+            const nextInvoiceNumber = await invoiceNumberGenerator();
+
+            const balance_due = calculateBalanceDue(total, req.body.paid_amount || 0);
+
             res.render(`${this.viewPath}/new`, {
                 title: `Nueva Factura`,
                 item: {},
+                invoice_number: nextInvoiceNumber,
+                invoiceTypes,
                 clients,
                 projects,
                 statusLabels,
-                currency_labels
+                currency_labels,
+                subtotal,
+                discount,
+                taxes,
+                total_amount: total,
+                paid_amount: 0,
+                balance_due: total,
             });
         } catch (error) {
             console.error('Error al abrir formulario de Facturas:', error.message);
