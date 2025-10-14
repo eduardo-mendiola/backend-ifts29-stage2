@@ -38,14 +38,14 @@ block content
               if item.members && item.members.length > 0
                 each member, index in item.members
                   li.list-group-item.d-flex.justify-content-between.align-items-center(
-                    data-member-id=member.user_id._id
-                    data-member-name=`${member.user_id.first_name} ${member.user_id.last_name}`
+                    data-member-id=member.employee_id._id
+                    data-member-name=`${member.employee_id.first_name} ${member.employee_id.last_name}`
                     data-member-role-id=member.team_role_id._id
                     data-member-role-name=member.team_role_id.name
-                    data-default-role-id=member.user_id.role_id._id
-                    data-default-role-name=member.user_id.role_id.name
+                    data-default-role-id=member.employee_id.user_id.role_id._id
+                    data-default-role-name=member.employee_id.user_id.role_id.name
                   )
-                    span #{member.user_id.first_name} #{member.user_id.last_name} (#{member.team_role_id.name})
+                    span #{member.employee_id.first_name} #{member.employee_id.last_name} (#{member.team_role_id.name})
                     button.btn.btn-sm.btn-danger(type="button", onclick="removeMember(this)") Quitar
               else
                 li#no-members.list-group-item No hay miembros aún
@@ -57,11 +57,11 @@ block content
               .col-12
                 select#add_member.form-select(onchange="handleMemberSelection()", tabindex="2")
                   option(value="") Seleccionar usuario...
-                  if users && users.length > 0
-                    each user in users
+                  if employees && employees.length > 0
+                    each employee in employees
                       //- Evitar duplicar al líder
-                      if !item.team_leader || user._id.toString() !== item.team_leader._id.toString()
-                        option(value=user._id, data-name=`${user.first_name} ${user.last_name}`, data-default-role-id=user.role_id._id, data-default-role-name=user.role_id.name) #{user.first_name} #{user.last_name} - #{user.role_id.name}
+                      if !item.team_leader || employee._id.toString() !== item.team_leader._id.toString()
+                        option(value=employee._id, data-name=`${employee.first_name} ${employee.last_name}`, data-default-role-id=employee.user_id.role_id._id, data-default-role-name=employee.user_id.role_id.name) #{employee.first_name} #{employee.last_name} - #{employee.user_id.role_id.name}
                   else
                     option(value="") No hay usuarios disponibles
               
@@ -86,10 +86,10 @@ block content
   //- Scripts para agregar y quitar miembros dinámicamente
   script.
     // Variables globales para manejar la selección
-    let selectedUserId = null;
-    let selectedUserName = null;
-    let selectedUserDefaultRoleId = null;
-    let selectedUserDefaultRoleName = null;
+    let selectedemployeeId = null;
+    let selectedemployeeName = null;
+    let selectedemployeeDefaultRoleId = null;
+    let selectedemployeeDefaultRoleName = null;
 
     // Función para manejar la selección de usuario
     function handleMemberSelection() {
@@ -103,25 +103,25 @@ block content
         // No hay selección
         roleContainer.style.display = 'none';
         addButtonContainer.style.display = 'none';
-        selectedUserId = null;
-        selectedUserName = null;
-        selectedUserDefaultRoleId = null;
-        selectedUserDefaultRoleName = null;
+        selectedemployeeId = null;
+        selectedemployeeName = null;
+        selectedemployeeDefaultRoleId = null;
+        selectedemployeeDefaultRoleName = null;
       } else {
         // Usuario seleccionado
-        selectedUserId = selectedOption.value;
-        selectedUserName = selectedOption.getAttribute('data-name');
-        selectedUserDefaultRoleId = selectedOption.getAttribute('data-default-role-id');
-        selectedUserDefaultRoleName = selectedOption.getAttribute('data-default-role-name');
+        selectedemployeeId = selectedOption.value;
+        selectedemployeeName = selectedOption.getAttribute('data-name');
+        selectedemployeeDefaultRoleId = selectedOption.getAttribute('data-default-role-id');
+        selectedemployeeDefaultRoleName = selectedOption.getAttribute('data-default-role-name');
         
         // Intentar preseleccionar un rol similar al rol organizacional del usuario
-        const userRoleName = selectedUserDefaultRoleName.toLowerCase();
+        const employeeRoleName = selectedemployeeDefaultRoleName.toLowerCase();
         let bestMatch = null;
         
         // Buscar coincidencias aproximadas
         for (let option of roleSelect.options) {
           const teamRoleName = option.textContent.toLowerCase();
-          if (teamRoleName.includes(userRoleName) || userRoleName.includes(teamRoleName)) {
+          if (teamRoleName.includes(employeeRoleName) || employeeRoleName.includes(teamRoleName)) {
             bestMatch = option.value;
             break;
           }
@@ -155,10 +155,10 @@ block content
       roleSelect.selectedIndex = 0;
       roleContainer.style.display = 'none';
       addButtonContainer.style.display = 'none';
-      selectedUserId = null;
-      selectedUserName = null;
-      selectedUserDefaultRoleId = null;
-      selectedUserDefaultRoleName = null;
+      selectedemployeeId = null;
+      selectedemployeeName = null;
+      selectedemployeeDefaultRoleId = null;
+      selectedemployeeDefaultRoleName = null;
     }
 
     // Función para actualizar los inputs hidden
@@ -248,7 +248,7 @@ block content
         return;
       }
       
-      if (!selectedUserId) {
+      if (!selectedemployeeId) {
         alert('Error: No hay usuario seleccionado');
         return;
       }
@@ -264,15 +264,15 @@ block content
       // Crear nuevo elemento de lista
       const li = document.createElement('li');
       li.className = 'list-group-item d-flex justify-content-between align-items-center';
-      li.setAttribute('data-member-id', selectedUserId);
-      li.setAttribute('data-member-name', selectedUserName);
+      li.setAttribute('data-member-id', selectedemployeeId);
+      li.setAttribute('data-member-name', selectedemployeeName);
       li.setAttribute('data-member-role-id', selectedRoleOption.value);
       li.setAttribute('data-member-role-name', selectedRoleOption.textContent);
-      li.setAttribute('data-default-role-id', selectedUserDefaultRoleId);
-      li.setAttribute('data-default-role-name', selectedUserDefaultRoleName);
+      li.setAttribute('data-default-role-id', selectedemployeeDefaultRoleId);
+      li.setAttribute('data-default-role-name', selectedemployeeDefaultRoleName);
       
       const span = document.createElement('span');
-      span.textContent = `${selectedUserName} (${selectedRoleOption.textContent})`;
+      span.textContent = `${selectedemployeeName} (${selectedRoleOption.textContent})`;
       
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -286,7 +286,7 @@ block content
 
       // Quitar del select la opción seleccionada
       const select = document.getElementById('add_member');
-      const optionToRemove = select.querySelector(`option[value="${selectedUserId}"]`);
+      const optionToRemove = select.querySelector(`option[value="${selectedemployeeId}"]`);
       if (optionToRemove) {
         optionToRemove.remove();
       }

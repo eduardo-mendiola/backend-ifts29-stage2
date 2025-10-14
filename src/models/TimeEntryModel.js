@@ -3,7 +3,7 @@ import BaseModel from './BaseModel.js';
 
 const timeEntrySchema = new mongoose.Schema({
     code: { type: String, unique: true },
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    employee_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
     task_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Task', required: true },
     description: { type: String },
     date: { type: Date },
@@ -11,7 +11,7 @@ const timeEntrySchema = new mongoose.Schema({
     description: { type: String, required: true },
     billable: { type: Boolean, default: true },
     approved: { type: Boolean, default: false },
-    approved_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    approved_by: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
     supervisor_comment: { type: String }
 }, {
     collection: 'time_entries',
@@ -25,7 +25,7 @@ class TimeEntryModel extends BaseModel {
 
     async findAll() {
         return super.findAll([
-            'user_id',
+            'employee_id',
             'approved_by',
             { path: 'task_id', populate: { path: 'project_id' } }
         ]); // populate automático
@@ -33,7 +33,7 @@ class TimeEntryModel extends BaseModel {
 
     async findById(id) {
         return super.findById(id, [
-            'user_id',
+            'employee_id',
             'approved_by',
             { path: 'task_id', populate: { path: 'project_id' } }
         ]); // populate automático

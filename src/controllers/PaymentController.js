@@ -1,7 +1,7 @@
 import BaseController from './BaseController.js'
 import Payment from '../models/PaymentModel.js';
 import Project from '../models/ProjectModel.js'; 
-import User from '../models/UserModel.js';
+import Employee from '../models/EmployeeModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 class PaymentController extends BaseController {
@@ -16,7 +16,7 @@ class PaymentController extends BaseController {
             const task = await this.model.findById(id);
             if (!task) return res.render('error404', { title: 'Tarea no encontrado' });
 
-            const users = await User.findAll();
+            const employees = await Employee.findAll();
             const projects = await Project.findAll();
 
             // Formatear fechas antes de enviar a la vista
@@ -25,7 +25,7 @@ class PaymentController extends BaseController {
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Task`,
                 item: formattedTask, // Tarea con fecha formateada
-                users,
+                employees,
                 projects
             });
         } catch (error) {
@@ -36,13 +36,13 @@ class PaymentController extends BaseController {
 
     newView = async (req, res) => {
         try {
-            const users = await User.findAll();
+            const employees = await Employee.findAll();
             const projects = await Project.findAll();
 
             res.render(`${this.viewPath}/new`, {
                 title: `Nueva Tarea`,
                 item: {}, // objeto vacío porque es nuevo
-                users,
+                employees,
                 projects
             });
         } catch (error) {

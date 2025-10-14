@@ -1,7 +1,7 @@
 import BaseController from './BaseController.js';
 import TimeEntry from '../models/TimeEntryModel.js';
 import Task from '../models/TaskModel.js';
-import User from '../models/UserModel.js';
+import Employee from '../models/EmployeeModel.js';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
@@ -72,9 +72,9 @@ class TimeEntryController extends BaseController {
             const time_entry = await this.model.findById(id);
             if (!time_entry) return res.render('error404', { title: 'Registro no encontrado' });
 
-            const users = await User.findAll();
+            const employees = await Employee.findAll();
             const tasks = await Task.findAll();
-            const approved_by = await User.findAll();
+            const approved_by = await Employee.findAll();
             const managers = filterManagers(approved_by);
 
             const formattedTimeEntry = formatDatesForInput(this.formatItem(time_entry), ['date']);
@@ -82,7 +82,7 @@ class TimeEntryController extends BaseController {
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Time Entry: ${formattedTimeEntry.code}`,
                 item: formattedTimeEntry,
-                users,
+                employees,
                 tasks,
                 managers
             });
@@ -95,15 +95,15 @@ class TimeEntryController extends BaseController {
     // Sobrescribimos newView para pasar usuarios y tareas
     newView = async (req, res) => {
         try {
-            const users = await User.findAll();
+            const employees = await Employee.findAll();
             const tasks = await Task.findAll();
-            const approved_by = await User.findAll();
+            const approved_by = await Employee.findAll();
             const managers = filterManagers(approved_by);
 
             res.render(`${this.viewPath}/new`, {
                 title: `Nueva Tarea`,
                 item: {},
-                users,
+                employees,
                 tasks,
                 managers
             });

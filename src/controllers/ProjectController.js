@@ -2,7 +2,7 @@ import BaseController from './BaseController.js'
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
 import Team from '../models/TeamModel.js';
-import User from '../models/UserModel.js';
+import Employee from '../models/EmployeeModel.js';
 import mongoose from 'mongoose';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
@@ -20,8 +20,8 @@ class ProjectController extends BaseController {
       if (!project) return res.render('error404', { title: 'Proyecto no encontrado' });
 
       // Traer todos los usuarios para filtrar managers
-      const allUsers = await User.findAll();
-      const managers = filterManagers(allUsers);
+      const allEmployees = await Employee.findAll();
+      const managers = filterManagers(allEmployees);
 
       // Traer todos los equipos disponibles
       const allTeams = await Team.findAll();
@@ -118,8 +118,8 @@ class ProjectController extends BaseController {
   newView = async (req, res) => {
     try {
       // Traer todos los usuarios para filtrar managers
-      const allUsers = await User.findAll();
-      const managers = filterManagers(allUsers);
+      const allEmployees = await Employee.findAll();
+      const managers = filterManagers(allEmployees);
 
       // Traer todos los equipos disponibles
       const allTeams = await Team.findAll();

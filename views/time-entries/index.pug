@@ -21,11 +21,11 @@ block content
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
-        tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Registro Código: ${item.code}`, data-textmodal2 =`Usuario: ${item.user_id.first_name} ${item.user_id.last_name}`)
+        tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Registro Código: ${item.code}`, data-textmodal2 =`Usuario: ${item.employee_id.first_name} ${item.employee_id.last_name}`)
           td= index + 1
           td= item.code
           td= item.date ? new Date(item.date).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : 'N/A'
-          td= item.user_id.first_name + " " + item.user_id.last_name
+          td= item.employee_id.first_name + " " + item.employee_id.last_name
           td= item.task_id.project_id.name
           td= item.task_id.title
           td.text-end

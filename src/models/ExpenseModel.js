@@ -4,7 +4,7 @@ import BaseModel from './BaseModel.js';
 const expenseSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    employee_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
     description: { type: String },
     amount: { type: Number, required: true },
     currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
@@ -26,7 +26,7 @@ class ExpenseModel extends BaseModel {
     async findAll() {
         return super.findAll([
             'project_id', 
-            'user_id', 
+            'employee_id', 
             'category_id'
         ]); // populate automático
     }   
@@ -34,7 +34,7 @@ class ExpenseModel extends BaseModel {
     async findById(id) {
         return super.findById(id, [
             'project_id', 
-            'user_id', 
+            'employee_id', 
             'category_id'
         ]); // populate automático
     }

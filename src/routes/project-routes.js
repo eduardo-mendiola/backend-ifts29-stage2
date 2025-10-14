@@ -2,9 +2,9 @@ import express from 'express';
 const router = express.Router();
 
 import projectController from '../controllers/ProjectController.js';
-import { validateUserInput } from '../middleware/validationMiddleware.js'; 
 
-router.post('/', validateUserInput, projectController.create);
+
+router.post('/', projectController.create);
 router.get('/', projectController.getAll);
 router.get('/:id', projectController.getById);
 router.put('/:id', projectController.update);

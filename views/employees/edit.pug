@@ -1,0 +1,160 @@
+extends ../layout.pug
+
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/employees/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Editar Usuario
+        a.btn.btn-gray(href="/employees", tabindex="28") Volver a la lista
+
+      // Contenedor de 2 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="first_name") Nombre
+            input#first_name.form-control(type="text", name="first_name", value=item.first_name || "", required, tabindex="1")
+          .mb-3
+            label.form-label(for="birth_date") Fecha de Nacimiento
+            input#birth_date.form-control(type="date", name="birth_date", value=item.birth_date || "", tabindex="3")
+          .mb-3
+            label.form-label(for="dni") DNI
+            input#dni.form-control(type="text", name="dni", value=item.dni || "", required, tabindex="5")
+          .mb-3
+            label.form-label(for="email") Email
+            input#email.form-control(type="email", name="email", value=item.user_id.email || "", required, tabindex="7")
+          .mb-3
+            label.form-label(for="hire_date") Fecha de Ingreso
+            input#hire_date.form-control(type="date", name="hire_date", value=item.hire_date || "", tabindex="9")
+          .mb-3
+            label.form-label(for="area_id") Área
+            select#area_id.form-select(name="area_id", required, tabindex="16")
+              each area in areas
+                option(
+                  value=area._id 
+                  selected=(item.area_id && area._id.toString() === item.area_id._id.toString())
+                ) #{area.name_area}
+          .mb-3
+            label.form-label(for="position_id") Cargo (posición)
+            select#position_id.form-select(name="position_id", required, tabindex="17")
+              each position in positions
+                option(
+                  value=position._id 
+                  selected=(item.position_id && position._id.toString() === item.position_id._id.toString())
+                ) #{position.name}
+          .mb-3
+            label.form-label(for="role_id") Rol (acceso)
+            select#role_id.form-select(name="role_id", required, tabindex="19")
+              each role in roles
+                option(
+                  value=role._id 
+                  selected=(item.user_id.role_id && role._id.toString() === item.user_id.role_id._id.toString())
+                ) #{role.name}
+         
+          .mb-3
+            label.form-label(for="username") Nombre de usuario
+            input#username.form-control(type="text", name="username", value=item.user_id.username || "", required, tabindex="21")
+          .mb-3
+            label.form-label(for="password_hash") Contraseña
+            input#password_hash.form-control(type="text", name="password_hash", value=item.user_id.password_hash || "", required, tabindex="22")
+                
+
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="last_name") Apellido
+            input#last_name.form-control(type="text", name="last_name", value=item.last_name || "", required, tabindex="2")
+          .mb-3
+            label.form-label(for="nationality") Nacionalidad
+            input#nationality.form-control(type="text", name="nationality", value=item.nationality || "", tabindex="4")
+          .mb-3
+            label.form-label(for="gender") Género
+            select#gender.form-select(name="gender", required, tabindex="6")
+              each g in genderOptions
+                option(value=g selected=(item.gender === g))= g
+          .mb-3
+            label.form-label(for="phone") Teléfono
+            input#phone.form-control(type="text", name="phone", value=item.phone || "", tabindex="8")
+          //- Bloque de domicilio 
+          .mb-3
+            label.form-label Domicilio
+            .row
+              .col-md-6
+                input.form-control(
+                  type="text", 
+                  name="address.street", 
+                  placeholder="Calle", 
+                  value=(item.address && item.address.street) ? item.address.street : "", 
+                  tabindex="10"
+                )
+              .col-md-2
+                input.form-control(
+                  type="text", 
+                  name="address.number", 
+                  placeholder="Número", 
+                  value=(item.address && item.address.number) ? item.address.number : "", 
+                  tabindex="11"
+                )
+              .col-md-4
+                input.form-control(
+                  type="text", 
+                  name="address.postal_code", 
+                  placeholder="Código Postal", 
+                  value=(item.address && item.address.postal_code) ? item.address.postal_code : "", 
+                  tabindex="12"
+                )
+            .row.mt-2
+              .col-md-6
+                input.form-control(
+                  type="text", 
+                  name="address.city", 
+                  placeholder="Ciudad", 
+                  value=(item.address && item.address.city) ? item.address.city : "", 
+                  tabindex="13"
+                )
+              .col-md-6
+                input.form-control(
+                  type="text", 
+                  name="address.province", 
+                  placeholder="Provincia/Estado", 
+                  value=(item.address && item.address.province) ? item.address.province : "", 
+                  tabindex="14"
+                )
+            .row.mt-2
+              .col-12
+                input.form-control(
+                  type="text", 
+                  name="address.country", 
+                  placeholder="País", 
+                  value=(item.address && item.address.country) ? item.address.country : "", 
+                  tabindex="15"
+                )
+          .mb-3
+            label.form-label(for="employment_type") Tipo de contrato
+            select#employment_type.form-select(name="employment_type", required, tabindex="18")
+              each t in employmentTypes
+                option(value=t selected=(item.employment_type === t))= t   
+          .mb-3
+            label.form-label(for="monthly_salary") Salario Mensual
+            input#monthly_salary.form-control(type="number", name="monthly_salary", value=item.monthly_salary || "", min="0", tabindex="20")
+          .mb-3
+            label.form-label(for="is_active") Estado
+            select#is_active.form-select(name="is_active", required, tabindex="23")
+              option(value="true" selected=(item.is_active === true)) Activo
+              option(value="false" selected=(item.is_active === false)) Inactivo
+          .mb-3
+            label.form-label(for="profile_image") Foto de Perfil (URL)
+            input#profile_image.form-control(type="text", name="profile_image", value=item.profile_image || "", tabindex="24")
+          .mb-3
+            label.form-label(for="supervisor_id") Supervisor
+            select#supervisor_id.form-select(name="supervisor_id", tabindex="25")
+              each sup in supervisors
+                option(
+                  value=sup._id
+                  selected=(item.supervisor_id && sup._id.toString() === item.supervisor_id._id.toString())
+                ) #{sup.full_name}
+          
+          
+
+      button.btn.btn-success.mt-3(type="submit", tabindex="26") Actualizar Usuario
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/employees", tabindex="27") Cancelar

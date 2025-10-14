@@ -2,9 +2,9 @@ import express from 'express';
 const router = express.Router();
 
 import userController from '../controllers/UserController.js';
-import { validateUserInput } from '../middleware/validationMiddleware.js'; 
+// import { validateUserInput } from '../middleware/validationMiddleware.js'; 
 
-router.post('/', validateUserInput, userController.create);
+router.post('/', userController.create);
 router.get('/', userController.getAll);
 router.get('/:id', userController.getById);
 router.put('/:id', userController.update);

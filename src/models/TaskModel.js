@@ -7,7 +7,7 @@ const taskSchema = new mongoose.Schema({
     description: { type: String },
     priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },
     status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
     estimated_hours: { type: Number },
     due_date: { type: Date },
     project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
@@ -28,7 +28,7 @@ class TaskModel extends BaseModel {
             'project_id', 
             {
                 path: 'time_entries_ids', 
-                populate: 'user_id'
+                populate: 'employee_id'
             }
         ]); // populate automático
     }   
@@ -39,7 +39,7 @@ class TaskModel extends BaseModel {
             'project_id', 
             {
                 path: 'time_entries_ids', 
-                populate: 'user_id'
+                populate: 'employee_id'
             }
         ]); // populate automático
     }

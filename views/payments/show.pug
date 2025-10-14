@@ -46,7 +46,7 @@ block content
           if item.time_entries_ids && item.time_entries_ids.length > 0
             ul
               each time_entries_id in item.time_entries_ids
-                li= `${time_entries_id.code} - Responsable: ${time_entries_id.user_id.full_name}`
+                li= `${time_entries_id.code} - Responsable: ${time_entries_id.employee_id.full_name}`
           else
             span.text-muted Sin registros
       tr
@@ -60,6 +60,6 @@ block content
   .mt-3
     a.btn.btn-gray.me-2(href="/tasks", tabindex="2") Volver a la lista
     a.btn.btn-primary.me-2(href=`/tasks/${item.id}/edit`, tabindex="3") Editar
-    //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+    //- form(action=`/api/employees/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
     //-   input(type="hidden", name="_method", value="DELETE")
     //-   button.btn.btn-danger-soft(type="submit") Eliminar

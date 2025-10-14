@@ -29,7 +29,7 @@ block content
           if item.members && item.members.length > 0
             ul
               each member in item.members
-                li= member.user_id.first_name + " " + member.user_id.last_name + " (" + member.team_role_id.name + ")"
+                li= member.employee_id.first_name + " " + member.employee_id.last_name + " (" + member.team_role_id.name + ")"
           else
             span.text-muted Sin miembros
       tr

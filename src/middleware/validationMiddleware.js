@@ -8,12 +8,12 @@ const validateClientInput = (req, res, next) => {
 };
 
 // Validación para usuarios
-const validateUserInput = (req, res, next) => {
-    const { first_name, last_name, email, password_hash, role_id, area_id } = req.body;
+const validateEmployeeInput = (req, res, next) => {
+    const { first_name, last_name, area_id } = req.body;
 
-    if (!first_name || !last_name || !email || !password_hash || !role_id || !area_id) {
+    if (!first_name || !last_name || !area_id) {
         return res.status(400).json({ 
-            message: 'first_name, last_name, email, password_hash, role_id y area_id son campos obligatorios.'
+            message: 'first_name, last_name y area_id son campos obligatorios.'
         });
     }
 
@@ -81,7 +81,7 @@ const validateProjectInput = (req, res, next) => {
 
 export {
     validateClientInput,
-    validateUserInput,
+    validateEmployeeInput,
     // validateRoleInput,
     validateProjectInput
 };

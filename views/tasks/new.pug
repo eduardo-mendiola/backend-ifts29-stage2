@@ -52,12 +52,12 @@ block content
           .mb-3
             label.form-label(for="assigned_to") Asignado
             select#assigned_to.form-select(name="assigned_to", required, tabindex="8")
-              if users && users.length > 0
-                each user in users
+              if employees && employees.length > 0
+                each employee in employees
                   option(
-                    value=user._id 
-                    selected=(item.assigned_to && user._id.toString() === item.assigned_to._id.toString())
-                  ) #{user.first_name + ' ' + user.last_name}  
+                    value=employee._id 
+                    selected=(item.assigned_to && employee._id.toString() === item.assigned_to._id.toString())
+                  ) #{employee.first_name + ' ' + employee.last_name}  
               else
                 option(value="") No hay usuarios disponibles 
 

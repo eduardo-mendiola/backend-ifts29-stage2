@@ -6,6 +6,7 @@ import methodOverride from 'method-override';
 // Importar rutas de cada entidad
 import clientRoutes from './routes/client-routes.js';
 import userRoutes from './routes/user-routes.js';
+import employeeRoutes from './routes/employee-routes.js';
 import roleRoutes from './routes/role-routes.js';
 import projectRoutes from './routes/project-routes.js';
 import areaRoutes from './routes/area-routes.js';
@@ -25,6 +26,7 @@ import expenseCategoryRoutes from './routes/expense-category-routes.js';
 import ClientController from './controllers/ClientController.js';
 import ProjectController from './controllers/ProjectController.js';
 import UserController from './controllers/UserController.js';
+import EmployeeController from './controllers/EmployeeController.js';
 import AreaController from './controllers/AreaController.js';
 import RoleController from './controllers/RoleController.js';
 import TaskController from './controllers/TaskController.js';
@@ -98,6 +100,14 @@ app.get('/users', UserController.getAllView);
 app.get('/users/:id', UserController.getByIdView);
 app.get('/users/:id/edit', UserController.getEditView); 
 app.put('/users/:id', UserController.updateView); 
+
+// Employee
+app.get('/employees/new', EmployeeController.newView); 
+app.post('/employees', EmployeeController.createView);
+app.get('/employees', EmployeeController.getAllView);
+app.get('/employees/:id', EmployeeController.getByIdView);
+app.get('/employees/:id/edit', EmployeeController.getEditView); 
+app.put('/employees/:id', EmployeeController.updateView); 
 
 // Project
 app.get('/projects/new', ProjectController.newView); 
@@ -231,6 +241,7 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/expense-categories', expenseCategoryRoutes);
+app.use('/api/employees', employeeRoutes);
 
 
 // ||--------------------------------------------------------------------------------------------------||

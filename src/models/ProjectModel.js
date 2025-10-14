@@ -11,7 +11,7 @@ const projectSchema = new mongoose.Schema({
     budget: { type: Number },
     billing_type: { type: String, enum: ['hourly', 'fixed'], default: 'fixed' },
     status: { type: String, enum: ['pending', 'in_progress', 'completed'], default: 'pending' },
-    project_manager: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    project_manager: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
     teams: [
         {
             team_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
@@ -30,11 +30,11 @@ class ProjectModel extends BaseModel {
     async findAll() {
         return super.findAll([
             { path: 'client_id' },
-            { path: 'project_manager', model: 'User', select: 'first_name last_name' }, 
+            { path: 'project_manager', model: 'Employee', select: 'first_name last_name' }, 
             {
                 path: 'teams.team_id',
                 select: 'name team_leader', // traigo el nombre del equipo y el líder
-                populate: { path: 'team_leader', model: 'User', select: 'first_name last_name' } // anidado
+                populate: { path: 'team_leader', model: 'Employee', select: 'first_name last_name' } // anidado
             }
         ]);
     }
@@ -42,11 +42,11 @@ class ProjectModel extends BaseModel {
     async findById(id) {
         return super.findById(id, [
             { path: 'client_id' },
-            { path: 'project_manager', model: 'User', select: 'first_name last_name' },
+            { path: 'project_manager', model: 'Employee', select: 'first_name last_name' },
             {
                 path: 'teams.team_id',
                 select: 'name team_leader',
-                populate: { path: 'team_leader', model: 'User', select: 'first_name last_name' }
+                populate: { path: 'team_leader', model: 'Employee', select: 'first_name last_name' }
             }
         ]);
     }

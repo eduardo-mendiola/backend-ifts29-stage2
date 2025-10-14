@@ -1,6 +1,6 @@
 import BaseController from './BaseController.js';
 import TeamModel from '../models/TeamModel.js';
-import User from '../models/UserModel.js';
+import Employee from '../models/EmployeeModel.js';
 import mongoose from 'mongoose';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
@@ -20,9 +20,9 @@ class TeamController extends BaseController {
             const team = await this.model.findById(id);
             if (!team) return res.render('error404', { title: 'Equipo no encontrado' });
 
-            const users = await User.findAll();
-            const allUsers = await User.findAll();
-            const managers = filterManagers(allUsers);
+            const employees = await Employee.findAll();
+            const allEmployees = await Employee.findAll();
+            const managers = filterManagers(allEmployees);
 
             // Cargar todos los roles de equipo disponibles
             const TeamRole = await import('../models/TeamRoleModel.js');
@@ -32,10 +32,10 @@ class TeamController extends BaseController {
 
 
             // Filtrar usuarios disponibles (excluir líder y miembros actuales)
-            const availableUsers = users.filter(user => {
-                const isLeader = formattedTeam.team_leader && user._id.toString() === formattedTeam.team_leader._id.toString();
+            const availableEmployees = employees.filter(employee => {
+                const isLeader = formattedTeam.team_leader && employee._id.toString() === formattedTeam.team_leader._id.toString();
                 const isMember = formattedTeam.members && formattedTeam.members.some(member =>
-                    member.user_id._id.toString() === user._id.toString()
+                    member.employee_id._id.toString() === employee._id.toString()
                 );
                 return !isLeader && !isMember;
             });
@@ -43,8 +43,8 @@ class TeamController extends BaseController {
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Equipo`,
                 item: formattedTeam,
-                users: availableUsers,
-                allUsers: users,
+                employees: availableEmployees,
+                allEmployees: employees,
                 managers,
                 teamRoles
             });
@@ -57,8 +57,8 @@ class TeamController extends BaseController {
     // Vista de nuevo equipo
     newView = async (req, res) => {
         try {
-            const users = await User.findAll();
-            const managers = filterManagers(users);
+            const employees = await Employee.findAll();
+            const managers = filterManagers(employees);
 
             // Cargar todos los roles de equipo disponibles
             const TeamRole = await import('../models/TeamRoleModel.js');
@@ -67,7 +67,7 @@ class TeamController extends BaseController {
             res.render(`${this.viewPath}/new`, {
                 title: 'Crear Nuevo Equipo',
                 item: {},
-                users,
+                employees,
                 managers,
                 teamRoles
             });
@@ -119,7 +119,7 @@ class TeamController extends BaseController {
                 if (memberId && memberTeamRoleId) {
                     try {
                         finalMembersArray.push({
-                            user_id: mongoose.Types.ObjectId.createFromHexString(memberId),
+                            employee_id: mongoose.Types.ObjectId.createFromHexString(memberId),
                             team_role_id: mongoose.Types.ObjectId.createFromHexString(memberTeamRoleId)
                         });
                         console.log(`Miembro ${i} procesado correctamente`);
@@ -191,7 +191,7 @@ class TeamController extends BaseController {
                 if (memberId && memberTeamRoleId) {
                     try {
                         finalMembersArray.push({
-                            user_id: mongoose.Types.ObjectId.createFromHexString(memberId),
+                            employee_id: mongoose.Types.ObjectId.createFromHexString(memberId),
                             team_role_id: mongoose.Types.ObjectId.createFromHexString(memberTeamRoleId)
                         });
                         console.log(`Miembro ${i} procesado correctamente`);

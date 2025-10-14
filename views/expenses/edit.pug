@@ -66,15 +66,15 @@ block content
         // Columna derecha
         .col-md-6
           .mb-3
-            label.form-label(for="user_id") Usuario
-            select#user_id.form-select(name="user_id", required, tabindex="2")
+            label.form-label(for="employee_id") Usuario
+            select#employee_id.form-select(name="employee_id", required, tabindex="2")
               option(value="") Seleccionar usuario...
-              if users && users.length > 0
-                each user in users
+              if employees && employees.length > 0
+                each employee in employees
                     option(
-                      value=user._id 
-                      selected=(item.user_id && user._id.toString() === item.user_id._id.toString())
-                    ) #{user.full_name}
+                      value=employee._id 
+                      selected=(item.employee_id && employee._id.toString() === item.employee_id._id.toString())
+                    ) #{employee.full_name}
               else
                 option(value="") No hay usuarios disponibles
           .mb-3

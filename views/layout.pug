@@ -181,14 +181,21 @@ html(lang="es")
                 | Inicio
 
             li
-              a.nav-link.text-white(href="/users")
-                i.bi.bi-person-badge.me-2
-                | Usuarios
-
-            li
               a.nav-link.text-white(href="/projects")
                 i.bi.bi-grid.me-2
                 | Proyectos
+            
+            li
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")
+                i.bi.bi-people.me-2
+                i.bi.bi-caret-down-fill
+                |  Usuarios 
+                
+              ul.collapse#menuClientes.ms-3
+                li
+                  a.nav-link.text-white(href="/users") Usuarios
+                li
+                  a.nav-link.text-white(href="/employees") Empleados
 
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")

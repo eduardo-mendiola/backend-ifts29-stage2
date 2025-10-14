@@ -2,7 +2,7 @@ import BaseController from './BaseController.js';
 import Expense from '../models/ExpenseModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
-import User from '../models/UserModel.js';
+import Employee from '../models/EmployeeModel.js';
 import ExpenseCategory from '../models/ExpenseCategoryModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
@@ -82,7 +82,7 @@ class ExpenseController extends BaseController {
 
             const clients = await Client.findAll();
             const projects = await Project.findAll();
-            const users = await User.findAll();
+            const employees = await Employee.findAll();
             const categories = await ExpenseCategory.findAll();
 
             // Format dates before sending to the view
@@ -96,7 +96,7 @@ class ExpenseController extends BaseController {
                 item: formattedExpense,
                 clients,
                 projects,
-                users,
+                employees,
                 categories,
                 statusLabels,
                 payment_method_labels,
@@ -113,7 +113,7 @@ class ExpenseController extends BaseController {
         try {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
-            const users = await User.findAll();
+            const employees = await Employee.findAll();
             const categories = await ExpenseCategory.findAll();
 
             res.render(`${this.viewPath}/new`, {
@@ -121,7 +121,7 @@ class ExpenseController extends BaseController {
                 item: {},
                 clients,
                 projects,
-                users,
+                employees,
                 categories,
                 statusLabels,
                 payment_method_labels,

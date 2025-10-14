@@ -29,14 +29,14 @@ block content
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", required, tabindex="5")= item.description || ""
           .mb-3
-            label.form-label(for="user_id") Usuario
-            select#user_id.form-select(name="user_id", required, tabindex="7")
-              if users && users.length > 0
-                each user in users
+            label.form-label(for="employee_id") Usuario
+            select#employee_id.form-select(name="employee_id", required, tabindex="7")
+              if employees && employees.length > 0
+                each employee in employees
                   option(
-                    value=user._id 
-                    selected=(item.user_id && user._id.toString() === item.user_id._id.toString())
-                  ) #{user.first_name + ' ' + user.last_name}  
+                    value=employee._id 
+                    selected=(item.employee_id && employee._id.toString() === item.employee_id._id.toString())
+                  ) #{employee.first_name + ' ' + employee.last_name}  
               else
                 option(value="") No hay usuarios disponibles
           .mb-3

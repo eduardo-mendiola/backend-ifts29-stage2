@@ -7,19 +7,13 @@ const invoiceSchema = new mongoose.Schema({
     invoice_type: { type: String, enum: ['A', 'B', 'C', 'E'], default: 'B' },
     invoice_number: { type: String, required: true },
     due_date: { type: Date },
-    currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
-    items: [
+    issue_date: { type: Date, required: true },
+    extras: [
         {
             description: { type: String, required: true },
-            total_amount: { type: Number, required: true }
+            amount: { type: Number, required: true }
         }
     ],
-    subtotal: { type: Number, required: true },
-    tax_percent: { type: Number, required: true },
-    taxes: { type: Number, required: true },
-    discount_percent: { type: Number },
-    discount: { type: Number },
-    subtotal: { type: Number, required: true },
     total_amount: { type: Number, required: true },
     paid_amount: { type: Number },
     balance_due: { type: Number },
@@ -45,6 +39,9 @@ invoiceSchema.virtual('client_code').get(function () {
     return this.estimate_id?.project_id?.client_id?.code || null;
 });
 
+invoiceSchema.virtual('subtotal').get(function () {
+    return this.estimate_id?.total_amount || null;
+});
 
 class InvoiceModel extends BaseModel {
     constructor() {
