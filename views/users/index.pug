@@ -20,7 +20,7 @@ block content
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
-        tr(data-id=item.id, data-code=item.code, data-textmodal1=`Nombre: ${item.first_name} ${item.last_name}`)
+        tr(data-id=item.id, data-code=item.code, data-textmodal1=`Nombre de usuario: ${item.username}`)
           td= index + 1 || "N/A"
           td= item.code || "N/A"
           td= item.username || "N/A"
