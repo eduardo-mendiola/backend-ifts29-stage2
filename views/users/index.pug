@@ -13,18 +13,20 @@ block content
       tr
         th №
         th Código
-        th Nombre
-        th Apellido
+        th Nombre de Usurrio
+        th Contraseña
+        th Email
         th Rol
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
         tr(data-id=item.id, data-code=item.code, data-textmodal1=`Nombre: ${item.first_name} ${item.last_name}`)
-          td= index + 1
-          td= item.code
-          td= item.first_name
-          td= item.last_name
-          td= item.role_id.name
+          td= index + 1 || "N/A"
+          td= item.code || "N/A"
+          td= item.username || "N/A"
+          td= item.password_hash || "N/A"
+          td= item.email || "N/A"
+          td= item.role_id.name || "N/A"
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}`) Ver
             a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}/edit`) Editar

@@ -27,6 +27,7 @@ class EmployeeController extends BaseController {
             const positions = await Position.findAll();
             const supervisors = await filterManagers(allEmployees);
 
+
             // enums disponibles
             const genderOptions = ['male', 'female', 'other'];
             const employmentTypes = ['full-time', 'part-time', 'contractor'];
@@ -62,7 +63,7 @@ class EmployeeController extends BaseController {
             const genderOptions = ['male', 'female', 'other'];
             const employmentTypes = ['full-time', 'part-time', 'contractor'];
 
-
+             
             res.render(`${this.viewPath}/new`, {
                 title: `Nuevo Empleado`,
                 item: {},
@@ -113,13 +114,16 @@ class EmployeeController extends BaseController {
                 country: req.body['address.country']
             };
 
+            const last_login = null; // Establecer last_login como null al crear un nuevo usuario
+
             // 1️ Crear User con código temporal
             const newUser = await User.create({
                 username,
                 password_hash,
                 email,
                 role_id,
-                code: 'TEMP-' + new Date().getTime()
+                code: 'TEMP-' + new Date().getTime(),
+                last_login
             });
 
             // 2️ Generar código definitivo para User
@@ -224,7 +228,7 @@ class EmployeeController extends BaseController {
                 area_id,
                 nationality,
                 birth_date,
-                address, // ✅ ahora sí es un objeto válido
+                address,
                 gender,
                 hire_date,
                 position_id,
@@ -249,8 +253,4 @@ class EmployeeController extends BaseController {
 }
 
 
-
 export default new EmployeeController();
-
-
-

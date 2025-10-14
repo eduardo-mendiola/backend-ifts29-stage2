@@ -2,7 +2,7 @@ extends ../layout.pug
 //- views/task/show.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-4 #{item.title} 
+    h1.mb-4 Tarea: #{item.title} 
     a.btn.btn-gray(href="/tasks", tabindex="1") Volver
  
 
@@ -48,7 +48,7 @@ block content
               each time_entries_id in item.time_entries_ids
                 li= `${time_entries_id.code} - Responsable: ${time_entries_id.employee_id.full_name}`
           else
-            span.text-muted Sin registros
+            span.text Sin registros
       tr
         th Fecha de Creación
         td= item.created_at
