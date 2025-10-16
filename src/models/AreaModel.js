@@ -4,7 +4,8 @@ import BaseModel from './BaseModel.js';
 const areaSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     name_area: { type: String, required: true },
-    description: { type: String }
+    description: { type: String },
+    is_active: { type: Boolean, default: true }
 }, { 
     collection: 'areas',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 

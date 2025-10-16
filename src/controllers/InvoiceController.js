@@ -29,9 +29,6 @@ class InvoiceController extends BaseController {
         super(Invoice, 'invoices', 'INV-');
     }
 
-
-
-
     getAllView = async (req, res) => {
         try {
             const items = await this.model.findAll();
@@ -158,6 +155,54 @@ class InvoiceController extends BaseController {
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
+
+
+    // Update an invoice (overrides BaseController logic)
+    updateView = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const invoice = await this.model.findById(id);
+            if (!invoice) {
+                return res.status(404).json({ message: 'Factura no encontrada' });
+            }
+
+            // Si la factura está en draft, se pueden modificar todos los campos
+            if (invoice.status === 'draft') {
+                Object.assign(invoice, req.body);
+
+                // Mientras esté en draft, el número de factura es "pendiente"
+                if (!invoice.invoice_number || invoice.invoice_number === '') {
+                    invoice.invoice_number = 'pendiente';
+                }
+
+            } else {
+                // Si no está en draft, solo puede cambiar el estado
+                if (req.body.status) {
+                    invoice.status = req.body.status;
+
+                    // Si el middleware detectó cambio a "sent", generamos número
+                    if (req.generateInvoiceNumber && invoice.invoice_number === 'pendiente') {
+                        invoice.invoice_number = await invoiceNumberGenerator();
+                    }
+
+                } else {
+                    return res.status(400).json({
+                        message: 'Solo se puede modificar el estado una vez que sale del borrador.'
+                    });
+                }
+            }
+
+            await invoice.save();
+            res.redirect(`/invoices/${invoice._id}`);
+
+        } catch (error) {
+            console.error('Error al actualizar factura:', error.message);
+            res.status(500).render('error500', { title: 'Error al actualizar factura' });
+        }
+    };
+
+
+
 }
 
 export default new InvoiceController();

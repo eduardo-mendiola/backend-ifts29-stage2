@@ -19,6 +19,9 @@ block content
       tr
         th Descripción
         td= item.description
+      tr 
+        th Estado
+        td= item.is_active ? 'Activo' : 'Inactivo'
       tr
         th Fecha de Creación
         td= item.created_at

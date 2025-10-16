@@ -179,19 +179,14 @@ html(lang="es")
               a.nav-link.text-white(href="/admin/dashboard")
                 i.bi.bi-house-door.me-2
                 | Inicio
-
-            li
-              a.nav-link.text-white(href="/projects")
-                i.bi.bi-grid.me-2
-                | Proyectos
             
             li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")
+              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuUsuarios" role="button")
                 i.bi.bi-people.me-2
                 i.bi.bi-caret-down-fill
                 |  Usuarios 
                 
-              ul.collapse#menuClientes.ms-3
+              ul.collapse#menuUsuarios.ms-3
                 li
                   a.nav-link.text-white(href="/users") Usuarios
                 li
@@ -213,13 +208,15 @@ html(lang="es")
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button")
                 i.bi.bi-diagram-3.me-2
                 i.bi.bi-caret-down-fill
-                |  Roles y Cargos 
+                |  Organización 
                 
               ul.collapse#menuRoles.ms-3
                 li
                   a.nav-link.text-white(href="/roles") Roles
                 li
                   a.nav-link.text-white(href="/positions") Cargos
+                li
+                  a.nav-link.text-white(href="/areas") Áreas
 
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button")
@@ -228,6 +225,8 @@ html(lang="es")
                 |  Actividades 
                 
               ul.collapse#menuTareas.ms-3
+                li
+                  a.nav-link.text-white(href="/projects") Proyectos
                 li
                   a.nav-link.text-white(href="/tasks") Tareas
                 li
@@ -244,8 +243,6 @@ html(lang="es")
                   a.nav-link.text-white(href="/teams") Equipos
                 li
                   a.nav-link.text-white(href="/team-roles") Roles de Equipo
-                li
-                  a.nav-link.text-white(href="/areas") Áreas
             
             li
               a.nav-link.text-white(data-bs-toggle="collapse" href="#menuContabilidad" role="button")

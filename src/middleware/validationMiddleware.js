@@ -23,57 +23,6 @@ const validateEmployeeInput = (req, res, next) => {
         return res.status(400).json({ message: 'Formato de email inválido.' });
     }
 
-    // Validación de teléfono opcional
-    if (req.body.phone) {
-        const phoneRegex = /^\+?[0-9\s\-]{7,15}$/;
-        if (!phoneRegex.test(req.body.phone)) {
-            return res.status(400).json({ message: 'Formato de teléfono inválido.' });
-        }
-    }
-
-    next();
-};
-
-
-const validateProjectInput = (req, res, next) => {
-    const { client_id, name, start_date, end_date, budget, billing_type, status, manager_id } = req.body;
-
-    if (!client_id || !name || !start_date || !end_date || !budget || !billing_type || !status || !manager_id) {
-        return res.status(400).json({
-            message: 'client_id, name, start_date, end_date, budget, billing_type, status y manager_id son campos obligatorios.'
-        });
-    }
-
-    // Validación de fechas (ejemplo simple)
-    if (new Date(start_date) > new Date(end_date)) {
-        return res.status(400).json({
-            message: 'La fecha de inicio no puede ser mayor a la fecha de fin.'
-        });
-    }
-
-    // Validación del presupuesto
-    if (isNaN(budget) ||  budget <= 0) {
-        return res.status(400).json({
-            message: 'El presupuesto debe ser un número mayor que 0.'
-        });
-    }
-
-    // Validación de billing_type
-    const validBillingTypes = ['fixed', 'hourly', 'retainer'];
-    if (!validBillingTypes.includes(billing_type)) {
-        return res.status(400).json({
-            message:  `El tipo de facturación debe ser uno de: ${validBillingTypes.join(', ')}.`
-        });
-    }
-
-    // Validación de status
-    const validStatus = ['planned', 'in_progress', 'on_hold', 'completed', 'cancelled'];
-    if (!validStatus.includes(status)) {
-        return res.status(400).json({
-            message: `El estado debe ser uno de: ${validStatus.join(', ')}.`
-        });
-    }
-
     next();
 };
 
@@ -82,7 +31,5 @@ const validateProjectInput = (req, res, next) => {
 export {
     validateClientInput,
     validateEmployeeInput,
-    // validateRoleInput,
-    validateProjectInput
 };
 

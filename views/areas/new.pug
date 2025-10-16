@@ -5,7 +5,7 @@ block content
     form.bg-dark.text-white.p-4.rounded.shadow(action="/areas", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nuevo Area
-        a.btn.btn-gray(href="/areas", tabindex="5") Volver a la lista
+        a.btn.btn-gray(href="/areas", tabindex="6") Volver a la lista
 
       // Contenedor de 1 columnas
       .row.g-3
@@ -16,6 +16,11 @@ block content
           .mb-3
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", required, tabindex="2")
+          .mp-3 
+            label.form-label(for="is_active") Estado
+            select#is_active.form-select(name="is_active", required, tabindex="3")
+              option(value="true", selected) Activo
+              option(value="false") Inactivo
 
-      button.btn.btn-primary.mt-3(type="submit", tabindex="3") Crear Area
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/areas", tabindex="4") Cancelar
+      button.btn.btn-primary.mt-3(type="submit", tabindex="4") Crear Area
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/areas", tabindex="5") Cancelar
