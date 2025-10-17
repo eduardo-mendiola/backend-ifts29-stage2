@@ -6,14 +6,25 @@ const invoiceSchema = new mongoose.Schema({
     estimate_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Estimate' },
     invoice_type: { type: String, enum: ['A', 'B', 'C', 'E'], default: 'B' },
     invoice_number: { type: String, required: true },
+    validity_days: { type: Number, default: 15 },
     due_date: { type: Date },
-    issue_date: { type: Date, required: true },
+    issue_date: { type: Date},
+    // INICIO Para los extras de la factura
+    currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
     extras: [
         {
             description: { type: String, required: true },
             amount: { type: Number, required: true }
         }
     ],
+    extras_total: { type: Number, default: 0 },
+    discount_percent: { type: Number, default: 0 },
+    discount_amount: { type: Number, default: 0 },
+    tax_percent: { type: Number, default: 0 },
+    tax_amount: { type: Number, default: 0 },
+    extras_final_total: { type: Number, default: 0 },
+    // FIN Para los extras de la factura
+    
     total_amount: { type: Number, required: true },
     paid_amount: { type: Number },
     balance_due: { type: Number },
@@ -29,6 +40,10 @@ const invoiceSchema = new mongoose.Schema({
 // Virtuals para campos derivados
 invoiceSchema.virtual('project_name').get(function () {
     return this.estimate_id?.project_id?.name || null;
+});
+
+invoiceSchema.virtual('project_code').get(function () {
+    return this.estimate_id?.project_id?.code || null;
 });
 
 invoiceSchema.virtual('client_full_name').get(function () {

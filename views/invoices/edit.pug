@@ -1,8 +1,13 @@
 extends ../layout.pug
 //- views/invoices/edit.pug
+
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=`/invoices/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(
+      action=`/invoices/${item.id}?_method=PUT`, 
+      method="POST", 
+      style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;"
+    )
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Factura Código #{item.code}
         a.btn.btn-gray(href="/invoices", tabindex="9") Volver a la lista
@@ -12,130 +17,383 @@ block content
         // Columna izquierda
         .col-md-6
           .mb-3
-            label.form-label(for="title") Título
-            input#title.form-control(type="text", name="title", value=item.title || "", required, tabindex="1")
-          .mb-3
             label.form-label(for="client_id") Cliente
-            select#client_id.form-select(name="client_id", tabindex="3")
+            select#client_id.form-select(name="client_id", tabindex="2")
               option(value="") -- Seleccionar cliente --
               each client in clients
                 option(
                   value=client._id
-                  selected=(item.project_id && client._id.toString() === item.project_id.client_id._id.toString())
-                ) #{client.name}          
+                  selected=(item.estimate_id.project_id && client._id.toString() === item.estimate_id.project_id.client_id._id.toString())
+                ) #{client.name}
+
           .mb-3
-            label.form-label(for="project_id") Proyecto
-            select#project_id.form-select(name="project_id", required, tabindex="5")
-              if projects && projects.length > 0
-                each project in projects
+            label.form-label(for="currency") Moneda
+            select#currency.form-select(name="currency", required, tabindex="5")
+              option(value="") Seleccionar una Moneda...
+              if currency_labels
+                each label, key in currency_labels
                   option(
-                    value=project._id
-                    data-client-id=project.client_id._id
-                    selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
-                  ) #{project.name}
+                    value=key,
+                    selected=(item.currency && item.currency.toString() === key)
+                  ) #{label}
               else
-                option(value="") No hay proyectos disponibles
+                option(value="") No hay monedas disponibles
+
+          // Sección de Ítems
           .mb-3
-            label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description", required, tabindex="7")= item.description || ""
+            .d-flex.align-items-center.justify-content-between
+              label.form-label(for="extras") Ítems
+              button#addItemBtn.btn.btn-primary.btn-sm(type="button") 
+                i.bi.bi-plus-circle.me-1
+                | Agregar Ítem
+
+            table.table.table-dark.table-striped.mt-3#itemsTable
+              thead
+                tr
+                  th Descripción
+                  th Monto
+                  th.text-end(style="width: 1%; white-space: nowrap;") Acciones
+              tbody
+                if item.items && item.items.length
+                  each i in item.items
+                    tr(data-id=i._id)
+                      td= i.description
+                      td= i.amount
+                      td.d-flex.justify-content-end.gap-2
+                        button.btn.btn-warning.btn-sm.me-2.editItemBtn(type="button")
+                          i.bi.bi-pencil
+                        button.btn.btn-danger.btn-sm.me-2.deleteItemBtn(type="button")
+                          i.bi.bi-trash
+                else
+                  tr
+                    td(colspan="5" class="text-center text-muted") No hay ítems aún
+
+            // Input oculto para enviar los items al backend
+            input(type="hidden", name="items", id="itemsInput")
+
+          .mb-3
+            label.form-label(for="subtotal") Valor Subtotal de Items
+            input#subtotal.form-control(type="number", name="subtotal", value=item.subtotal || 0, readonly)
+
+          .mb-3
+            label.form-label(for="tax_percent") Impuestos %
+            input#tax_percent.form-control(type="number", name="tax_percent", value=item.tax_percent || "", tabindex="2")   
+
+          .mb-3
+            label.form-label(for="tax_amount") Monto de impuestos
+            input#tax_amount.form-control(type="number", name="tax_amount", value=item.tax_amount || 0, readonly)
+
           
-        // Columna derecha
-        .col-md-6
-          .mb-3
-            label.form-label(for="total_amount") Monto Total
-            input#total_amount.form-control(type="number", name="total_amount", value=item.total_amount || "", tabindex="2")
-          .mb-3 
-            label.form-label(for="validity_days") Días de Validez
-            input#validity_days.form-control(type="number", name="validity_days", value=item.validity_days || "", tabindex="4")
-          .mb-3
-            label.form-label(for="valid_until") Valido Hasta
-            input#valid_until.form-control(type="date", name="valid_until", value=item.valid_until)
+
           .mb-3
             label.form-label(for="status") Estado
             select#status.form-select(name="status", required, tabindex="6")
               if statusLabels
                 each label, key in statusLabels
                   option(
-                    value=key
+                    value=key,
                     selected=(item.status && item.status.toString() === key)
                   ) #{label}
               else
                 option(value="") No hay estados disponibles
-        
+          
+          .mb-3
+            label.form-label(for="notes") Notas
+            textarea#notes.form-control(name="notes", required, tabindex="4")= item.notes || ""
 
-      button.btn.btn-success.mt-3(type="submit", tabindex="7") Actualizar Tarea
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="estimate_id") Presupuesto / Proyecto
+            select#estimate_id.form-select(name="estimate_id", required, tabindex="3")
+              if estimates && estimates.length > 0
+                each estimate in estimates
+                  option(
+                    value=estimate._id
+                    data-client-id=estimate.project_id.client_id._id
+                    selected=(item.estimate_id && estimate._id.toString() === item.estimate_id._id.toString())
+                  ) #{estimate.title} / #{estimate.project_id.name}
+              else
+                option(value="") No hay proyectos disponibles
+          
+          
+
+          
+
+          .mb-3
+            label.form-label(for="discount_percent") Descuento %
+            input#discount_percent.form-control(type="number", name="discount_percent", value=item.discount_percent || "", tabindex="2")   
+
+          .mb-3
+            label.form-label(for="discount_amount") Monto de descuento
+            input#discount_amount.form-control(type="number", name="discount_amount", value=item.discount_amount || 0, readonly)
+
+          .mb-3
+            label.form-label(for="total_amount") Monto Total
+            input#total_amount.form-control(type="number", name="total_amount", value=item.total_amount || 0, readonly)
+
+          .mb-3 
+            label.form-label(for="validity_days") Días de Validez
+            input#validity_days.form-control(type="number", name="validity_days", value=item.validity_days || "", tabindex="4")
+
+          .mb-3
+            label.form-label(for="due_date") Valido Hasta
+            input#due_date.form-control(type="date", name="due_date", value=item.due_date)
+
+      // Botones de acción
+      button.btn.btn-success.mt-3(type="submit", tabindex="7") Actualizar Factura
       a.btn.btn-danger-soft.mt-3.ms-3(href="/invoices", tabindex="8") Cancelar
 
+ 
+  // Modal para agregar/editar ítem
+  div.modal.fade#itemModal(tabindex='-1', aria-labelledby='itemModalLabel', aria-hidden='true')
+    div.modal-dialog
+      div.modal-content.bg-dark.text-white
+        div.modal-header
+          h5.modal-title#itemModalLabel Agregar ítem
+          button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Cerrar')
+        div.modal-body
+          form#itemForm
+            input(type='hidden', name='item_id')
+            div.mb-3
+              label.form-label(for='item_description') Descripción
+              input.form-control#item_description(type='text', name='item_description', required)
+            div.mb-3
+              label.form-label(for='item_amount') Monto
+              input.form-control#item_amount(type='number', name='item_amount', step='0.01', required)
+            div.text-end
+              button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Cancelar
+              button.btn.btn-success.ms-3(type="submit") Guardar Ítem
+
+  // Modal de confirmación de eliminación
+  div.modal.fade#confirmDeleteModal(tabindex='-1', aria-labelledby='confirmDeleteLabel', aria-hidden='true')
+    div.modal-dialog
+      div.modal-content.bg-dark.text-white
+        div.modal-header
+          h5.modal-title#confirmDeleteLabel Confirmar Eliminación
+          button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Cerrar')
+        div.modal-body
+          p#confirmDeleteText ¿Está seguro que desea eliminar este ítem?
+        div.modal-footer
+          button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cancelar
+          button.btn.btn-danger#confirmDeleteBtn(type='button') Eliminar
+
+
+
+
+  //- ======================= SCRIPT UNIFICADO ==========================
   script.
     document.addEventListener('DOMContentLoaded', () => {
-      const clientSelect = document.getElementById('client_id');
-      const projectSelect = document.getElementById('project_id');
+      const itemModal = new bootstrap.Modal(document.getElementById('itemModal'));
+      const itemForm = document.getElementById('itemForm');
+      const itemsTable = document.querySelector('#itemsTable tbody');
+      const addItemBtn = document.getElementById('addItemBtn');
 
-      if (!clientSelect || !projectSelect) return;
+      const subtotalInput = document.getElementById('subtotal');
+      const discountPercentInput = document.getElementById('discount_percent');
+      const discountAmountInput = document.getElementById('discount_amount');
+      const taxPercentInput = document.getElementById('tax_percent');
+      const taxAmountInput = document.getElementById('tax_amount');
+      const totalAmountInput = document.getElementById('total_amount');
+
+      const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      let deleteIndex = null;
+
+
+      // Array inicial
+      let items = !{JSON.stringify(item.extras || [])};
+
+      // **Enviar items al backend antes de submit**
+      document.querySelector('form').addEventListener('submit', (e) => {
+        document.getElementById('itemsInput').value = JSON.stringify(items);
+      });
+
+      // Renderizar ítems
+      const renderItems = () => {
+        itemsTable.innerHTML = '';
+        if (items.length === 0) {
+          itemsTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No hay ítems aún</td></tr>';
+        } else {
+          items.forEach((it, index) => {
+            const row = document.createElement('tr');
+            row.dataset.index = index;
+            row.innerHTML = `
+              <td>${it.description}</td>
+              <td>${it.amount.toFixed(2)}</td>
+              <td class="text-nowrap">
+                <button class="btn btn-warning btn-sm me-1 editItemBtn" type="button">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-danger btn-sm deleteItemBtn" type="button">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>`;
+            itemsTable.appendChild(row);
+          });
+        }
+        recalcTotals();
+      };
+
+      // Recalcular totales
+      const recalcTotals = () => {
+        const subtotal = items.reduce((acc, it) => acc + it.amount, 0);
+        subtotalInput.value = subtotal.toFixed(2);
+
+        const discountPercent = parseFloat(discountPercentInput.value) || 0;
+        const discountAmount = subtotal * (discountPercent / 100);
+        discountAmountInput.value = discountAmount.toFixed(2);
+
+        const taxPercent = parseFloat(taxPercentInput.value) || 0;
+        const taxable = subtotal - discountAmount;
+        const taxAmount = taxable * (taxPercent / 100);
+        taxAmountInput.value = taxAmount.toFixed(2);
+
+        const total = taxable + taxAmount;
+        totalAmountInput.value = total.toFixed(2);
+      };
+
+      // Abrir modal (nuevo ítem)
+      addItemBtn.addEventListener('click', () => {
+        itemForm.reset();
+        itemForm.item_id.value = '';
+        document.getElementById('itemModalLabel').innerText = 'Agregar ítem';
+        itemModal.show();
+      });
+
+      // Guardar ítem
+      itemForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = itemForm.item_id.value;
+        const newItem = {
+          description: itemForm.item_description.value.trim(),
+          amount: parseFloat(itemForm.item_amount.value)
+        };
+        if (id) items[id] = newItem;
+        else items.push(newItem);
+        itemModal.hide();
+        renderItems();
+      });
+
+      // Editar o eliminar
+      // Editar o eliminar
+      itemsTable.addEventListener('click', (e) => {
+        // Editar ítem
+        if (e.target.closest('.editItemBtn')) {
+          const row = e.target.closest('tr');
+          const index = row.dataset.index;
+          const it = items[index];
+          itemForm.item_id.value = index;
+          itemForm.item_description.value = it.description;
+          itemForm.item_amount.value = it.amount;
+          document.getElementById('itemModalLabel').innerText = 'Editar ítem';
+          itemModal.show();
+        }
+
+        // Eliminar ítem con modal
+        if (e.target.closest('.deleteItemBtn')) {
+          const row = e.target.closest('tr');
+          deleteIndex = row.dataset.index;
+
+          // Actualizar texto dinámicamente con el nombre del ítem
+          const itemName = items[deleteIndex].description;
+          document.getElementById('confirmDeleteText').innerText = `¿Está seguro que desea eliminar el ítem "${itemName}"?`;
+
+          // Mostrar modal de confirmación
+          confirmDeleteModal.show();
+        }
+      });
+
+      // Botón de confirmación del modal
+      confirmDeleteBtn.addEventListener('click', () => {
+        if (deleteIndex !== null) {
+          items.splice(deleteIndex, 1);
+          renderItems();
+          deleteIndex = null;
+          confirmDeleteModal.hide();
+        }
+      });
+
+      // Inputs de descuento e impuestos
+      discountPercentInput.addEventListener('input', recalcTotals);
+      taxPercentInput.addEventListener('input', recalcTotals);
+
+      // Render inicial de ítems
+      renderItems();
+    });
+
+  
+    //- Filtrado dinámico de proyectos según cliente
+    document.addEventListener('DOMContentLoaded', () => {
+      const clientSelect = document.getElementById('client_id');
+      const estimateSelect = document.getElementById('estimate_id');
+
+      if (!clientSelect || !estimateSelect) return;
 
       // Traer todos los proyectos disponibles del backend
-      const allProjects = Array.from(projectSelect.options);
+      const allestimates = Array.from(estimateSelect.options);
 
       // Cliente y proyecto actuales (al editar)
       const currentClientId = clientSelect.value || '';
-      const currentProjectId = projectSelect.value || '';
+      const currentestimateId = estimateSelect.value || '';
 
       // Función para cargar proyectos según el cliente seleccionado
-      function loadProjectsForClient(clientId, keepSelected = false) {
-        projectSelect.innerHTML = ''; // limpiar el select
+      function loadestimatesForClient(clientId, keepSelected = false) {
+        estimateSelect.innerHTML = ''; // limpiar el select
 
         if (!clientId) {
           const option = document.createElement('option');
           option.value = '';
           option.textContent = '-- Selecciona primero un cliente --';
-          projectSelect.appendChild(option);
+          estimateSelect.appendChild(option);
           return;
         }
 
         // Filtrar proyectos por client_id
-        const filtered = allProjects.filter(opt => opt.dataset.clientId === clientId);
+        const filtered = allestimates.filter(opt => opt.dataset.clientId === clientId);
 
         if (filtered.length === 0) {
           const option = document.createElement('option');
           option.value = '';
           option.textContent = 'No hay proyectos disponibles para este cliente';
-          projectSelect.appendChild(option);
+          estimateSelect.appendChild(option);
         } else {
           const defaultOption = document.createElement('option');
           defaultOption.value = '';
           defaultOption.textContent = '-- Seleccionar proyecto --';
-          projectSelect.appendChild(defaultOption);
+          estimateSelect.appendChild(defaultOption);
 
           filtered.forEach(opt => {
             const clone = opt.cloneNode(true);
 
             // Mantener seleccionado el proyecto actual al cargar (solo al inicio)
-            if (keepSelected && clone.value === currentProjectId) {
+            if (keepSelected && clone.value === currentestimateId) {
               clone.selected = true;
             }
 
-            projectSelect.appendChild(clone);
+            estimateSelect.appendChild(clone);
           });
         }
       }
 
       // Cargar automáticamente los proyectos del cliente actual
-      loadProjectsForClient(currentClientId, true);
+      loadestimatesForClient(currentClientId, true);
 
       // Cuando el usuario cambia el cliente, actualizar proyectos
       clientSelect.addEventListener('change', () => {
-        loadProjectsForClient(clientSelect.value);
+        loadestimatesForClient(clientSelect.value);
       });
     });
 
     document.addEventListener('DOMContentLoaded', () => {
       const validityInput = document.getElementById('validity_days');
-      const dueDateInput = document.getElementById('valid_until');
+      const dueDateInput = document.getElementById('due_date');
 
-      // Fecha de creación en UTC (del backend)
-      const creationDate = new Date(!{JSON.stringify(item.created_at)});
+      // Determinar si existe fecha de emisión; si no, usar fecha actual
+      const issueDate = !{JSON.stringify(item.issue_date || null)};
+      const baseDate = issueDate ? new Date(issueDate) : new Date(); // Si no hay issue_date, usa fecha actual
 
-      // Función para formatear fecha en yyyy-mm-dd sin afectar zona horaria
+      // Función para formatear fecha en yyyy-mm-dd (sin zona horaria)
       function formatDateUTC(date) {
         const yyyy = date.getUTCFullYear();
         const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
@@ -143,14 +401,14 @@ block content
         return `${yyyy}-${mm}-${dd}`;
       }
 
-      // Función para actualizar la fecha de vencimiento según días de validez
+      // Función para actualizar la fecha de vencimiento
       function updateDueDate() {
         const days = parseInt(validityInput.value, 10);
         if (!isNaN(days)) {
           const newDueDate = new Date(Date.UTC(
-            creationDate.getUTCFullYear(),
-            creationDate.getUTCMonth(),
-            creationDate.getUTCDate() + days
+            baseDate.getUTCFullYear(),
+            baseDate.getUTCMonth(),
+            baseDate.getUTCDate() + days
           ));
           dueDateInput.value = formatDateUTC(newDueDate);
         } else {
@@ -161,9 +419,10 @@ block content
       // Inicializar al cargar
       updateDueDate();
 
-      // Actualizar cada vez que cambien los días de validez
+      // Actualizar cuando cambian los días de validez
       validityInput.addEventListener('input', updateDueDate);
 
       // Evitar edición manual
       dueDateInput.readOnly = true;
     });
+

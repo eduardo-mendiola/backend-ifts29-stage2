@@ -30,30 +30,99 @@ block content
         td= (item.estimate_id.project_id && item.estimate_id.project_id.client_id) ? `${item.client_full_name} - Código: ${item.client_code}` : 'N/A'
       tr
         th Proyecto
-        td= item.project_name || 'N/A'
+        td= `${item.project_name} - Código: ${item.project_code}` || 'N/A'
       tr 
-        th Subtotal
-        td $#{item.subtotal.toFixed(2)}
+        th Estado
+        td= statusLabels[item.status] || 'N/A'
+      tr
+        th Nota
+        td= item.notes || 'N/A'
+
+  h3.mt-4 Presupuesto asociado    
+  table.table.table-dark
+    tbody
       tr 
-        th Monto Total
-        td $#{item.total_amount.toFixed(2)}
+        th Presupuesto
+        td= `${item.estimate_id.title} - Código: ${item.estimate_id.code}` || 'N/A'
       tr 
         th Moneda 
-        td= currency_labels[item.currency] || 'N/A'
+        td= currency_labels[item.estimate_id.currency] || 'N/A'
+
+      tr
+        th Descuentos
+        td
+          if item.estimate_id.discount_percent && item.estimate_id.discount_percent
+            ul.list-unstyled.mb-0
+              li Porcentaje: #{item.estimate_id.discount_percent}%
+              li Valor: $#{item.estimate_id.discount_amount}
+              li Total: $#{item.estimate_id.subtotal.toFixed(2)} - $#{item.estimate_id.discount_amount.toFixed(2)} = $#{item.estimate_id.subtotal.toFixed(2) - item.estimate_id.discount_amount.toFixed(2)}
+          else
+            | N/A
+          
+        tr
+          th Impuestos
+          td
+            if item.estimate_id.tax_percent && item.estimate_id.tax_amount
+              ul.list-unstyled.mb-0
+                li Porcentaje: #{item.estimate_id.tax_percent}%
+                li Valor: $#{item.estimate_id.tax_amount}
+                li Total: $#{item.estimate_id.subtotal.toFixed(2) - item.estimate_id.discount_amount.toFixed(2)} x #{item.tax_percent}% = $#{item.estimate_id.total_amount.toFixed(2)}
+            else
+              | N/A
       tr 
-        th Porcentaje de Impuestos 
-        td= item.tax_percent ? `${item.tax_percent}%` : 'N/A'
+        th Monto total de presupuesto
+        td $#{item.estimate_id.total_amount.toFixed(2)}
+
+  h3.mt-4 Extras   
+  if item.extras && item.extras.length > 0
+    table.table.table-dark
+      tbody
+        tr 
+          th Moneda 
+          td= currency_labels[item.currency] || 'N/A'
+        tr
+          th Extas Items
+          td
+            if item.extras && item.extras.length > 0
+              ol
+                each extra in item.extras
+                  li= `Descripción: ${extra.description} - Monto: $${extra.amount}`
+            else
+              span.text-muted Sin Items
+        tr 
+          th Subtotal de extras
+          td $#{item.extras_total.toFixed(2)}
+
+        tr
+          th Descuentos
+          td
+            if item.discount_percent && item.discount_percent
+              ul.list-unstyled.mb-0
+                li Porcentaje: #{item.discount_percent}%
+                li Valor: $#{item.discount_amount}
+                li Total: $#{item.extras_total.toFixed(2)} - $#{item.discount_amount} = $#{item.extras_total.toFixed(2) - item.discount_amount.toFixed(2)}
+            else
+              | N/A
+          
+        tr
+          th Impuestos
+          td
+            if item.tax_percent && item.tax_amount
+              ul.list-unstyled.mb-0
+                li Porcentaje: #{item.tax_percent}%
+                li Valor: $#{item.tax_amount}
+                li Total: $#{item.extras_total.toFixed(2) - item.discount_amount.toFixed(2)} x #{item.tax_percent}% = $#{item.extras_final_total.toFixed(2)}
+            else
+              | N/A
+        tr 
+          th Monto Total de Extras
+          td $#{item.extras_final_total.toFixed(2)}
+
+  h3.mt-4 Valores totales de la Factura   
+  table.table.table-dark
+    tbody
       tr 
-        th Impuestos 
-        td= item.taxes ? `${item.taxes}%` : 'N/A'
-      tr 
-        th Porcentaje de Descuento 
-        td= item.discount_percent ? `${item.discount_percent}%` : 'N/A'
-      tr 
-        th Descuento 
-        td= item.discount ? `${item.discount}%` : 'N/A'
-      tr 
-        th Monto Total
+        th Monto Total de la Factura
         td $#{item.total_amount.toFixed(2)}
       tr 
         th Monto Pagado
@@ -61,19 +130,13 @@ block content
       tr 
         th Monto Pendiente
         td $#{item.balance_due.toFixed(2)}
-      tr 
-        th Estado
-        td= statusLabels[item.status] || 'N/A'
-      tr
-        th Nota
-        td= item.notes || 'N/A'
       tr
         th Fecha de Creación
         td= item.created_at
       tr
         th Fecha de Modificación
         td= item.updated_at
-    
+      
 
   .mt-3
     a.btn.btn-gray.me-2(href="/invoices", tabindex="2") Volver a la lista

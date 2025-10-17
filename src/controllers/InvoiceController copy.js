@@ -1,8 +1,8 @@
 import BaseController from './BaseController.js';
 import Invoice from '../models/InvoiceModel.js';
+import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
 import Estimate from '../models/EstimateModel.js';
-import mongoose from 'mongoose';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 import { calculateInvoiceTotals, calculateBalanceDue } from '../utils/invoiceHelpers.js';
 import { invoiceNumberGenerator } from '../utils/invoiceNumberGenerator.js';
@@ -70,60 +70,6 @@ class InvoiceController extends BaseController {
         }
     };
 
-    updateView = async (req, res) => {
-        try {
-            const { id } = req.params;
-            const {
-                title,
-                project_id,
-                currency,
-                subtotal,
-                tax_percent,
-                tax_amount,
-                discount_percent,
-                discount_amount,
-                total_amount,
-                validity_days,
-                valid_until,
-                status,
-                description,
-                client_id,
-                items
-            } = req.body;
-
-            // Parsear el campo "items" que llega como JSON
-            const itemsArray = items ? JSON.parse(items) : [];
-
-            // 👇 usar el modelo Mongoose interno
-            await this.model.model.findByIdAndUpdate(
-                id,
-                {
-                    title,
-                    project_id,
-                    client_id,
-                    currency,
-                    subtotal,
-                    tax_percent,
-                    tax_amount,
-                    discount_percent,
-                    discount_amount,
-                    total_amount,
-                    validity_days,
-                    valid_until,
-                    status,
-                    description,
-                    estimates_items: itemsArray
-                },
-                { new: true }
-            );
-
-            res.redirect(`/estimates/${id}`);
-        } catch (error) {
-            console.error('Error en update:', error.message);
-            res.status(500).render('error500', { title: 'Error del servidor' });
-        }
-    };
-
     // View for editing an invoice
     getEditView = async (req, res) => {
         try {
@@ -135,8 +81,15 @@ class InvoiceController extends BaseController {
             if (!estimate) return res.render('error404', { title: 'Presupuesto asociado no encontrado' });
 
             const clients = await Client.findAll();
-            const estimates = await Estimate.findAll();
+            const projects = await Project.findAll();
 
+            const { subtotal, discount, taxes, total } = calculateInvoiceTotals(
+                estimate.total_amount,
+                invoice.discount_percent,
+                invoice.tax_percent
+            );
+
+            const balance_due = calculateBalanceDue(total, invoice.paid_amount || 0);
 
             const formattedInvoice = formatDatesForInput(
                 this.formatItem(invoice),
@@ -148,9 +101,15 @@ class InvoiceController extends BaseController {
                 item: formattedInvoice,
                 invoiceTypes,
                 clients,
-                estimates,
+                projects,
                 statusLabels,
-                currency_labels
+                currency_labels,
+                subtotal,
+                discount,
+                taxes,
+                total_amount: total,
+                paid_amount: invoice.paid_amount || 0,
+                balance_due,
             });
         } catch (error) {
             console.error('Error en getEditView:', error.message);
@@ -163,11 +122,17 @@ class InvoiceController extends BaseController {
     newView = async (req, res) => {
         try {
             const clients = await Client.findAll();
-            const estimates = await Estimate.findAll();
+            const projects = await Project.findAll();
 
+            const { subtotal, discount, taxes, total } = calculateInvoiceTotals(
+                req.body.items,
+                req.body.discount_percent,
+                req.body.tax_percent
+            );
 
             const nextInvoiceNumber = await invoiceNumberGenerator();
 
+            const balance_due = calculateBalanceDue(total, req.body.paid_amount || 0);
 
             res.render(`${this.viewPath}/new`, {
                 title: `Nueva Factura`,
@@ -175,67 +140,19 @@ class InvoiceController extends BaseController {
                 invoice_number: nextInvoiceNumber,
                 invoiceTypes,
                 clients,
-                estimates,
+                projects,
                 statusLabels,
-                currency_labels
+                currency_labels,
+                subtotal,
+                discount,
+                taxes,
+                total_amount: total,
+                paid_amount: 0,
+                balance_due: total,
             });
         } catch (error) {
             console.error('Error al abrir formulario de Facturas:', error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
-        }
-    };
-
-    createView = async (req, res) => {
-        try {
-            const {
-                title,
-                project_id,
-                client_id,
-                currency,
-                subtotal,
-                tax_percent,
-                tax_amount,
-                discount_percent,
-                discount_amount,
-                total_amount,
-                valid_until,
-                status,
-                description,
-                items
-            } = req.body;
-
-            const itemsArray = items ? JSON.parse(items) : [];
-
-            const newEstimate = {
-                title,
-                project_id,
-                client_id,
-                currency,
-                subtotal,
-                tax_percent,
-                tax_amount,
-                discount_percent,
-                discount_amount,
-                total_amount,
-                valid_until,
-                status,
-                description,
-                estimates_items: itemsArray,
-                code: new mongoose.Types.ObjectId().toString()
-            };
-
-            const createdItem = await this.model.create(newEstimate);
-            // 4️ Generar código definitivo 
-            if (this.codePrefix) {
-                const estCode = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
-                await Estimate.update(createdItem._id, { code: estCode });
-                createdItem.code = estCode;
-            }
-
-            res.redirect(`/estimates/${createdItem.id}`);
-        } catch (error) {
-            console.error('Error al crear presupuesto:', error.message);
-            res.status(500).render('error500', { title: 'Error del servidor' });
         }
     };
 

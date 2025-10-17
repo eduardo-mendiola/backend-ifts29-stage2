@@ -15,7 +15,6 @@ block content
         th Código
         th № de Factura
         th Cliente
-        th Presupuesto
         th Proyecto 
         th Monto Total
         th Estado
@@ -27,7 +26,6 @@ block content
           td= item.code
           td= item.invoice_number || 'N/A'
           td= item.client_full_name || 'N/A'
-          td= item.estimate_id.title || 'N/A'
           td= item.project_name || 'N/A'
           td $#{item.total_amount.toFixed(2)}
           td= statusLabels[item.status] || 'N/A'
