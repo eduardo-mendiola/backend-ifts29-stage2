@@ -6,6 +6,17 @@ const estimateSchema = new mongoose.Schema({
     project_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
     title: { type: String, required: true },
     description: { type: String },
+    estimates_items: [
+        {
+            description: { type: String, required: true },
+            amount: { type: Number, required: true }
+        }
+    ],
+    subtotal: { type: Number },
+    discount_percent: { type: Number, default: 0 },
+    discount_amount: { type: Number, default: 0 },
+    tax_percent: { type: Number, default: 0 },
+    tax_amount: { type: Number, default: 0 },
     total_amount: { type: Number },
     currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
     status: { type: String, enum: ['draft', 'sent', 'viewed', 'accepted', 'rejected', 'expired', 'converted'], default: 'draft' },
@@ -17,11 +28,11 @@ const estimateSchema = new mongoose.Schema({
 });
 
 // Virtuals
-estimateSchema.virtual('clientName').get(function() {
+estimateSchema.virtual('clientName').get(function () {
     return this.project_id?.client_id?.name || 'N/A';
 });
 
-estimateSchema.virtual('clientCode').get(function() {
+estimateSchema.virtual('clientCode').get(function () {
     return this.project_id?.client_id?.code || 'N/A';
 });
 

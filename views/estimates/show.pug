@@ -26,6 +26,30 @@ block content
       tr
         th Descripción
         td= item.description
+      tr
+        th Items
+        td
+          if item.estimates_items && item.estimates_items.length > 0
+            ul
+              each estimates_item in item.estimates_items
+                li= `Descripción: ${estimates_item.description} - Monto: ${estimates_item.amount}`
+          else
+            span.text-muted Sin Items
+      tr 
+        th Subtotal 
+        td $#{item.subtotal.toFixed(2)}
+      tr  
+        th Descuento (%) 
+        td= item.discount_percent + ' %'
+      tr 
+        th Monto de Descuento 
+        td $#{item.discount_amount.toFixed(2)}
+      tr 
+        th Impuestos (%) 
+        td= item.tax_percent + ' %'
+      tr 
+        th Monto de Impuestos
+        td $#{item.tax_amount.toFixed(2)}
       tr 
         th Monto Total
         td $#{item.total_amount.toFixed(2)}

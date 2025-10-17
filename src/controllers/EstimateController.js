@@ -3,6 +3,7 @@ import Estimate from '../models/EstimateModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
+import { calculateInvoiceTotals, calculateBalanceDue } from '../utils/invoiceHelpers.js';
 
 const statusLabels = {
     draft: 'Borrador',
@@ -67,6 +68,60 @@ class EstimateController extends BaseController {
         }
     };
 
+
+    updateView = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const {
+                title,
+                project_id,
+                currency,
+                subtotal,
+                tax_percent,
+                tax_amount,
+                discount_percent,
+                discount_amount,
+                total_amount,
+                valid_until,
+                status,
+                description,
+                client_id,
+                items
+            } = req.body;
+
+            // Parsear el campo "items" que llega como JSON
+            const itemsArray = items ? JSON.parse(items) : [];
+
+            // 👇 usar el modelo Mongoose interno
+            await this.model.model.findByIdAndUpdate(
+                id,
+                {
+                    title,
+                    project_id,
+                    client_id,
+                    currency,
+                    subtotal,
+                    tax_percent,
+                    tax_amount,
+                    discount_percent,
+                    discount_amount,
+                    total_amount,
+                    valid_until,
+                    status,
+                    description,
+                    estimates_items: itemsArray // 👈 nombre del campo correcto
+                },
+                { new: true }
+            );
+
+            res.redirect(`/estimates/${id}`);
+        } catch (error) {
+            console.error('Error en update:', error.message);
+            res.status(500).render('error500', { title: 'Error del servidor' });
+        }
+    };
+
+
     // View for editing an estimate
     getEditView = async (req, res) => {
         try {
@@ -102,6 +157,7 @@ class EstimateController extends BaseController {
         try {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
+
 
             res.render(`${this.viewPath}/new`, {
                 title: `Nuevo Presupuesto`,
