@@ -10,7 +10,7 @@ block content
     )
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Factura Código #{item.code}
-        a.btn.btn-gray(href="/invoices", tabindex="9") Volver a la lista
+        a.btn.btn-gray(href="/invoices", tabindex="13") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
@@ -18,7 +18,7 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="client_id") Cliente
-            select#client_id.form-select(name="client_id", tabindex="2")
+            select#client_id.form-select(name="client_id", tabindex="1")
               option(value="") -- Seleccionar cliente --
               each client in clients
                 option(
@@ -27,8 +27,22 @@ block content
                 ) #{client.name}
 
           .mb-3
+            label.form-label(for="invoice_type") Tipo de Factura
+            select#invoice_type.form-select(name="invoice_type", required, tabindex="10")
+              if invoiceTypes
+                each label in invoiceTypes
+                  option(
+                    value=label,
+                    selected=(item.invoice_type == label)
+                  ) #{label}
+              else
+                option(value="") No hay tipos de facturas disponibles
+
+          
+
+          .mb-3
             label.form-label(for="currency") Moneda
-            select#currency.form-select(name="currency", required, tabindex="5")
+            select#currency.form-select(name="currency", required, tabindex="3")
               option(value="") Seleccionar una Moneda...
               if currency_labels
                 each label, key in currency_labels
@@ -54,8 +68,8 @@ block content
                   th Monto
                   th.text-end(style="width: 1%; white-space: nowrap;") Acciones
               tbody
-                if item.items && item.items.length
-                  each i in item.items
+                if item.extras && item.extras.length
+                  each i in item.extras
                     tr(data-id=i._id)
                       td= i.description
                       td= i.amount
@@ -72,22 +86,20 @@ block content
             input(type="hidden", name="items", id="itemsInput")
 
           .mb-3
-            label.form-label(for="subtotal") Valor Subtotal de Items
-            input#subtotal.form-control(type="number", name="subtotal", value=item.subtotal || 0, readonly)
+            label.form-label(for="extras_total") Valor Subtotal de Items
+            input#extras_total.form-control(type="number", name="extras_total", value=item.extras_total || 0, readonly)
 
           .mb-3
             label.form-label(for="tax_percent") Impuestos %
-            input#tax_percent.form-control(type="number", name="tax_percent", value=item.tax_percent || "", tabindex="2")   
+            input#tax_percent.form-control(type="number", name="tax_percent", value=item.tax_percent || "", tabindex="7")   
 
           .mb-3
             label.form-label(for="tax_amount") Monto de impuestos
             input#tax_amount.form-control(type="number", name="tax_amount", value=item.tax_amount || 0, readonly)
 
-          
-
           .mb-3
             label.form-label(for="status") Estado
-            select#status.form-select(name="status", required, tabindex="6")
+            select#status.form-select(name="status", required, tabindex="10")
               if statusLabels
                 each label, key in statusLabels
                   option(
@@ -96,16 +108,14 @@ block content
                   ) #{label}
               else
                 option(value="") No hay estados disponibles
+
           
-          .mb-3
-            label.form-label(for="notes") Notas
-            textarea#notes.form-control(name="notes", required, tabindex="4")= item.notes || ""
 
         // Columna derecha
         .col-md-6
           .mb-3
             label.form-label(for="estimate_id") Presupuesto / Proyecto
-            select#estimate_id.form-select(name="estimate_id", required, tabindex="3")
+            select#estimate_id.form-select(name="estimate_id", required, tabindex="2")
               if estimates && estimates.length > 0
                 each estimate in estimates
                   option(
@@ -116,33 +126,48 @@ block content
               else
                 option(value="") No hay proyectos disponibles
           
-          
+          .mb-3
+            label.form-label(for="estimate_total") Monto del presupuesto
+            input#estimate_total.form-control(type="number", name="estimate_total", value=item.estimate_id ? item.estimate_id.total_amount : 0, readonly)
+
 
           
 
           .mb-3
             label.form-label(for="discount_percent") Descuento %
-            input#discount_percent.form-control(type="number", name="discount_percent", value=item.discount_percent || "", tabindex="2")   
+            input#discount_percent.form-control(type="number", name="discount_percent", value=item.discount_percent || "", tabindex="4")   
 
           .mb-3
             label.form-label(for="discount_amount") Monto de descuento
             input#discount_amount.form-control(type="number", name="discount_amount", value=item.discount_amount || 0, readonly)
 
           .mb-3
-            label.form-label(for="total_amount") Monto Total
+            label.form-label(for="extras_final_total") Monto Total Extras
+            input#extras_final_total.form-control(type="number", name="extras_final_total", value=item.extras_final_total || 0, readonly)
+
+          .mb-3
+            label.form-label(for="total_amount") Monto Total Factura
             input#total_amount.form-control(type="number", name="total_amount", value=item.total_amount || 0, readonly)
 
           .mb-3 
             label.form-label(for="validity_days") Días de Validez
-            input#validity_days.form-control(type="number", name="validity_days", value=item.validity_days || "", tabindex="4")
+            input#validity_days.form-control(type="number", name="validity_days", value=item.validity_days || "", tabindex="6")
 
           .mb-3
             label.form-label(for="due_date") Valido Hasta
             input#due_date.form-control(type="date", name="due_date", value=item.due_date)
 
+          .mb-3
+            label.form-label(for="notes") Notas
+            textarea#notes.form-control(name="notes", required, tabindex="8")= item.notes || ""
+
+          
+          
+          
+
       // Botones de acción
-      button.btn.btn-success.mt-3(type="submit", tabindex="7") Actualizar Factura
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/invoices", tabindex="8") Cancelar
+      button.btn.btn-success.mt-3(type="submit", tabindex="11") Actualizar Factura
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/invoices", tabindex="12") Cancelar
 
  
   // Modal para agregar/editar ítem
@@ -189,12 +214,13 @@ block content
       const itemsTable = document.querySelector('#itemsTable tbody');
       const addItemBtn = document.getElementById('addItemBtn');
 
-      const subtotalInput = document.getElementById('subtotal');
+      const subtotalInput = document.getElementById('extras_total');
       const discountPercentInput = document.getElementById('discount_percent');
       const discountAmountInput = document.getElementById('discount_amount');
       const taxPercentInput = document.getElementById('tax_percent');
       const taxAmountInput = document.getElementById('tax_amount');
       const totalAmountInput = document.getElementById('total_amount');
+      const estimateTotalInput = document.getElementById('estimate_total');
 
       const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
       const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
@@ -249,9 +275,16 @@ block content
         const taxAmount = taxable * (taxPercent / 100);
         taxAmountInput.value = taxAmount.toFixed(2);
 
-        const total = taxable + taxAmount;
+        // Monto final de extras (con descuento e impuestos)
+        const extrasFinalTotal = taxable + taxAmount;
+        document.getElementById('extras_final_total').value = extrasFinalTotal.toFixed(2);
+
+        // Monto total factura = presupuesto + extras finales
+        const estimateTotal = parseFloat(estimateTotalInput.value) || 0;
+        const total = estimateTotal + extrasFinalTotal;
         totalAmountInput.value = total.toFixed(2);
       };
+
 
       // Abrir modal (nuevo ítem)
       addItemBtn.addEventListener('click', () => {

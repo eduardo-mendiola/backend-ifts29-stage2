@@ -26,7 +26,7 @@ const invoiceSchema = new mongoose.Schema({
     // FIN Para los extras de la factura
     
     total_amount: { type: Number, required: true },
-    paid_amount: { type: Number },
+    paid_amount: { type: Number, default: 0 },
     balance_due: { type: Number },
     status: { type: String, enum: ['draft', 'sent', 'paid', 'overdue', 'cancelled'], default: 'draft' },
     notes: { type: String },
