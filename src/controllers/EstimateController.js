@@ -3,6 +3,7 @@ import Estimate from '../models/EstimateModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
+import mongoose from 'mongoose';
 import { calculateInvoiceTotals, calculateBalanceDue } from '../utils/invoiceHelpers.js';
 
 const statusLabels = {
@@ -82,6 +83,7 @@ class EstimateController extends BaseController {
                 discount_percent,
                 discount_amount,
                 total_amount,
+                validity_days,
                 valid_until,
                 status,
                 description,
@@ -106,10 +108,11 @@ class EstimateController extends BaseController {
                     discount_percent,
                     discount_amount,
                     total_amount,
+                    validity_days,
                     valid_until,
                     status,
                     description,
-                    estimates_items: itemsArray // 👈 nombre del campo correcto
+                    estimates_items: itemsArray
                 },
                 { new: true }
             );
@@ -172,6 +175,62 @@ class EstimateController extends BaseController {
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
+
+
+    createView = async (req, res) => {
+        try {
+            const {
+                title,
+                project_id,
+                client_id,
+                currency,
+                subtotal,
+                tax_percent,
+                tax_amount,
+                discount_percent,
+                discount_amount,
+                total_amount,
+                valid_until,
+                status,
+                description,
+                items
+            } = req.body;
+
+            const itemsArray = items ? JSON.parse(items) : [];
+
+            const newEstimate = {
+                title,
+                project_id,
+                client_id,
+                currency,
+                subtotal,
+                tax_percent,
+                tax_amount,
+                discount_percent,
+                discount_amount,
+                total_amount,
+                valid_until,
+                status,
+                description,
+                estimates_items: itemsArray,
+                code: new mongoose.Types.ObjectId().toString()
+            };
+
+            const createdItem = await this.model.create(newEstimate);
+            // 4️ Generar código definitivo 
+            if (this.codePrefix) {
+                const estCode = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
+                await Estimate.update(createdItem._id, { code: estCode });
+                createdItem.code = estCode;
+            }
+
+            res.redirect(`/estimates/${createdItem.id}`);
+        } catch (error) {
+            console.error('Error al crear presupuesto:', error.message);
+            res.status(500).render('error500', { title: 'Error del servidor' });
+        }
+    };
+
 }
 
 export default new EstimateController();

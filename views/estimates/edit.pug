@@ -92,34 +92,35 @@ block content
 
           // Sección de Ítems
           .mb-3
-            label.form-label(for="estimates_items") Ítems
-            button#addItemBtn.btn.btn-primary.btn-sm.ms-2(type="button") 
-              i.bi.bi-plus-circle.me-1
-              | Agregar Ítem
+            .d-flex.align-items-center.justify-content-between
+              label.form-label(for="estimates_items") Ítems
+              button#addItemBtn.btn.btn-primary.btn-sm(type="button") 
+                i.bi.bi-plus-circle.me-1
+                | Agregar Ítem
 
             table.table.table-dark.table-striped.mt-3#itemsTable
               thead
                 tr
                   th Descripción
                   th Monto
-                  th Acciones
+                  th.text-end(style="width: 1%; white-space: nowrap;") Acciones
               tbody
                 if item.items && item.items.length
                   each i in item.items
                     tr(data-id=i._id)
                       td= i.description
                       td= i.amount
-                      td
-                        button.btn.btn-warning.btn-sm.me-1.editItemBtn(type="button")
+                      td.d-flex.justify-content-end.gap-2
+                        button.btn.btn-warning.btn-sm.me-2.editItemBtn(type="button")
                           i.bi.bi-pencil
-                        button.btn.btn-danger.btn-sm.deleteItemBtn(type="button")
+                        button.btn.btn-danger.btn-sm.me-2.deleteItemBtn(type="button")
                           i.bi.bi-trash
                 else
                   tr
                     td(colspan="5" class="text-center text-muted") No hay ítems aún
 
-          // Input oculto para enviar los items al backend
-          input(type="hidden", name="items", id="itemsInput")
+            // Input oculto para enviar los items al backend
+            input(type="hidden", name="items", id="itemsInput")
 
           .mb-3
             label.form-label(for="discount_percent") Descuento %
@@ -317,4 +318,107 @@ block content
 
       // Render inicial de ítems
       renderItems();
+    });
+
+  
+    //- Filtrado dinámico de proyectos según cliente
+    document.addEventListener('DOMContentLoaded', () => {
+      const clientSelect = document.getElementById('client_id');
+      const projectSelect = document.getElementById('project_id');
+
+      if (!clientSelect || !projectSelect) return;
+
+      // Traer todos los proyectos disponibles del backend
+      const allProjects = Array.from(projectSelect.options);
+
+      // Cliente y proyecto actuales (al editar)
+      const currentClientId = clientSelect.value || '';
+      const currentProjectId = projectSelect.value || '';
+
+      // Función para cargar proyectos según el cliente seleccionado
+      function loadProjectsForClient(clientId, keepSelected = false) {
+        projectSelect.innerHTML = ''; // limpiar el select
+
+        if (!clientId) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = '-- Selecciona primero un cliente --';
+          projectSelect.appendChild(option);
+          return;
+        }
+
+        // Filtrar proyectos por client_id
+        const filtered = allProjects.filter(opt => opt.dataset.clientId === clientId);
+
+        if (filtered.length === 0) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = 'No hay proyectos disponibles para este cliente';
+          projectSelect.appendChild(option);
+        } else {
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = '-- Seleccionar proyecto --';
+          projectSelect.appendChild(defaultOption);
+
+          filtered.forEach(opt => {
+            const clone = opt.cloneNode(true);
+
+            // Mantener seleccionado el proyecto actual al cargar (solo al inicio)
+            if (keepSelected && clone.value === currentProjectId) {
+              clone.selected = true;
+            }
+
+            projectSelect.appendChild(clone);
+          });
+        }
+      }
+
+      // Cargar automáticamente los proyectos del cliente actual
+      loadProjectsForClient(currentClientId, true);
+
+      // Cuando el usuario cambia el cliente, actualizar proyectos
+      clientSelect.addEventListener('change', () => {
+        loadProjectsForClient(clientSelect.value);
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const validityInput = document.getElementById('validity_days');
+      const dueDateInput = document.getElementById('valid_until');
+
+      // Fecha de creación en UTC (del backend)
+      const creationDate = new Date(!{JSON.stringify(item.created_at)});
+
+      // Función para formatear fecha en yyyy-mm-dd sin afectar zona horaria
+      function formatDateUTC(date) {
+        const yyyy = date.getUTCFullYear();
+        const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(date.getUTCDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      }
+
+      // Función para actualizar la fecha de vencimiento según días de validez
+      function updateDueDate() {
+        const days = parseInt(validityInput.value, 10);
+        if (!isNaN(days)) {
+          const newDueDate = new Date(Date.UTC(
+            creationDate.getUTCFullYear(),
+            creationDate.getUTCMonth(),
+            creationDate.getUTCDate() + days
+          ));
+          dueDateInput.value = formatDateUTC(newDueDate);
+        } else {
+          dueDateInput.value = '';
+        }
+      }
+
+      // Inicializar al cargar
+      updateDueDate();
+
+      // Actualizar cada vez que cambien los días de validez
+      validityInput.addEventListener('input', updateDueDate);
+
+      // Evitar edición manual
+      dueDateInput.readOnly = true;
     });
