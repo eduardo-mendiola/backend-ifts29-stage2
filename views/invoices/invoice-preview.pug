@@ -1,0 +1,19 @@
+//- views/invoices/invoice-preview.pug
+extends ../layout.pug
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2 Factura (Vista Previa)
+    a.btn.btn-secondary(href=`/invoices/${item._id}`) Volver
+
+  .container.mt-4.bg-light.text-dark.p-4.rounded
+    .d-flex.justify-content-between.align-items-center.mb-4
+      
+
+    hr
+
+    include invoice-template-partials.pug
+
+    // Botón para confirmar generación
+    form(action=`/invoices/${item._id}/confirm-generate`, method="POST")
+      button.btn.btn-success.mt-4(type="submit") Confirmar generación de factura

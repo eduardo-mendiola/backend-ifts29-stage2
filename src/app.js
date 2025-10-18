@@ -200,6 +200,9 @@ app.put('/expenses/:id', ExpenseController.updateView);
 // Vistas Pug para Invoices
 app.get('/invoices', InvoiceController.getAllView);          
 app.get('/invoices/new', InvoiceController.newView);
+app.put('/invoices/:id/generate', InvoiceController.generateInvoiceView);
+app.get('/invoices/:id/preview', InvoiceController.previewInvoiceView);
+app.post('/invoices/:id/confirm-generate', InvoiceController.confirmGenerateInvoice);
 app.get('/invoices/:id/edit', InvoiceController.getEditView);
 app.get('/invoices/:id', InvoiceController.getByIdView);  
 app.post('/invoices', InvoiceController.createView);        

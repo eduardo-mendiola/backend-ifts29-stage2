@@ -1,0 +1,125 @@
+//- views/invoices/invoice-template-partials.pug
+.invoice-header.position-relative.d-flex.justify-content-between.align-items-top
+    div
+        h3.mb-0 Factura #{nextInvoiceNumber || 'SIN N° (borrador)'}
+        br
+        p.mb-0 Fecha de emisión: 
+            if item.issue_date
+                = item.issue_date.toLocaleDateString()
+            else
+                | N/A
+        p.mb-0 Vencimiento: 
+            if item.due_date
+                = item.due_date.toLocaleDateString()
+            else
+                | N/A
+
+    //- Esto se centra absolutamente
+    span.fs-1.border.border-dark.ps-3.pe-3.position-absolute.start-50.translate-middle-x #{item.invoice_type}
+
+    div.text-end
+        img(src="/images/logo_cw.webp", alt="Logo", style="max-height:60px")
+
+.row.mt-4
+  .d-flex.w-100.justify-content-between
+    div
+      h5 De:
+      p.mb-0 ClickWave S.A.
+      p.mb-0 contacto@clickwave.com.ar
+      p.mb-0 +54 9 11 1234 5678
+      p.mb-0 Dirección: Av. Siempre Viva 742
+    div
+      h5 Para:
+      p.mb-0 #{item.client_full_name || 'N/A'}
+      p.mb-0 Proyecto: #{item.project_name || 'N/A'}
+
+hr.mt-4
+
+h5.mt-3 Presupuesto
+table.table.table-bordered
+  thead.table-light
+    tr
+      th Código
+      th Título 
+    tbody
+      tr 
+        td= item.estimate_id ? item.estimate_id.code : 'N/A'
+        td= item.estimate_id ? item.estimate_id.title : 'N/A'
+      
+h5.mt-3 Detalle
+table.table.table-bordered
+  thead.table-light
+    tr
+      th Descripción
+      th.text-end Monto
+  tbody
+    if item.estimate_id && item.estimate_id.estimates_items
+      each it in item.estimate_id.estimates_items
+        tr
+          td= it.description
+          td.text-end $#{it.amount != null ? it.amount.toFixed(2) : '0.00'}
+    else
+      tr
+        td(colspan="2") Sin ítems
+    tr 
+      th Subtotal:
+      td.text-end $#{item.estimate_id && item.estimate_id.subtotal != null ? item.estimate_id.subtotal.toFixed(2) : '0.00'} 
+    tr 
+      th Descuento (#{item.estimate_id.discount_percent || 0}%):
+      td.text-end -$#{item.estimate_id.discount_amount != null ? item.estimate_id.discount_amount.toFixed(2) : '0.00'}
+    tr 
+      th Impuestos (#{item.estimate_id.tax_percent || 0}%):
+      td.text-end +$#{item.estimate_id.tax_amount != null ? item.estimate_id.tax_amount.toFixed(2) : '0.00'}
+    tr.table-active
+      th Total presupuesto:
+      td.text-end $#{item.estimate_id.total_amount != null ? item.estimate_id.total_amount.toFixed(2) : '0.00'}
+
+if item.extras && item.extras.length > 0
+  h5.mt-4 Extras
+  table.table.table-bordered
+    thead.table-light
+      tr
+        th Descripción
+        th.text-end Monto
+    tbody
+      each extra in item.extras
+        tr
+          td= extra.description
+          td.text-end $#{extra.amount != null ? extra.amount.toFixed(2) : '0.00'}
+      tr 
+        th Subtotal extras:
+        td.text-end $#{item.extras.reduce((sum, ex) => sum + (ex.amount || 0), 0).toFixed(2)}
+      tr 
+        th Descuento (#{item.discount_percent || 0}%):
+        td.text-end -$#{item.discount_amount != null ? item.discount_amount.toFixed(2) : '0.00'}
+      tr 
+        th Impuestos (#{item.tax_percent || 0}%):   
+        td.text-end +$#{item.tax_amount != null ? item.tax_amount.toFixed(2) : '0.00'}
+      tr.table-active
+        th Total extras:
+        td.text-end $#{item.extras_total != null ? item.extras_total.toFixed(2) : '0.00'}
+
+.row.mt-4.justify-content-end
+  .col-md-6 
+    h5.mt-0 Notas adicionales
+    table.table.table-bordered
+      tbody
+        tr
+          td
+            p= item.notes || 'N/A'
+  .col-md-6
+    table.table
+      tbody
+        tr
+          th Subtotal:
+          td.text-end $#{item.subtotal_total.toFixed(2)}
+        tr
+          th Descuento total:
+          td.text-end -$#{item.discount_total.toFixed(2)}
+        tr
+          th Impuestos:
+          td.text-end +$#{item.tax_total.toFixed(2)}
+        tr.table-active
+          th Total a pagar:
+          td.text-end $#{item.total_final.toFixed(2)}
+

@@ -10,6 +10,10 @@ router.get('/:id', invoiceController.getById);
 router.put('/:id', invoiceController.update);
 router.patch('/:id', invoiceController.patch);
 router.delete('/:id', invoiceController.delete);
+router.get('/:id/generate', invoiceController.generateInvoiceView);
+router.get('/:id/preview', invoiceController.previewInvoiceView);
+router.post('/:id/confirm-generate', invoiceController.confirmGenerateInvoice);
+
 
 
 export default router;
