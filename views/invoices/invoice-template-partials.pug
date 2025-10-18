@@ -24,8 +24,13 @@ div#invoice-content
             h3.mb-0 Factura #{nextInvoiceNumber}
           else
             h3.mb-0 Factura #{item.invoice_number}
+          
+          // espacio reservado para estado "ANULADA"
+          div(style="min-height: 22px;") 
+            if item.status === 'cancelled'
+              h4.text-danger.mb-0 ANULADA
           br
-          p.mb-0 Fecha de emisión: 
+          p.mb-0.mt-0 Fecha de emisión: 
             if item.issue_date
               = item.issue_date.toLocaleDateString()
             else

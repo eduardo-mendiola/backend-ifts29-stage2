@@ -154,10 +154,10 @@ block content
                 ? `/invoices/${item.id}/edit`
                 : `/invoices/${item.id}/preview`
             )= item.status === 'draft' ? 'Editar' : 'Imprimir'
-    a.btn.btn-success.me-2(
-                href=item.status === 'draft' ? `/invoices/${item.id}/edit` : '#',
-                class=item.status !== 'draft' ? 'disabled' : ''
-              ) Generar Factura
+
+    if item.status === 'draft'
+      a.btn.btn-success.me-2(href=`/invoices/${item.id}/preview`, tabindex="2") Generar Factura
+              
     //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
     //-   input(type="hidden", name="_method", value="DELETE")
     //-   button.btn.btn-danger-soft(type="submit") Eliminar

@@ -9,7 +9,7 @@ block content
     )
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nueva Factura
-        a.btn.btn-gray(href="/invoices", tabindex="13") Volver a la lista
+        a.btn.btn-gray(href="/invoices", tabindex="12") Volver a la lista
 
       .row.g-3
         // Columna izquierda
@@ -43,7 +43,7 @@ block content
           // Sección de Ítems
           .mb-3
             .d-flex.align-items-center.justify-content-between
-              label.form-label(for="extras") Ítems
+              label.form-label(for="extras") Ítems Extras
               button#addItemBtn.btn.btn-primary.btn-sm(type="button") 
                 i.bi.bi-plus-circle.me-1
                 | Agregar Ítem
@@ -72,14 +72,18 @@ block content
             label.form-label(for="tax_amount") Monto de impuestos
             input#tax_amount.form-control(type="number", name="tax_amount", value="0", readonly)
 
+          //- .mb-3
+          //-   label.form-label(for="status") Estado
+          //-   select#status.form-select(name="status", required, tabindex="10")
+          //-     if statusLabels
+          //-       each label, key in statusLabels
+          //-         option(value=key)= label
+          //-     else
+          //-       option(value="") No hay estados disponibles
+
           .mb-3
-            label.form-label(for="status") Estado
-            select#status.form-select(name="status", required, tabindex="10")
-              if statusLabels
-                each label, key in statusLabels
-                  option(value=key)= label
-              else
-                option(value="") No hay estados disponibles
+            label.form-label(for="notes") Notas
+            textarea#notes.form-control(name="notes", tabindex="9")
 
         // Columna derecha
         .col-md-6
@@ -122,12 +126,10 @@ block content
             label.form-label(for="due_date") Valido Hasta
             input#due_date.form-control(type="date", name="due_date", readonly)
 
-          .mb-3
-            label.form-label(for="notes") Notas
-            textarea#notes.form-control(name="notes", tabindex="8")
+          
 
-      button.btn.btn-success.mt-3(type="submit", tabindex="11") Crear Factura
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/invoices", tabindex="12") Cancelar
+      button.btn.btn-success.mt-3(type="submit", tabindex="10") Crear Factura
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/invoices", tabindex="11") Cancelar
 
   // Modal para agregar/editar ítem
   div.modal.fade#itemModal(tabindex='-1', aria-labelledby='itemModalLabel', aria-hidden='true')

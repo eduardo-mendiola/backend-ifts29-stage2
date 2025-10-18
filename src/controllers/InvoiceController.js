@@ -147,6 +147,7 @@ class InvoiceController extends BaseController {
       const {
         estimate_id,
         currency,
+        invoice_type,
         extras_total,
         tax_percent,
         tax_amount,
@@ -155,7 +156,6 @@ class InvoiceController extends BaseController {
         total_amount,
         validity_days,
         due_date,
-        status,
         notes,
         items
       } = req.body;
@@ -170,6 +170,7 @@ class InvoiceController extends BaseController {
       const newInvoice = {
         estimate_id,
         currency,
+        invoice_type,
         extras_total: extras_total_num,
         tax_percent: parseFloat(tax_percent) || 0,
         tax_amount: tax_amount_num,
@@ -179,7 +180,7 @@ class InvoiceController extends BaseController {
         total_amount: parseFloat(total_amount) || 0,
         validity_days: parseInt(validity_days) || 0,
         due_date: due_date || null,
-        status: status || 'draft',
+        status: 'draft',
         notes: notes || '',
         extras: itemsArray,
         issue_date: new Date(),
@@ -218,6 +219,7 @@ class InvoiceController extends BaseController {
         const {
           estimate_id,
           currency,
+          invoice_type,
           extras_total,
           tax_percent,
           tax_amount,
@@ -226,7 +228,6 @@ class InvoiceController extends BaseController {
           total_amount,
           validity_days,
           due_date,
-          status,
           description,
           items
         } = req.body;
@@ -244,6 +245,7 @@ class InvoiceController extends BaseController {
 
         // Actualizar campos permitidos
         invoice.estimate_id = estimate_id || invoice.estimate_id;
+        invoice.invoice_type = invoice_type || invoice.invoice_type;
         invoice.currency = currency || invoice.currency;
         invoice.extras_total = extras_total || 0;
         invoice.tax_percent = tax_percent || 0;
@@ -254,7 +256,7 @@ class InvoiceController extends BaseController {
         invoice.total_amount = total_amount || 0;
         invoice.validity_days = validity_days || 0;
         invoice.due_date = due_date || null;
-        invoice.status = status || invoice.status;
+        invoice.status = "draft"; 
         invoice.description = description || invoice.description;
         invoice.extras = itemsArray;
         invoice.balance_due = balanceDue;
@@ -380,7 +382,48 @@ class InvoiceController extends BaseController {
   };
 
 
-  
+  updateStatus = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      const invoice = await this.model.findById(id);
+      if (!invoice) {
+        return res.status(404).json({ message: 'Factura no encontrada' });
+      }
+
+      // Validaciones de negocio
+      if (invoice.status === 'draft') {
+        return res.status(400).json({ message: 'No se puede anular una factura en borrador.' });
+      }
+
+      if (invoice.status === 'paid') {
+        return res.status(400).json({
+          message: 'No se puede anular una factura ya pagada. Use nota de crédito.'
+        });
+      }
+
+      if (invoice.status === 'cancelled') {
+        return res.status(400).json({ message: 'La factura ya está anulada.' });
+      }
+
+      // Aplicar cancelación
+      if (status === 'cancelled') {
+        invoice.status = 'cancelled';
+      }
+
+      await invoice.save();
+
+      return res.redirect('/invoices/');
+
+    } catch (error) {
+      console.error('Error cambiando estado:', error.message);
+      return res.status(500).render('error500', { title: 'Error al cambiar estado' });
+    }
+  };
+
+
+
 }
 
 

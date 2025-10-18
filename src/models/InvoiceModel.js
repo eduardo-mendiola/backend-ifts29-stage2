@@ -4,7 +4,7 @@ import BaseModel from './BaseModel.js';
 const invoiceSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     estimate_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Estimate' },
-    invoice_type: { type: String, enum: ['A', 'B', 'C', 'E'], default: 'B' },
+    invoice_type: { type: String, enum: ['A', 'B', 'C', 'E'] },
     invoice_number: { type: String, required: true },
     validity_days: { type: Number, default: 15 },
     due_date: { type: Date },

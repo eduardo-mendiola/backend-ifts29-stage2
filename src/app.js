@@ -207,6 +207,7 @@ app.get('/invoices/:id/edit', InvoiceController.getEditView);
 app.get('/invoices/:id', InvoiceController.getByIdView);  
 app.post('/invoices', InvoiceController.createView);        
 app.put('/invoices/:id', InvoiceController.updateView);
+app.put('/invoices/:id/status', InvoiceController.updateStatus);
 
 
 

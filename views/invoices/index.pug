@@ -35,11 +35,69 @@ block content
             a.btn.btn-gray.btn-sm.me-2(href=`/invoices/${item.id}`) Ver
             a.btn.btn-sm.me-2(
               class=item.status === 'draft' ? 'btn-gray' : 'btn-success',
-              style="width: 100px; text-align:center;",
+              style="width: 65px; text-align:center;",
               href=item.status === 'draft' 
                 ? `/invoices/${item.id}/edit`
                 : `/invoices/${item.id}/preview`
             )= item.status === 'draft' ? 'Editar' : 'Imprimir'
-            form(action=`/api/invoices/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
-              input(type="hidden", name="_method", value="DELETE")
-              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Estatus
+
+         
+            //- Si está en draft → eliminar
+            //- if item.status === 'draft'
+            //-   form(
+            //-     action=`/api/expenses/${item.id}?_method=DELETE`,
+            //-     method="POST",
+            //-     style="display:inline;"
+            //-   )
+            //-     input(type="hidden", name="_method", value="DELETE")
+            //-     button.btn.btn-danger-soft.btn-sm.delete-btn(
+            //-       type="submit",
+            //-       style="width:60px; text-align:center;"
+            //-     ) Eliminar
+            //- //- Si no → anular
+            //- else
+            //-   form(
+            //-     action=`/invoices/${item.id}/status?_method=PUT`,
+            //-     method="POST",
+            //-     style="display:inline;"
+            //-   )
+            //-     input(type="hidden", name="status", value="cancelled")
+            //-     button.btn.btn-danger-soft.btn-sm(
+            //-       type="submit",
+            //-       style="width:60px; text-align:center;"
+            //-     ) Anular
+            //- Si está en draft → eliminar
+            if item.status === 'draft'
+              form(
+                action=`/api/expenses/${item.id}?_method=DELETE`,
+                method="POST",
+                style="display:inline;"
+              )
+                input(type="hidden", name="_method", value="DELETE")
+                button.btn.btn-danger-soft.btn-sm.delete-btn(
+                  type="submit",
+                  style="width:60px; text-align:center;"
+                ) Eliminar
+
+            //- Si NO está en draft pero está cancelada → botón deshabilitado
+            else if item.status === 'cancelled'
+              button.btn.btn-danger-soft.btn-sm(
+                disabled,
+                style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
+              ) Anulada
+
+            //- Si NO está en draft y NO está cancelada → permitir anular
+            else
+              form(
+                action=`/invoices/${item.id}/status?_method=PUT`,
+                method="POST",
+                style="display:inline;"
+              )
+                input(type="hidden", name="status", value="cancelled")
+                button.btn.btn-danger-soft.btn-sm(
+                  type="submit",
+                  style="width:60px; text-align:center;"
+                ) Anular
+
+
+
