@@ -7,10 +7,7 @@ import { formatDatesForInput } from '../utils/dateHelpers.js';
 import { calculateInvoiceTotals, calculateBalanceDue } from '../utils/invoiceHelpers.js';
 import { getNextInvoiceNumberPreview, invoiceNumberGenerator } from '../utils/invoiceNumberGenerator.js';
 
-// Dependencias para generación de PDF
-import fs from 'fs';
-import path from 'path';
-import PDFDocument from 'pdfkit';
+
 
 const statusLabels = {
   draft: 'Borrador',
@@ -292,29 +289,6 @@ class InvoiceController extends BaseController {
     }
   };
 
-  // confirmGenerateInvoice = async (req, res) => {
-  //   try {
-  //     const { id } = req.params;
-  //     const invoice = await Invoice.findById(id);
-
-  //     if (!invoice) return res.status(404).send('Factura no encontrada');
-
-  //     // Generar número oficial (incrementa el contador)
-  //     const realInvoiceNumber = await invoiceNumberGenerator();
-
-  //     // Cambiar estado y asignar número
-  //     invoice.status = 'generated';
-  //     invoice.invoice_number = realInvoiceNumber;
-
-  //     await invoice.save();
-
-  //     res.redirect(`/invoices/${invoice._id}`);
-  //   } catch (err) {
-  //     console.error('Error en confirmGenerateInvoice:', err.message);
-  //     res.status(500).send('Error al generar factura');
-  //   }
-  // };
-
 
   confirmGenerateInvoice = async (req, res) => {
     try {
@@ -338,9 +312,6 @@ class InvoiceController extends BaseController {
       res.status(500).send('Error al generar factura');
     }
   };
-
-
-
 
   previewInvoiceView = async (req, res) => {
     try {
@@ -409,9 +380,9 @@ class InvoiceController extends BaseController {
   };
 
 
-
-
-
+  
 }
+
+
 
 export default new InvoiceController();

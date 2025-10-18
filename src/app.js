@@ -208,6 +208,8 @@ app.get('/invoices/:id', InvoiceController.getByIdView);
 app.post('/invoices', InvoiceController.createView);        
 app.put('/invoices/:id', InvoiceController.updateView);
 
+
+
 // Vistas Pug para Payments
 app.get('/payments', PaymentController.getAllView);          
 app.get('/payments/new', PaymentController.newView);

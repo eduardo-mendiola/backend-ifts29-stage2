@@ -4,10 +4,12 @@ block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-4 Factura Código: #{item.code}
     div
-      a.btn.btn-success.me-2(
-                href=item.status === 'draft' ? `/invoices/${item.id}/preview` : '#',
-                class=item.status !== 'draft' ? 'disabled' : ''
-              ) Generar Factura
+     a.btn.me-2(
+              class=item.status === 'draft' ? 'btn-success' : 'btn-success',
+              href=item.status === 'draft' 
+                ? `/invoices/${item.id}/preview`
+                : `/invoices/${item.id}/preview`
+            )= item.status === 'draft' ? 'Generar Factura' : 'Imprimir'
       a.btn.btn-gray(href="/invoices", tabindex="1") Volver
  
   table.table.table-dark
@@ -145,10 +147,13 @@ block content
 
   .mt-3
     a.btn.btn-gray.me-2(href="/invoices", tabindex="2") Volver a la lista
-    a.btn.btn-primary.me-2(
-              href=item.status === 'draft' ? `/invoices/${item.id}/edit` : '#',
-              class=item.status !== 'draft' ? 'disabled' : ''
-            ) Editar
+    a.btn.me-2(
+              class=item.status === 'draft' ? 'btn-primary' : 'btn-success',
+              style="width: 100px; text-align:center;",
+              href=item.status === 'draft' 
+                ? `/invoices/${item.id}/edit`
+                : `/invoices/${item.id}/preview`
+            )= item.status === 'draft' ? 'Editar' : 'Imprimir'
     a.btn.btn-success.me-2(
                 href=item.status === 'draft' ? `/invoices/${item.id}/edit` : '#',
                 class=item.status !== 'draft' ? 'disabled' : ''

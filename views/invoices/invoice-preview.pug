@@ -4,16 +4,29 @@ extends ../layout.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-3
     h2 Factura (Vista Previa)
-    a.btn.btn-secondary(href=`/invoices/${item._id}`) Volver
+    a.btn.btn-secondary(href='/invoices/') Volver
 
   .container.mt-4.bg-light.text-dark.p-4.rounded
-    .d-flex.justify-content-between.align-items-center.mb-4
-      
-
-    hr
-
     include invoice-template-partials.pug
 
-    // Botón para confirmar generación
+  // Botón para generar o imprimir
+  if item.status === 'draft'
     form(action=`/invoices/${item._id}/confirm-generate`, method="POST")
-      button.btn.btn-success.mt-4(type="submit") Confirmar generación de factura
+      button.btn.btn-success.mt-4(
+        type="submit"
+        style="width:160px;"
+      ) Generar factura
+  else
+    button.btn.btn-primary.mt-4(
+      type="button"
+      onclick="window.print()"
+      style="width:160px; text-align:center;"
+    ) Imprimir factura
+
+  // Estilos para impresión
+  style.
+    @media print {
+      body * { visibility: hidden; }       /* Oculta todo */
+      #invoice-content, #invoice-content * { visibility: visible; }  /* Muestra solo el div de la factura */
+      #invoice-content { position: absolute; top: 5px; left: 0; height: 100% ;width: 100%; transform: scale(0.90); }
+    }
