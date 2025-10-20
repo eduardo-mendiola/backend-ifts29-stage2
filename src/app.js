@@ -211,13 +211,14 @@ app.post('/invoices', InvoiceController.createView);
 app.put('/invoices/:id', InvoiceController.updateView);
 app.put('/invoices/:id/status', InvoiceController.updateStatus);
 
-// Vistas Pug para Payments
+// Vistas Pug para Receipts
 app.get('/receipts', ReceiptController.getAllView);          
 app.get('/receipts/new', ReceiptController.newView);
 app.get('/receipts/:id/edit', ReceiptController.getEditView);
 app.get('/receipts/:id', ReceiptController.getByIdView);  
 app.post('/receipts', ReceiptController.createView);        
 app.put('/receipts/:id', ReceiptController.updateView);
+app.put('/receipts/:id/status', ReceiptController.updateStatus);
 
 // Vistas Pug para Payments
 app.get('/payments', PaymentController.getAllView);          

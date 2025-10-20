@@ -10,6 +10,7 @@ router.get('/:id', receiptController.getById);
 router.put('/:id', receiptController.update);
 router.patch('/:id', receiptController.patch);
 router.delete('/:id', receiptController.delete);
+router.put('/:id/status', receiptController.updateStatus);
 
 
 export default router;

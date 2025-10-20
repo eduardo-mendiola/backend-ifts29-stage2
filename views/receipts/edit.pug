@@ -30,25 +30,18 @@ block content
                   option(
                     value=invoice._id
                     data-estimate-id=invoice.estimate_id._id
+                    data-currency=invoice.currency
+                    data-amount=invoice.total_amount
                     selected=(item.invoice_id && invoice._id.toString() === item.invoice_id._id.toString())
                   ) #{invoice.invoice_number} - $#{invoice.total_amount} - #{invoice.estimate_id.clientName} - #{invoice.estimate_id.projectName}
   
           .mb-3
-            label.form-label(for="currency") Moneda
-            select#currency.form-select(name="currency", required, tabindex="5")
-              option(value="") Seleccionar una Moneda...
-              if currency_labels
-                each label, key in currency_labels
-                  option(
-                    value=key
-                    selected=(item.currency && item.currency.toString() === key)
-                  ) #{label}
-              else
-                option(value="") No hay monedas disponibles
-            
+            label.form-label(for="invoice_currency") Moneda
+            input#invoice_currency.form-control(type="text", name="invoice_currency", value=item.invoice_currency || "", readonly)
+
           .mb-3
-            label.form-label(for="amount") Monto Total ($)
-            input#amount.form-control(type="number", name="amount", value=item.amount || "", tabindex="7")
+            label.form-label(for="amount_total") Monto Total ($)
+            input#amount_total.form-control(type="number", name="amount_total", value=item.amount_total || "", readonly)
 
         // Columna derecha
         .col-md-6
@@ -94,6 +87,8 @@ block content
       const clientSelect    = document.getElementById('client_id');
       const estimateSelect  = document.getElementById('estimate_id');
       const invoiceSelect   = document.getElementById('invoice_id');
+      const currencyInput   = document.getElementById('invoice_currency');
+      const amountInput     = document.getElementById('amount_total');
 
       if (!clientSelect || !estimateSelect || !invoiceSelect) return;
 
@@ -101,7 +96,26 @@ block content
       const allEstimates = Array.from(estimateSelect.options);
       const allInvoices  = Array.from(invoiceSelect.options);
 
-      // Valores actuales (modo edición) - Mejorar la obtención de valores
+      // --- FUNCIÓN PARA CARGAR DATOS DE LA FACTURA ---
+      function loadInvoiceData() {
+        const selectedOption = invoiceSelect.options[invoiceSelect.selectedIndex];
+        
+        if (selectedOption && selectedOption.value) {
+          const currency = selectedOption.dataset.currency || '';
+          const amount = selectedOption.dataset.amount || '';
+          
+          currencyInput.value = currency;
+          amountInput.value = amount;
+          
+          console.log('Loaded invoice data:', { currency, amount });
+        } else {
+          // No limpiar en modo edición si no hay selección, mantener valores originales
+          if (!currencyInput.value) currencyInput.value = '';
+          if (!amountInput.value) amountInput.value = '';
+        }
+      }
+
+      // Valores actuales (modo edición)
       let currentClientId   = '';
       let currentEstimateId = '';
       let currentInvoiceId  = '';
@@ -121,16 +135,8 @@ block content
         currentInvoiceId = selectedInvoice.value.toString();
       }
 
-      // Debug - agregar logs para verificar valores
-      console.log('Valores actuales:', {
-        clientId: currentClientId,
-        estimateId: currentEstimateId,
-        invoiceId: currentInvoiceId
-      });
-
       // --- FILTRADO DE PROYECTOS ---
       function loadEstimatesForClient(clientId, keepSelected = false) {
-        console.log('Loading estimates for client:', clientId);
         estimateSelect.innerHTML = '';
 
         if (!clientId) {
@@ -143,11 +149,8 @@ block content
 
         const filtered = allEstimates.filter(opt => {
           const optClientId = (opt.dataset?.clientId || '').toString();
-          console.log('Comparing:', optClientId, 'with', clientId.toString());
           return optClientId === clientId.toString();
         });
-
-        console.log('Filtered estimates:', filtered.length);
 
         if (filtered.length === 0) {
           const opt = document.createElement('option');
@@ -164,7 +167,6 @@ block content
             const clone = opt.cloneNode(true);
             if (keepSelected && clone.value.toString() === currentEstimateId) {
               clone.selected = true;
-              console.log('Selected estimate:', clone.value);
             }
             estimateSelect.appendChild(clone);
           });
@@ -173,7 +175,6 @@ block content
 
       // --- FILTRADO DE FACTURAS POR PROYECTO ---
       function loadInvoicesForEstimate(estimateId, keepSelected = false) {
-        console.log('Loading invoices for estimate:', estimateId);
         invoiceSelect.innerHTML = '';
 
         if (!estimateId) {
@@ -188,8 +189,6 @@ block content
           const optEstimateId = (opt.dataset?.estimateId || '').toString();
           return optEstimateId === estimateId.toString();
         });
-
-        console.log('Filtered invoices:', filtered.length);
 
         if (filtered.length === 0) {
           const opt = document.createElement('option');
@@ -206,29 +205,36 @@ block content
             const clone = opt.cloneNode(true);
             if (keepSelected && clone.value.toString() === currentInvoiceId) {
               clone.selected = true;
-              console.log('Selected invoice:', clone.value);
             }
             invoiceSelect.appendChild(clone);
           });
+        }
+        
+        // Cargar datos de la factura después de filtrar
+        if (keepSelected) {
+          setTimeout(loadInvoiceData, 50);
         }
       }
 
       // --- EVENTOS ---
       clientSelect.addEventListener('change', () => {
         loadEstimatesForClient(clientSelect.value, false);
-        loadInvoicesForEstimate('', false); // limpiamos facturas
+        loadInvoicesForEstimate('', false);
       });
 
       estimateSelect.addEventListener('change', () => {
         loadInvoicesForEstimate(estimateSelect.value, false);
       });
 
+      // Evento para cargar datos cuando se selecciona una factura
+      invoiceSelect.addEventListener('change', () => {
+        loadInvoiceData();
+      });
+
       // --- INICIALIZACIÓN CUANDO SE EDITA ---
       if (currentClientId) {
-        console.log('Initializing with client:', currentClientId);
         loadEstimatesForClient(currentClientId, true);
         
-        // Dar tiempo para que se carguen los estimates antes de cargar invoices
         setTimeout(() => {
           if (currentEstimateId) {
             loadInvoicesForEstimate(currentEstimateId, true);

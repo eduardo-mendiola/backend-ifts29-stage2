@@ -14,9 +14,9 @@ block content
         th №
         th Código
         th Factura №
-        th Total Factura
+        th Moneda
+        th Monto
         th Código de transacción
-        th Monto pagado
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
@@ -24,12 +24,53 @@ block content
           td= index + 1
           td= item.code
           td= item.invoice_number
+          td= currency_labels[item.invoice_currency]
           td $#{item.amount_total.toFixed(2)}
           td= item.transaction_id
-          td $#{item.amount.toFixed(2)}
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/receipts/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/receipts/${item.id}/edit`) Editar
-            form(action=`/api/receipts/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
-              input(type="hidden", name="_method", value="DELETE")
-              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+            //- a.btn.btn-gray.btn-sm.me-2(href=`/receipts/${item.id}/edit`) Editar
+
+            //- Lógica para el botón de anular cobro
+            if item.status === 'success'
+              form(
+                action=`/receipts/${item.id}/status?_method=PUT`,
+                method="POST",
+                style="display:inline;"
+              )
+                input(type="hidden", name="status", value="cancelled")
+                button.btn.btn-danger-soft.btn-sm(
+                  type="button",
+                  style="width:60px; text-align:center;"
+                  data-bs-toggle="modal",
+                  data-bs-target=`#confirmCancelModal-${item.id}`
+                ) Anular
+
+            //- Si está cancelado → botón deshabilitado
+            else if item.status === 'cancelled'
+              button.btn.btn-danger-soft.btn-sm(
+                disabled,
+                style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
+              ) Anulado
+
+      
+            // Modal de confirmación
+            div.modal.fade(id=`confirmCancelModal-${item.id}`, tabindex="-1", aria-labelledby=`confirmCancelModalLabel-${item.id}`, aria-hidden="true")
+              div.modal-dialog
+                div.modal-content.bg-dark.text-white
+                  div.modal-header
+                    h5.modal-title(id=`confirmCancelModalLabel-${item.id}`) Confirmar cancelación
+                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                  div.modal-body
+                    h2.fs-5.text-center ¿Estás seguro que quieres anular este cobro?
+                    p.text-start.font-weight-bold.mt-3= `Código: ${item.code}`
+                    p.text-start.font-weight-bold.mt-3= `Factura №: ${item.invoice_number}`
+                    p.text-start.font-weight-bold.mt-3= `Monto: ${item.amount_total.toFixed(2)} ${currency_labels[item.invoice_currency]}`
+                    p.text-start.font-weight-bold.mt-3= `Cliente: ${item.client_full_name}`
+                    p.text-start.font-weight-bold.mt-3= `Proyecto: ${item.project_name}`
+                  div.modal-footer
+                    button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Cancelar
+                    // Form que se envía al confirmar
+                    form(action=`/receipts/${item.id}/status?_method=PUT`, method="POST", style="display:inline;")
+                      input(type="hidden", name="status", value="cancelled")
+                      button.btn.btn-danger(type="submit") Confirmar

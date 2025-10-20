@@ -29,6 +29,9 @@ div#invoice-content
           div(style="min-height: 22px;") 
             if item.status === 'cancelled'
               h4.text-danger.mb-0 ANULADA
+            else if item.status === 'paid'
+              h4.text-success.mb-0 PAGADA
+              
           br
           p.mb-0.mt-0 Fecha de emisión: 
             if item.issue_date

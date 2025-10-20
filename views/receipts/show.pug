@@ -19,16 +19,19 @@ block content
         td= item.transaction_id
       tr 
         th Moneda 
-        td= currency_labels[item.currency] 
+        td= currency_labels[item.invoice_currency] 
       tr 
         th Monto
-        td $#{item.amount.toFixed(2)}
+        td $#{item.amount_total.toFixed(2)}
       tr
         th Fecha
         td= item.payment_date 
       tr 
         th Método de Pago
         td= payment_method_labels[item.payment_method]
+      tr 
+        th Estado
+        td= status_labels[item.status]
       tr
         th Fecha de Creación
         td= item.created_at

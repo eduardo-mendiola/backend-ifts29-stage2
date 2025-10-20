@@ -4,11 +4,10 @@ import BaseModel from './BaseModel.js';
 const receiptSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     invoice_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Invoice', required: true },
-    currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
-    amount: { type: Number, required: true },
     payment_date: { type: Date },
     payment_method: { type: String, enum: ['bank_transfer', 'credit_card', 'cash', 'check', 'paypal'], default: 'bank_transfer' },
     transaction_id: { type: String, unique: true },
+    status: { type: String, enum: ['success', 'cancelled'], default: 'success' },
 }, {
     collection: 'receipts',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }, // timestamps automáticos
@@ -39,6 +38,10 @@ receiptSchema.virtual('amount_total').get(function () {
 
 receiptSchema.virtual('invoice_number').get(function () {
     return this.invoice_id?.invoice_number || null;
+});
+
+receiptSchema.virtual('invoice_currency').get(function () {
+    return this.invoice_id?.currency || null;
 });
 
 
