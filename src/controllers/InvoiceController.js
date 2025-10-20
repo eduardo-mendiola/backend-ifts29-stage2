@@ -4,7 +4,7 @@ import Client from '../models/ClientModel.js';
 import Estimate from '../models/EstimateModel.js';
 import mongoose from 'mongoose';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
-import { calculateInvoiceTotals, calculateBalanceDue } from '../utils/invoiceHelpers.js';
+import { calculateBalanceDue } from '../utils/invoiceHelpers.js';
 import { getNextInvoiceNumberPreview, invoiceNumberGenerator } from '../utils/invoiceNumberGenerator.js';
 
 

@@ -36,6 +36,10 @@ estimateSchema.virtual('clientCode').get(function () {
     return this.project_id?.client_id?.code || 'N/A';
 });
 
+estimateSchema.virtual('projectName').get(function () {
+    return this.project_id?.name || 'N/A';
+});
+
 // Para incluir virtuals automáticamente al convertir a JSON u objeto
 estimateSchema.set('toObject', { virtuals: true });
 estimateSchema.set('toJSON', { virtuals: true });

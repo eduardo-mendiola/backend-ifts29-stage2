@@ -3,6 +3,7 @@ import Receipt from '../models/ReceiptModel.js';
 import Project from '../models/ProjectModel.js';
 import Invoice from '../models/InvoiceModel.js';
 import Client from '../models/ClientModel.js';
+import Estimate from '../models/EstimateModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 const payment_method_labels = {
@@ -76,11 +77,12 @@ class ReceiptController extends BaseController {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
             const invoices = await Invoice.findAll();
+            const estimates = await Estimate.findAll();
 
             // Format dates before sending to the view
             const formattedReceipt = formatDatesForInput(
                 this.formatItem(receipt),
-                ['date', 'updated_at', 'created_at']
+                ['payment_date', 'updated_at', 'created_at']
             );
 
             res.render(`${this.viewPath}/edit`, {
@@ -89,6 +91,7 @@ class ReceiptController extends BaseController {
                 clients,
                 projects,
                 invoices,
+                estimates,
                 payment_method_labels,
                 currency_labels
             });
@@ -103,7 +106,11 @@ class ReceiptController extends BaseController {
         try {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
-            const invoices = await Invoice.findAll();
+            const invoicesAll = await Invoice.findAll();
+            const estimates = await Estimate.findAll();
+
+            // Filtrar solo las facturas con status "generated"
+            const invoices = invoicesAll.filter(inv => inv.status === 'generated');
 
             res.render(`${this.viewPath}/new`, {
                 title: `Nuevo Cobro`,
@@ -111,6 +118,7 @@ class ReceiptController extends BaseController {
                 clients,
                 projects,
                 invoices,
+                estimates,
                 payment_method_labels,
                 currency_labels
             });

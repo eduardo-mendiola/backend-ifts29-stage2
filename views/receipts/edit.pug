@@ -1,58 +1,41 @@
 extends ../layout.pug
-//- views/expenses/edit.pug
+//- views/receipts/edit.pug
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=`/expenses/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form.bg-dark.text-white.p-4.rounded.shadow(action=`/receipts/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
       .d-flex.justify-content-between.align-items-center.mb-3
-        h1.mb-0 Editar Tarea
-        a.btn.btn-gray(href="/expenses", tabindex="12") Volver a la lista
+        h1.mb-0 Editar Cobro
+        a.btn.btn-gray(href="/receipts", tabindex="11") Volver a la lista
 
       // Contenedor de 2 columnas
       .row.g-3
         // Columna izquierda
         .col-md-6
           .mb-3
-            label.form-label(for="project_id") Proyecto
-            select#project_id.form-select(name="project_id", required, tabindex="1")
-              option(value="") Seleccionar un proyecto...
-              if projects && projects.length > 0
-                each project in projects
-                  option(
-                    value=project._id 
-                    selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
-                  ) #{project.name}
-              else
-                option(value="") No hay proyectos disponibles
+            label.form-label(for="client_id") Cliente
+            select#client_id.form-select(name="client_id", tabindex="1")
+              option(value="") -- Seleccionar cliente --
+              each client in clients
+                option(
+                  value=client._id
+                  selected=(item.invoice_id && item.invoice_id.estimate_id && item.invoice_id.estimate_id.project_id && item.invoice_id.estimate_id.project_id.client_id && client._id.toString() === item.invoice_id.estimate_id.project_id.client_id._id.toString())
+                ) #{client.name}
+
           .mb-3
-            label.form-label(for="category_id") Categoría
-            select#category_id.form-select(name="category_id", required, tabindex="3")
-              option(value="") Seleccionar una categoría...
-              if categories && categories.length > 0
-                each category in categories
+            label.form-label(for="invoice_id") Factura 
+            select#invoice_id.form-select(name="invoice_id", required, tabindex="3")
+              option(value="") Seleccionar una factura...
+              if invoices && invoices.length > 0
+                each invoice in invoices
                   option(
-                    value=category._id 
-                    selected=(item.category_id && category._id.toString() === item.category_id._id.toString())
-                  ) #{category.name}
-              else
-                option(value="") No hay Categorías disponibles
-          .mb-3
-            label.form-label(for="amount") Monto Total
-            input#amount.form-control(type="number", name="amount", value=item.amount || "", tabindex="5")
-          .mb-3
-            label.form-label(for="status") Estado
-            select#status.form-select(name="status", required, tabindex="7")
-              option(value="") Seleccionar un estado...
-              if statusLabels
-                each label, key in statusLabels
-                  option(
-                    value=key
-                    selected=(item.status && item.status.toString() === key)
-                  ) #{label}
-              else
-                option(value="") No hay estados disponibles
+                    value=invoice._id
+                    data-estimate-id=invoice.estimate_id._id
+                    selected=(item.invoice_id && invoice._id.toString() === item.invoice_id._id.toString())
+                  ) #{invoice.invoice_number} - $#{invoice.total_amount} - #{invoice.estimate_id.clientName} - #{invoice.estimate_id.projectName}
+  
           .mb-3
             label.form-label(for="currency") Moneda
-            select#currency.form-select(name="currency", required, tabindex="9")
+            select#currency.form-select(name="currency", required, tabindex="5")
               option(value="") Seleccionar una Moneda...
               if currency_labels
                 each label, key in currency_labels
@@ -62,27 +45,34 @@ block content
                   ) #{label}
               else
                 option(value="") No hay monedas disponibles
+            
+          .mb-3
+            label.form-label(for="amount") Monto Total ($)
+            input#amount.form-control(type="number", name="amount", value=item.amount || "", tabindex="7")
 
         // Columna derecha
         .col-md-6
           .mb-3
-            label.form-label(for="employee_id") Usuario
-            select#employee_id.form-select(name="employee_id", required, tabindex="2")
-              option(value="") Seleccionar usuario...
-              if employees && employees.length > 0
-                each employee in employees
-                    option(
-                      value=employee._id 
-                      selected=(item.employee_id && employee._id.toString() === item.employee_id._id.toString())
-                    ) #{employee.full_name}
+            label.form-label(for="estimate_id") Presupuesto / Proyecto
+            select#estimate_id.form-select(name="estimate_id", required, tabindex="2")
+              if estimates && estimates.length > 0
+                each estimate in estimates
+                  option(
+                    value=estimate._id
+                    data-client-id=estimate.project_id.client_id._id
+                    selected=(item.invoice_id && item.invoice_id.estimate_id && estimate._id.toString() === item.invoice_id.estimate_id._id.toString())
+                  ) #{estimate.title} / #{estimate.project_id.name}
               else
-                option(value="") No hay usuarios disponibles
+                option(value="") No hay proyectos disponibles
+          
           .mb-3
-            label.form-label(for="description") Descripción
-            textarea#description.form-control(name="description", required, tabindex="4")= item.description || ""
+            label.form-label(for="payment_date") Fecha de Pago
+            input#payment_date.form-control(type="date", name="payment_date", value=item.payment_date || "", tabindex="4")
+
           .mb-3
-            label.form-label(for="date") Fecha 
-            input#date.form-control(type="date", name="date", value=item.date || "", tabindex="6")
+            label.form-label(for="transaction_id") Código de Transacción
+            input#transaction_id.form-control(type="text", name="transaction_id", value=item.transaction_id || "", tabindex="6")
+
           .mb-3
             label.form-label(for="payment_method") Método de Pago
             select#payment_method.form-select(name="payment_method", required, tabindex="8")
@@ -95,11 +85,157 @@ block content
                   ) #{label}
               else
                 option(value="") No hay métodos de pago disponibles
-          .mb-3
-            label.form-label(for="notes") Notas
-            textarea#notes.form-control(name="notes", required, tabindex="10")= item.notes || ""
-          
-        
 
-      button.btn.btn-success.mt-3(type="submit", tabindex="11") Actualizar Gasto
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/expenses", tabindex="10") Cancelar
+      button.btn.btn-success.mt-3(type="submit", tabindex="9") Actualizar Cobro
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/receipts", tabindex="10") Cancelar
+
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const clientSelect    = document.getElementById('client_id');
+      const estimateSelect  = document.getElementById('estimate_id');
+      const invoiceSelect   = document.getElementById('invoice_id');
+
+      if (!clientSelect || !estimateSelect || !invoiceSelect) return;
+
+      // Guardar opciones originales
+      const allEstimates = Array.from(estimateSelect.options);
+      const allInvoices  = Array.from(invoiceSelect.options);
+
+      // Valores actuales (modo edición) - Mejorar la obtención de valores
+      let currentClientId   = '';
+      let currentEstimateId = '';
+      let currentInvoiceId  = '';
+
+      // Obtener IDs de manera más robusta
+      if (clientSelect.value) {
+        currentClientId = clientSelect.value.toString();
+      }
+      
+      const selectedEstimate = estimateSelect.querySelector('option[selected]');
+      if (selectedEstimate) {
+        currentEstimateId = selectedEstimate.value.toString();
+      }
+      
+      const selectedInvoice = invoiceSelect.querySelector('option[selected]');
+      if (selectedInvoice) {
+        currentInvoiceId = selectedInvoice.value.toString();
+      }
+
+      // Debug - agregar logs para verificar valores
+      console.log('Valores actuales:', {
+        clientId: currentClientId,
+        estimateId: currentEstimateId,
+        invoiceId: currentInvoiceId
+      });
+
+      // --- FILTRADO DE PROYECTOS ---
+      function loadEstimatesForClient(clientId, keepSelected = false) {
+        console.log('Loading estimates for client:', clientId);
+        estimateSelect.innerHTML = '';
+
+        if (!clientId) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = '-- Selecciona primero un cliente --';
+          estimateSelect.appendChild(opt);
+          return;
+        }
+
+        const filtered = allEstimates.filter(opt => {
+          const optClientId = (opt.dataset?.clientId || '').toString();
+          console.log('Comparing:', optClientId, 'with', clientId.toString());
+          return optClientId === clientId.toString();
+        });
+
+        console.log('Filtered estimates:', filtered.length);
+
+        if (filtered.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'No hay proyectos disponibles para este cliente';
+          estimateSelect.appendChild(opt);
+        } else {
+          const def = document.createElement('option');
+          def.value = '';
+          def.textContent = '-- Seleccionar proyecto --';
+          estimateSelect.appendChild(def);
+
+          filtered.forEach(opt => {
+            const clone = opt.cloneNode(true);
+            if (keepSelected && clone.value.toString() === currentEstimateId) {
+              clone.selected = true;
+              console.log('Selected estimate:', clone.value);
+            }
+            estimateSelect.appendChild(clone);
+          });
+        }
+      }
+
+      // --- FILTRADO DE FACTURAS POR PROYECTO ---
+      function loadInvoicesForEstimate(estimateId, keepSelected = false) {
+        console.log('Loading invoices for estimate:', estimateId);
+        invoiceSelect.innerHTML = '';
+
+        if (!estimateId) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = '-- Selecciona primero un proyecto --';
+          invoiceSelect.appendChild(opt);
+          return;
+        }
+
+        const filtered = allInvoices.filter(opt => {
+          const optEstimateId = (opt.dataset?.estimateId || '').toString();
+          return optEstimateId === estimateId.toString();
+        });
+
+        console.log('Filtered invoices:', filtered.length);
+
+        if (filtered.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'No hay facturas disponibles para este proyecto';
+          invoiceSelect.appendChild(opt);
+        } else {
+          const def = document.createElement('option');
+          def.value = '';
+          def.textContent = '-- Seleccionar factura --';
+          invoiceSelect.appendChild(def);
+
+          filtered.forEach(opt => {
+            const clone = opt.cloneNode(true);
+            if (keepSelected && clone.value.toString() === currentInvoiceId) {
+              clone.selected = true;
+              console.log('Selected invoice:', clone.value);
+            }
+            invoiceSelect.appendChild(clone);
+          });
+        }
+      }
+
+      // --- EVENTOS ---
+      clientSelect.addEventListener('change', () => {
+        loadEstimatesForClient(clientSelect.value, false);
+        loadInvoicesForEstimate('', false); // limpiamos facturas
+      });
+
+      estimateSelect.addEventListener('change', () => {
+        loadInvoicesForEstimate(estimateSelect.value, false);
+      });
+
+      // --- INICIALIZACIÓN CUANDO SE EDITA ---
+      if (currentClientId) {
+        console.log('Initializing with client:', currentClientId);
+        loadEstimatesForClient(currentClientId, true);
+        
+        // Dar tiempo para que se carguen los estimates antes de cargar invoices
+        setTimeout(() => {
+          if (currentEstimateId) {
+            loadInvoicesForEstimate(currentEstimateId, true);
+          }
+        }, 100);
+      } else {
+        loadEstimatesForClient('', false);
+        loadInvoicesForEstimate('', false);
+      }
+    });

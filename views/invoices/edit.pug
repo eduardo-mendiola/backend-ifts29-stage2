@@ -97,18 +97,6 @@ block content
             label.form-label(for="tax_amount") Monto de impuestos
             input#tax_amount.form-control(type="number", name="tax_amount", value=item.tax_amount || 0, readonly)
 
-          //- .mb-3
-          //-   label.form-label(for="status") Estado
-          //-   select#status.form-select(name="status", required, tabindex="10")
-          //-     if statusLabels
-          //-       each label, key in statusLabels
-          //-         option(
-          //-           value=key,
-          //-           selected=(item.status && item.status.toString() === key)
-          //-         ) #{label}
-          //-     else
-          //-       option(value="") No hay estados disponibles
-
           .mb-3
             label.form-label(for="notes") Notas
             textarea#notes.form-control(name="notes", required, tabindex="9")= item.notes || ""
@@ -133,9 +121,6 @@ block content
           .mb-3
             label.form-label(for="estimate_total") Monto del presupuesto
             input#estimate_total.form-control(type="number", name="estimate_total", value=item.estimate_id ? item.estimate_id.total_amount : 0, readonly)
-
-
-          
 
           .mb-3
             label.form-label(for="discount_percent") Descuento %
@@ -416,6 +401,7 @@ block content
       });
     });
 
+    //- Cálculo automático de fecha de vencimiento según días de validez
     document.addEventListener('DOMContentLoaded', () => {
       const validityInput = document.getElementById('validity_days');
       const dueDateInput = document.getElementById('due_date');
