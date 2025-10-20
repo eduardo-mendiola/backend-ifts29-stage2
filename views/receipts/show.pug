@@ -1,0 +1,76 @@
+extends ../layout.pug
+//- views/receipts/show.pug
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.mb-4 Detalles del Cobro: #{item.code}
+    a.btn.btn-gray(href="/receipts", tabindex="1") Volver
+ 
+  h3.mt-4 Detalles del Cobro
+  table.table.table-dark
+    tbody
+      tr
+        th ID
+        td= item.id
+      tr
+        th Código
+        td= item.code
+      tr
+        th Código de Transacción
+        td= item.transaction_id
+      tr 
+        th Moneda 
+        td= currency_labels[item.currency] 
+      tr 
+        th Monto
+        td $#{item.amount.toFixed(2)}
+      tr
+        th Fecha
+        td= item.payment_date 
+      tr 
+        th Método de Pago
+        td= payment_method_labels[item.payment_method]
+      tr
+        th Fecha de Creación
+        td= item.created_at
+      tr
+        th Fecha de Modificación
+        td= item.updated_at
+  
+  h3.mt-4 Detalles de la Factura Asociada
+  table.table.table-dark
+    tbody
+      tr
+        th Número de Factura
+        td= item.invoice_number
+      tr
+        th Monto Total de la Factura
+        td $#{item.amount_total.toFixed(2)}
+  
+  h3.mt-4 Detalles del Cliente Asociado
+  table.table.table-dark
+    tbody
+      tr
+        th Código del Cliente
+        td= item.client_code
+      tr
+        th Nombre del Cliente
+        td= item.client_full_name
+      
+
+  h3.mt-4 Detalles del Proyecto Asociado
+  table.table.table-dark
+    tbody
+      tr
+        th Código del Proyecto
+        td= item.project_code
+      tr
+        th Nombre del Proyecto
+        td= item.project_name
+  
+
+  .mt-3
+    a.btn.btn-gray.me-2(href="/receipts", tabindex="2") Volver a la lista
+    a.btn.btn-primary.me-2(href=`/receipts/${item.id}/edit`, tabindex="3") Editar
+    //- form(action=`/api/employees/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+    //-   input(type="hidden", name="_method", value="DELETE")
+    //-   button.btn.btn-danger-soft(type="submit") Eliminar

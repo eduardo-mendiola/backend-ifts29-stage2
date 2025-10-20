@@ -1,0 +1,104 @@
+extends ../layout.pug
+//- views/expenses/new.pug
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/expenses", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Crear Nuevo Gasto
+        a.btn.btn-gray(href="/expenses", tabindex="13") Volver a la lista
+
+      // Contenedor de 2 columnas
+      .row.g-3
+        // Columna izquierda
+        .col-md-6
+          .mb-3
+            label.form-label(for="project_id") Proyecto
+            select#project_id.form-select(name="project_id", required, tabindex="1")
+              option(value="") Seleccionar un proyecto...
+              if projects && projects.length > 0
+                each project in projects
+                  option(
+                    value=project._id,
+                    selected=(item.project_id && project._id.toString() === item.project_id._id.toString())
+                  ) #{project.name}
+              else
+                option(value="") No hay proyectos disponibles
+          .mb-3
+            label.form-label(for="category_id") Categoría
+            select#category_id.form-select(name="category_id", required, tabindex="3")
+              option(value="") Seleccionar una categoría...
+              if categories && categories.length > 0
+                each category in categories
+                  option(
+                    value=category._id,
+                    selected=(item.category_id && category._id.toString() === item.category_id._id.toString())
+                  ) #{category.name}
+              else
+                option(value="") No hay Categorías disponibles
+          .mb-3
+            label.form-label(for="amount") Monto Total
+            input#amount.form-control(type="number", name="amount", tabindex="5")
+          .mb-3
+            label.form-label(for="status") Estado
+            select#status.form-select(name="status", required, tabindex="7")
+              option(value="") Seleccionar un estado...
+              if statusLabels
+                each label, key in statusLabels
+                  option(
+                    value=key,
+                    selected=(item.status && item.status.toString() === key)
+                  ) #{label}
+              else
+                option(value="") No hay estados disponibles
+          .mb-3
+            label.form-label(for="currency") Moneda
+            select#currency.form-select(name="currency", required, tabindex="9")
+              option(value="") Seleccionar una Moneda...
+              if currency_labels
+                each label, key in currency_labels
+                  option(
+                    value=key,
+                    selected=(item.currency && item.currency.toString() === key)
+                  ) #{label}
+              else
+                option(value="") No hay monedas disponibles
+
+        // Columna derecha
+        .col-md-6
+          .mb-3
+            label.form-label(for="employee_id") Usuario
+            select#employee_id.form-select(name="employee_id", required, tabindex="2")
+              option(value="") Seleccionar usuario...
+              if employees && employees.length > 0
+                each employee in employees
+                    option( 
+                      value=employee._id,
+                      selected=(item.employee_id && employee._id.toString() === item.employee_id._id.toString())
+                    ) #{employee.full_name}
+              else
+                option(value="") No hay usuarios disponibles
+          .mb-3
+            label.form-label(for="description") Descripción
+            textarea#description.form-control(name="description", required, tabindex="4")
+          .mb-3
+            label.form-label(for="date") Fecha 
+            input#date.form-control(type="date", name="date", value=item.date || new Date().toISOString().split('T')[0], tabindex="6")
+          .mb-3
+            label.form-label(for="payment_method") Método de Pago
+            select#payment_method.form-select(name="payment_method", required, tabindex="8")
+              option(value="") Seleccionar un Método de Pago...
+              if payment_method_labels
+                each label, key in payment_method_labels
+                  option(
+                    value=key,
+                    selected=(item.payment_method && item.payment_method.toString() === key)
+                  ) #{label}
+              else
+                option(value="") No hay métodos de pago disponibles
+          .mb-3
+            label.form-label(for="notes") Notas
+            textarea#notes.form-control(name="notes", required, tabindex="10")
+
+
+      button.btn.btn-primary.mt-3(type="submit", tabindex="11") Crear Gasto
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/expenses", tabindex="12") Cancelar

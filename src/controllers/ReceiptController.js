@@ -1,16 +1,9 @@
-import BaseController from './BaseController.js';
-import Expense from '../models/ExpenseModel.js';
+import BaseController from './BaseController.js'
+import Receipt from '../models/ReceiptModel.js';
 import Project from '../models/ProjectModel.js';
+import Invoice from '../models/InvoiceModel.js';
 import Client from '../models/ClientModel.js';
-import Employee from '../models/EmployeeModel.js';
-import ExpenseCategory from '../models/ExpenseCategoryModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
-
-const statusLabels = {
-    pending: 'Pendiente',
-    approved: 'Aprobado',
-    rejected: 'Rechazado'
-};
 
 const payment_method_labels = {
     bank_transfer: 'Transferencia Bancaria',
@@ -27,9 +20,9 @@ const currency_labels = {
     ARG: 'Peso argentino'
 };
 
-class ExpenseController extends BaseController {
+class ReceiptController extends BaseController {
     constructor() {
-        super(Expense, 'expenses', 'EXP-');
+        super(Receipt, 'receipts', 'REC-');
     }
 
     getAllView = async (req, res) => {
@@ -38,7 +31,6 @@ class ExpenseController extends BaseController {
             res.render(`${this.viewPath}/index`, {
                 title: `Lista de ${this.viewPath}`,
                 items: this.formatItems(items),
-                statusLabels,
                 payment_method_labels,
                 currency_labels
             });
@@ -48,23 +40,22 @@ class ExpenseController extends BaseController {
         }
     };
 
-    // View for displaying an expense by ID (for show.pug)
+    // View for displaying an receipt by ID (for show.pug)
     getByIdView = async (req, res) => {
         try {
             const { id } = req.params;
-            const expense = await this.model.findById(id);
-            if (!expense) return res.render('error404', { title: 'Gasto no encontrado' });
+            const receipt = await this.model.findById(id);
+            if (!receipt) return res.render('error404', { title: 'Cobro no encontrado' });
 
             // Format dates before sending to the view
-            const formattedExpense = formatDatesForInput(
-                this.formatItem(expense),
-                ['date', 'updated_at', 'created_at']
+            const formattedReceipt = formatDatesForInput(
+                this.formatItem(receipt),
+                ['payment_date', 'updated_at', 'created_at']
             );
 
             res.render(`${this.viewPath}/show`, {
-                title: `Ver Presupuesto`,
-                item: formattedExpense,
-                statusLabels,
+                title: `Ver Cobro`,
+                item: formattedReceipt,
                 payment_method_labels,
                 currency_labels
             });
@@ -75,32 +66,29 @@ class ExpenseController extends BaseController {
         }
     };
 
-    // View for editing an expense
+    // View for editing an receipt
     getEditView = async (req, res) => {
         try {
             const { id } = req.params;
-            const expense = await this.model.findById(id);
-            if (!expense) return res.render('error404', { title: 'Gasto no encontrado' });
+            const receipt = await this.model.findById(id);
+            if (!receipt) return res.render('error404', { title: 'Cobro no encontrado' });
 
             const clients = await Client.findAll();
             const projects = await Project.findAll();
-            const employees = await Employee.findAll();
-            const categories = await ExpenseCategory.findAll();
+            const invoices = await Invoice.findAll();
 
             // Format dates before sending to the view
-            const formattedExpense = formatDatesForInput(
-                this.formatItem(expense),
+            const formattedReceipt = formatDatesForInput(
+                this.formatItem(receipt),
                 ['date', 'updated_at', 'created_at']
             );
 
             res.render(`${this.viewPath}/edit`, {
-                title: `Editar Presupuesto`,
-                item: formattedExpense,
+                title: `Editar Cobro`,
+                item: formattedReceipt,
                 clients,
                 projects,
-                employees,
-                categories,
-                statusLabels,
+                invoices,
                 payment_method_labels,
                 currency_labels
             });
@@ -110,30 +98,27 @@ class ExpenseController extends BaseController {
         }
     };
 
-    // View for creating a new expense
+    // View for creating a new receipt
     newView = async (req, res) => {
         try {
             const clients = await Client.findAll();
             const projects = await Project.findAll();
-            const employees = await Employee.findAll();
-            const categories = await ExpenseCategory.findAll();
+            const invoices = await Invoice.findAll();
 
             res.render(`${this.viewPath}/new`, {
-                title: `Nuevo Gasto`,
+                title: `Nuevo Cobro`,
                 item: {},
                 clients,
                 projects,
-                employees,
-                categories,
-                statusLabels,
+                invoices,
                 payment_method_labels,
                 currency_labels
             });
         } catch (error) {
-            console.error('Error al abrir formulario de gastos:', error.message);
+            console.error('Error al abrir formulario de cobro:', error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };
 }
 
-export default new ExpenseController();
+export default new ReceiptController();

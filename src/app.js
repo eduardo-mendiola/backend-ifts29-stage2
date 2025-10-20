@@ -21,6 +21,7 @@ import expenseRoutes from './routes/expense-routes.js';
 import invoiceRoutes from './routes/invoice-routes.js';
 import paymentRoutes from './routes/payment-routes.js';
 import expenseCategoryRoutes from './routes/expense-category-routes.js';
+import receiptRoutes from './routes/receipt-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -40,6 +41,7 @@ import ExpenseController from './controllers/ExpenseController.js';
 import InvoiceController from './controllers/InvoiceController.js';
 import PaymentController from './controllers/PaymentController.js';
 import ExpenseCategoryController from './controllers/ExpenseCategoryController.js';
+import ReceiptController from './controllers/ReceiptController.js';
 
 
 // ||----------------------------------------------------------------------------------------------------------||
@@ -209,7 +211,13 @@ app.post('/invoices', InvoiceController.createView);
 app.put('/invoices/:id', InvoiceController.updateView);
 app.put('/invoices/:id/status', InvoiceController.updateStatus);
 
-
+// Vistas Pug para Payments
+app.get('/receipts', ReceiptController.getAllView);          
+app.get('/receipts/new', ReceiptController.newView);
+app.get('/receipts/:id/edit', ReceiptController.getEditView);
+app.get('/receipts/:id', ReceiptController.getByIdView);  
+app.post('/receipts', ReceiptController.createView);        
+app.put('/receipts/:id', ReceiptController.updateView);
 
 // Vistas Pug para Payments
 app.get('/payments', PaymentController.getAllView);          
@@ -247,6 +255,7 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/expense-categories', expenseCategoryRoutes);
+app.use('/api/receipts', receiptRoutes);
 app.use('/api/employees', employeeRoutes);
 
 

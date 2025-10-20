@@ -10,7 +10,7 @@ const expenseSchema = new mongoose.Schema({
     currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
     date: { type: Date },
     category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'ExpenseCategory', required: true },
-    payment_method: { type: String, enum: ['credit_card', 'cash', 'bank_transfer'], default: 'credit_card' },
+    payment_method: { type: String, enum: ['bank_transfer', 'credit_card', 'cash', 'check', 'paypal'], default: 'credit_card' },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     notes: { type: String },
 }, {
