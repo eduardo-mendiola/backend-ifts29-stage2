@@ -4,7 +4,7 @@ import BaseModel from './BaseModel.js';
 const paymentSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     invoice_number: { type: String, unique: true },
-    transition_id: { type: String, unique: true },
+    transaction_id: { type: String, unique: true },
     payment_date: { type: Date, required: true },
     payment_method: { type: String, enum: ['bank_transfer', 'credit_card', 'cash', 'check', 'paypal'], default: 'bank_transfer' },
     currency: { type: String, enum: ['USD', 'EUR', 'GBP', 'ARG'], default: 'USD' },
