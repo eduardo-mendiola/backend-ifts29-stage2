@@ -227,6 +227,7 @@ app.get('/payments/:id/edit', PaymentController.getEditView);
 app.get('/payments/:id', PaymentController.getByIdView);  
 app.post('/payments', PaymentController.createView);        
 app.put('/payments/:id', PaymentController.updateView);
+app.put('/payments/:id/status', PaymentController.updateStatus);
 
 // Vistas Pug para Expense Categories
 app.get('/expense-categories', ExpenseCategoryController.getAllView);          

@@ -1,53 +1,120 @@
 import BaseController from './BaseController.js'
 import Payment from '../models/PaymentModel.js';
-import Project from '../models/ProjectModel.js'; 
-import Employee from '../models/EmployeeModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
+
+
+const payment_method_labels = {
+    bank_transfer: 'Transferencia Bancaria',
+    credit_card: 'Tarjeta de Crédito',
+    cash: 'Efectivo',
+    check: 'Cheque',
+    paypal: 'PayPal'
+};
+
+const currency_labels = {
+    USD: 'Dólar estadounidense',
+    EUR: 'Euro',
+    GBP: 'Libra esterlina',
+    ARG: 'Peso argentino'
+};
+
+const status_labels = {
+    success: 'Exitoso',
+    cancelled: 'Cancelado'
+};
 
 class PaymentController extends BaseController {
     constructor() {
-        super(Payment, 'payments', 'PAY-'); 
+        super(Payment, 'payments', 'PAY-');
     }
 
-    // Sobrescribimos getEditView para incluir usuarios y proyectos
-    getEditView = async (req, res) => {
+    getAllView = async (req, res) => {
         try {
-            const { id } = req.params;
-            const task = await this.model.findById(id);
-            if (!task) return res.render('error404', { title: 'Tarea no encontrado' });
+            const items = await this.model.findAll();
+            res.render(`${this.viewPath}/index`, {
+                title: `Lista de ${this.viewPath}`,
+                items: this.formatItems(items),
+                payment_method_labels,
+                currency_labels,
+                status_labels,
 
-            const employees = await Employee.findAll();
-            const projects = await Project.findAll();
-
-            // Formatear fechas antes de enviar a la vista
-            const formattedTask = formatDatesForInput(this.formatItem(task), ['due_date', 'created_at']);
-
-            res.render(`${this.viewPath}/edit`, {
-                title: `Editar Task`,
-                item: formattedTask, // Tarea con fecha formateada
-                employees,
-                projects
             });
         } catch (error) {
-            console.error('Error en getEditView:', error.message);
+            console.error(`Error al obtener todos en vista (${this.viewPath}):`, error.message);
+            res.render('error500', { title: 'Error de servidor' });
+        }
+    };
+
+    // View for displaying an payment by ID (for show.pug)
+    getByIdView = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const payment = await this.model.findById(id);
+            if (!payment) return res.render('error404', { title: 'Pago no encontrado' });
+
+            // Format dates before sending to the view
+            const formattedPayment = formatDatesForInput(
+                this.formatItem(payment),
+                ['payment_date', 'updated_at', 'created_at']
+            );
+
+            res.render(`${this.viewPath}/show`, {
+                title: `Ver Pago`,
+                item: formattedPayment,
+                payment_method_labels,
+                currency_labels,
+                status_labels
+            });
+
+        } catch (error) {
+            console.error('Error en getByIdView:', error.message);
             res.status(500).render('error500', { title: 'Error del servidor' });
         }
     };
 
+
     newView = async (req, res) => {
         try {
-            const employees = await Employee.findAll();
-            const projects = await Project.findAll();
 
             res.render(`${this.viewPath}/new`, {
-                title: `Nueva Tarea`,
+                title: `Nuevo Pago`,
                 item: {}, // objeto vacío porque es nuevo
-                employees,
-                projects
+                payment_method_labels,
+                currency_labels,
+                status_labels,
+
             });
         } catch (error) {
-            console.error('Error al abrir formulario de tareas:', error.message);
+            console.error('Error al abrir formulario de pagos:', error.message);
             res.status(500).render('error500', { title: 'Error de servidor' });
+        }
+    };
+
+    updateStatus = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { status } = req.body;
+
+            const payment = await this.model.findById(id);
+            if (!payment) {
+                return res.status(404).json({ message: 'Pago no encontrado' });
+            }
+
+            // Validación de negocio - solo verificar si ya está cancelado
+            if (payment.status === 'cancelled') {
+                return res.status(400).json({ message: 'El Pago ya está anulado.' });
+            }
+
+            // Cambiar el status del Pago a cancelled
+            payment.status = 'cancelled';
+            await payment.save();
+
+            return res.redirect('/payments/');
+
+        } catch (error) {
+            console.error('Error cambiando estado del Pago:', error.message);
+            console.error('Stack:', error.stack); // Más detalles del error
+            return res.status(500).render('error500', { title: 'Error al cambiar estado' });
         }
     };
 }

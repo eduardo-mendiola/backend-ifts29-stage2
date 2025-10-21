@@ -10,6 +10,7 @@ router.get('/:id', paymentController.getById);
 router.put('/:id', paymentController.update);
 router.patch('/:id', paymentController.patch);
 router.delete('/:id', paymentController.delete);
+router.put('/:id/status', paymentController.updateStatus);
 
 
 export default router;

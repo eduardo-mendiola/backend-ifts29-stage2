@@ -2,8 +2,8 @@ extends ../layout.pug
 //- views/task/index.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-0 Lista de Tareas
-    a.btn.btn-primary(href="/tasks/new") Nueva Tarea
+    h1.mb-0 Lista de Pagos
+    a.btn.btn-primary(href="/payments/new") Nueva Pago
     
   //- Incluir barra de búsqueda, modal y JS común
   include ../partials/common-table-scripts.pug
@@ -13,21 +13,61 @@ block content
       tr
         th №
         th Código
-        th Título 
-        th Asignado 
-        th status
+        th Factura №
+        th Moneda
+        th Monto
+        th Código de transacción
         th.text-end.pe-5 Acciones
     tbody
       each item, index in items
         tr(data-id=item.id, data-code=`${item.code}`, data-textmodal1=`Título: ${item.title}`)
           td= index + 1
           td= item.code
-          td= item.title
-          td= item.assigned_to.first_name + " " + item.assigned_to.last_name
-          td= item.status
+          td= item.invoice_number
+          td= currency_labels[item.currency]
+          td $#{item.amount.toFixed(2)}
+          td= item.transaction_id
           td.text-end
-            a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}/edit`) Editar
-            form(action=`/api/tasks/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
-              input(type="hidden", name="_method", value="DELETE")
-              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+            a.btn.btn-gray.btn-sm.me-2(href=`/payments/${item.id}`) Ver
+            
+            //- Lógica para el botón de anular cobro
+            if item.status === 'success'
+              form(
+                action=`/payments/${item.id}/status?_method=PUT`,
+                method="POST",
+                style="display:inline;"
+              )
+                input(type="hidden", name="status", value="cancelled")
+                button.btn.btn-danger-soft.btn-sm(
+                  type="button",
+                  style="width:60px; text-align:center;"
+                  data-bs-toggle="modal",
+                  data-bs-target=`#confirmCancelModal-${item.id}`
+                ) Anular
+
+            //- Si está cancelado → botón deshabilitado
+            else if item.status === 'cancelled'
+              button.btn.btn-danger-soft.btn-sm(
+                disabled,
+                style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
+              ) Anulado
+
+      
+            // Modal de confirmación
+            div.modal.fade(id=`confirmCancelModal-${item.id}`, tabindex="-1", aria-labelledby=`confirmCancelModalLabel-${item.id}`, aria-hidden="true")
+              div.modal-dialog
+                div.modal-content.bg-dark.text-white
+                  div.modal-header
+                    h5.modal-title(id=`confirmCancelModalLabel-${item.id}`) Confirmar cancelación
+                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                  div.modal-body
+                    h2.fs-5.text-center ¿Estás seguro que quieres anular este cobro?
+                    p.text-start.font-weight-bold.mt-3= `Código: ${item.code}`
+                    p.text-start.font-weight-bold.mt-3= `Código transacción: ${item.transaction_id}`
+                    p.text-start.font-weight-bold.mt-3= `Monto: ${item.amount.toFixed(2)} ${currency_labels[item.currency]}`
+                  div.modal-footer
+                    button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Cancelar
+                    // Form que se envía al confirmar
+                    form(action=`/payments/${item.id}/status?_method=PUT`, method="POST", style="display:inline;")
+                      input(type="hidden", name="status", value="cancelled")
+                      button.btn.btn-danger(type="submit") Confirmar

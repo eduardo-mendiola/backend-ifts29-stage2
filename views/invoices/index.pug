@@ -27,9 +27,9 @@ block content
           td= item.code
           td= item.invoice_number || 'N/A'
           td= item.client_full_name || 'N/A'
-          td= item.estimate_id.title || 'N/A'
+          td= item.estimate_id ? item.estimate_id.title : 'N/A'
           td= item.project_name || 'N/A'
-          td $#{item.total_amount.toFixed(2)}
+          td= item.total_amount ? `$${item.total_amount.toFixed(2)}` : 'N/A'
           td= statusLabels[item.status] || 'N/A'
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/invoices/${item.id}`) Ver
