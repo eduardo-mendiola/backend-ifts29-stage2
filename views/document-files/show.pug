@@ -1,0 +1,46 @@
+extends ../layout.pug
+//- views/document-files/show.pug
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.mb-4 Detalles del Documento: #{item.code}
+    a.btn.btn-gray(href="/document-files", tabindex="1") Volver
+ 
+
+  table.table.table-dark
+    tbody
+      tr
+        th ID
+        td= item.id
+      tr
+        th Código
+        td= item.code
+      tr
+        th Proyecto
+        td= item.project_id.name
+      tr
+        th Usuario
+        td= item.uploaded_by.full_name
+      tr
+        th Título
+        td= item.title
+      tr 
+        th Categoría
+        td= FILE_CATEGORY_LABELS[item.category]
+      tr 
+        th Ruta del Archivo
+        td 
+          a(href=item.file_url, target="_blank") Ver Archivo
+      tr
+        th Fecha de Creación
+        td= item.created_at
+      tr
+        th Fecha de Modificación
+        td= item.updated_at
+      
+
+  .mt-3
+    a.btn.btn-gray.me-2(href="/document-files", tabindex="2") Volver a la lista
+    a.btn.btn-primary.me-2(href=`/document-files/${item.id}/edit`, tabindex="3") Editar
+    //- form(action=`/api/employees/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+    //-   input(type="hidden", name="_method", value="DELETE")
+    //-   button.btn.btn-danger-soft(type="submit") Eliminar

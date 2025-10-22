@@ -22,6 +22,7 @@ import invoiceRoutes from './routes/invoice-routes.js';
 import paymentRoutes from './routes/payment-routes.js';
 import expenseCategoryRoutes from './routes/expense-category-routes.js';
 import receiptRoutes from './routes/receipt-routes.js';
+import documentFileRoutes from './routes/document-file-routes.js';
 
 // Importar controladores para vistas
 import ClientController from './controllers/ClientController.js';
@@ -42,6 +43,7 @@ import InvoiceController from './controllers/InvoiceController.js';
 import PaymentController from './controllers/PaymentController.js';
 import ExpenseCategoryController from './controllers/ExpenseCategoryController.js';
 import ReceiptController from './controllers/ReceiptController.js';
+import DocumentFileController from './controllers/DocumentFileController.js';
 
 
 // ||----------------------------------------------------------------------------------------------------------||
@@ -237,6 +239,14 @@ app.get('/expense-categories/:id', ExpenseCategoryController.getByIdView);
 app.post('/expense-categories', ExpenseCategoryController.createView);        
 app.put('/expense-categories/:id', ExpenseCategoryController.updateView);
 
+// Vistas Pug para Documents
+app.get('/document-files', DocumentFileController.getAllView);          
+app.get('/document-files/new', DocumentFileController.newView);
+app.get('/document-files/:id/edit', DocumentFileController.getEditView);
+app.get('/document-files/:id', DocumentFileController.getByIdView);  
+app.post('/document-files', DocumentFileController.createView);        
+app.put('/document-files/:id', DocumentFileController.updateView);
+
 
 
 
@@ -259,6 +269,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/expense-categories', expenseCategoryRoutes);
 app.use('/api/receipts', receiptRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/document-files', documentFileRoutes);
 
 
 // ||--------------------------------------------------------------------------------------------------||

@@ -1,0 +1,73 @@
+extends ../layout.pug
+
+block content
+  .d-flex.justify-content-center
+    form.bg-dark.text-white.p-4.rounded.shadow(action="/document-files" method="POST" style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+      .d-flex.justify-content-between.align-items-center.mb-3
+        h1.mb-0 Nuevo Documento
+        a.btn.btn-gray(href="/document-files", tabindex="9") Volver a la lista
+
+      .row.g-3
+        // ────────── Columna Izquierda ──────────
+        .col-md-6
+          .mb-3
+            // Cliente (solo para filtrar, no se envía)
+            label.form-label(for="client_id") Cliente
+            select#client_id.form-select(tabindex="1")
+              option(value="") -- Seleccionar cliente --
+              each client in clients
+                option(value=client._id) #{client.name}
+
+          .mb-3
+            label.form-label(for="uploaded_by") Cargado por
+            select#uploaded_by.form-select(name="uploaded_by", required, tabindex="3")
+              if employees && employees.length > 0
+                each employee in employees
+                  option(value=employee._id) #{employee.full_name}
+              else
+                option(value="") No hay usuarios disponibles
+
+          .mb-3
+            label.form-label(for="title") Título
+            input#title.form-control(type="text", name="title", value="", tabindex="5")
+
+          .mb-3
+            label.form-label(for="file_url") Ruta del Archivo
+            input#file_url.form-control(type="text", name="file_url", value="", tabindex="6")
+
+        // ────────── Columna Derecha ──────────
+        .col-md-6
+          .mb-3
+            label.form-label(for="project_id") Proyecto
+            select#project_id.form-select(name="project_id", required, tabindex="2")
+              option(value="") -- Seleccionar un proyecto --
+
+          .mb-3
+            label.form-label(for="category") Categoría
+            select#category.form-select(name="category", required, tabindex="4")
+              option(value="") -- Seleccionar categoría --
+              each label, key in FILE_CATEGORY_LABELS
+                option(value=key) #{label}
+
+      button.btn.btn-success.mt-3(type="submit", tabindex="7") Crear Documento
+      a.btn.btn-danger-soft.mt-3.ms-3(href="/document-files", tabindex="8") Cancelar
+
+  script.
+    const clients = !{JSON.stringify(clients)};
+    const projects = !{JSON.stringify(projects)};
+    const clientSelect = document.getElementById('client_id');
+    const projectSelect = document.getElementById('project_id');
+
+    function loadProjectsByClient(clientId) {
+      projectSelect.innerHTML = '<option value="">-- Seleccionar un proyecto --</option>';
+      const filtered = projects.filter(p => p.client_id._id === clientId);
+      filtered.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p._id;
+        opt.textContent = p.name;
+        projectSelect.appendChild(opt);
+      });
+    }
+
+    // Evento cambio de cliente
+    clientSelect.addEventListener('change', e => loadProjectsByClient(e.target.value));
