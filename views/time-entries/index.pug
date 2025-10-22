@@ -26,8 +26,8 @@ block content
           td= item.code
           td= item.date ? new Date(item.date).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : 'N/A'
           td= item.employee_id.first_name + " " + item.employee_id.last_name
-          td= item.task_id.project_id.name
-          td= item.task_id.title
+          td= item.task_id && item.task_id.project_id ? item.task_id.project_id.name : 'N/A'
+          td= item.task_id && item.task_id.title ? item.task_id.title : 'N/A'
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/time-entries/${item.id}`) Ver
             a.btn.btn-gray.btn-sm.me-2(href=`/time-entries/${item.id}/edit`) Editar

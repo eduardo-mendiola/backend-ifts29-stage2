@@ -62,9 +62,22 @@ block content
                     each employee in employees
                       //- Evitar duplicar al líder
                       if !item.team_leader || employee._id.toString() !== item.team_leader._id.toString()
-                        option(value=employee._id, data-name=`${employee.first_name} ${employee.last_name}`, data-default-role-id=employee.user_id.role_id._id, data-default-role-name=employee.user_id.role_id.name) #{employee.first_name} #{employee.last_name} - #{employee.user_id.role_id.name}
+                        if employee.user_id && employee.user_id.role_id
+                          option(
+                            value=employee._id
+                            data-name=`${employee.first_name} ${employee.last_name}`
+                            data-default-role-id=employee.user_id.role_id._id
+                            data-default-role-name=employee.user_id.role_id.name
+                          ) #{employee.first_name} #{employee.last_name} - #{employee.user_id.role_id.name}
+                        else
+                          //- Fallback si el usuario no tiene rol asignado
+                          option(
+                            value=employee._id
+                            data-name=`${employee.first_name} ${employee.last_name}`
+                          ) #{employee.first_name} #{employee.last_name} - (sin rol)
                   else
                     option(value="") No hay usuarios disponibles
+
               
               // Campo de rol (inicialmente oculto)
               .col-12#role-container(style="display: none;")
