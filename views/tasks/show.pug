@@ -30,7 +30,7 @@ block content
             = item.priority === 'baja' ? 'Baja' : item.priority === 'media' ? 'Media' : 'Alta'
       tr
         th Estado
-        td= item.status
+        td= statusLabels[item.status]
       tr
         th Asignado
         td= item.assigned_to.first_name + " " + item.assigned_to.last_name

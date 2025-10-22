@@ -7,10 +7,61 @@ import mongoose from 'mongoose';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
+const statusLabels = {
+  pending: 'Pendiente',
+  in_progress: 'En Progreso',
+  completed: 'Completado'
+};
+
+const billingTypeLabels = {
+  hourly: 'Por Hora',
+  fixed: 'Fijo'
+};
+
 class ProjectController extends BaseController {
   constructor() {
     super(Project, 'projects', 'PRJ-');
   }
+
+  getAllView = async (req, res) => {
+    try {
+      const items = await this.model.findAll();
+      res.render(`${this.viewPath}/index`, {
+        title: `Lista de ${this.viewPath}`,
+        items: this.formatItems(items),
+        statusLabels,
+      });
+    } catch (error) {
+      console.error(`Error al obtener todos en vista (${this.viewPath}):`, error.message);
+      res.render('error500', { title: 'Error de servidor' });
+    }
+  };
+
+  // View for displaying an estimate by ID (for show.pug)
+  getByIdView = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const project = await this.model.findById(id);
+      if (!project) return res.render('error404', { title: 'Proyecto no encontrado' });
+
+      // Format dates before sending to the view
+      const formattedProject = formatDatesForInput(
+        this.formatItem(project),
+        ['start_date', 'end_date', 'updated_at', 'created_at']
+      );
+
+      res.render(`${this.viewPath}/show`, {
+        title: `Ver Proyecto`,
+        item: formattedProject,
+        statusLabels,
+        billingTypeLabels
+      });
+
+    } catch (error) {
+      console.error('Error en getByIdView:', error.message);
+      res.status(500).render('error500', { title: 'Error del servidor' });
+    }
+  };
 
   // Vista de edición de un proyecto
   getEditView = async (req, res) => {
@@ -41,8 +92,11 @@ class ProjectController extends BaseController {
         managers,
         allTeams,
         clients,
-        selectedTeamIds
+        selectedTeamIds,
+        statusLabels,
+        billingTypeLabels
       });
+
     } catch (error) {
       console.error('Error en getEditView:', error.message);
       res.status(500).render('error500', { title: 'Error del servidor' });

@@ -37,13 +37,13 @@ block content
             span.text-muted Sin miembros
       tr
         th Estado
-        td= item.status
+        td= statusLabels[item.status]
       tr
         th Presupuesto
         td= item.budget
       tr
         th Facturación
-        td= item.billing_type
+        td= billingTypeLabels[item.billing_type]
       tr
         th Fecha de inicio
         td= item.start_date

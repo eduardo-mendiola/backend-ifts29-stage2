@@ -24,7 +24,7 @@ block content
           td= item.code
           td= item.name
           td= item.client_id.name
-          td= item.status
+          td= statusLabels[item.status]
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/projects/${item.id}`) Ver
             a.btn.btn-gray.btn-sm.me-2(href=`/projects/${item.id}/edit`) Editar

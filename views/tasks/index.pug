@@ -24,7 +24,7 @@ block content
           td= item.code
           td= item.title
           td= item.assigned_to.first_name + " " + item.assigned_to.last_name
-          td= item.status
+          td= statusLabels[item.status]
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}`) Ver
             a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}/edit`) Editar
