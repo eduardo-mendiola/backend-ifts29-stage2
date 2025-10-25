@@ -21,12 +21,16 @@ block content
               each client in clients
                 option(value=client._id)= client.name
           
+        
           .mb-3
             label.form-label(for="invoice_type") Tipo de Factura
             select#invoice_type.form-select(name="invoice_type", required, tabindex="10")
               if invoiceTypes
-                each label, key in invoiceTypes
-                  option(value=key)= label
+                each label in invoiceTypes
+                  option(
+                    value=label,
+                    selected=(item.invoice_type == label)
+                  ) #{label}
               else
                 option(value="") No hay tipos de facturas disponibles
 
