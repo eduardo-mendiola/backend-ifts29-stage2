@@ -512,7 +512,7 @@ Además, la pantalla de inicio (**Dashboard**) proporciona accesos rápidos a lo
 Esta estructura asegura que los usuarios puedan localizar rápidamente cualquier módulo o entidad dentro del sistema, manteniendo la coherencia y eficiencia en la experiencia de uso.
 
 **Ejemplo visual de la navegación:**  
-![Menú y navegación](assets/screenshots/menu_navegacion.png)
+![Menú y navegación](assets/screenshots/menu_navegacion.webp)
 
 ---
 
@@ -523,23 +523,23 @@ Se presenta un caso representativo del patrón CRUD que se aplica de manera cons
 
 - **Index:** Muestra el listado de elementos de la entidad, incluyendo una barra de búsqueda por código para localizar rápidamente registros. Cada fila incluye opciones por documento: Ver, Editar y Eliminar.  
 
-  ![Index](assets/screenshots/crud_index.png)
+  ![Index](assets/screenshots/crud_index.webp)
 
 - **Ver (Show):** Resume toda la información de la entidad y, si es necesario, muestra datos relacionados. Incluye botones de navegación para volver al listado o editar el registro directamente.  
 
-  ![Show](assets/screenshots/crud_show.png)
+  ![Show](assets/screenshots/crud_show.webp)
 
 - **Editar (Edit):** Permite modificar la información del registro, respetando la lógica de negocio y validaciones específicas de cada entidad.  
 
-  ![Edit](assets/screenshots/crud_edit.png)
+  ![Edit](assets/screenshots/crud_edit.webp)
 
 - **Eliminar (Delete):** Abre un modal de confirmación antes de proceder, asegurando que la acción no se realice accidentalmente.  
 
-  ![Delete](assets/screenshots/crud_delete.png)
+  ![Delete](assets/screenshots/crud_delete.webp)
 
 - **Nuevo (New):** Permite crear un registro con los campos requeridos y aplicando la lógica de negocio correspondiente.  
 
-  ![New](assets/screenshots/crud_new.png)
+  ![New](assets/screenshots/crud_new.webp)
 
 Este patrón uniforme garantiza consistencia en la experiencia del usuario y facilita la comprensión y gestión de todas las entidades del sistema.
 
@@ -552,9 +552,9 @@ Este patrón uniforme garantiza consistencia en la experiencia del usuario y fac
 **Descripción:**  
 Demuestra la funcionalidad de filtros y búsqueda avanzada para seleccionar usuarios o empleados de manera eficiente.  
 
-![Usuarios y Empleados](assets/screenshots/filtros_usuarios_empleados.png)
+![Usuarios y Empleados](assets/screenshots/filtros_usuarios_empleados.webp)
 
-![Usuarios y Empleados](assets/screenshots/filtros_usuarios_empleados2.png)
+![Usuarios y Empleados](assets/screenshots/filtros_usuarios_empleados2.webp)
 
 ---
 
@@ -563,7 +563,7 @@ Demuestra la funcionalidad de filtros y búsqueda avanzada para seleccionar usua
 **Descripción:**  
 Muestra la gestión de roles y la configuración de permisos específicos para cada tipo de usuario.  
 
-![Roles](assets/screenshots/roles_permisos.png)
+![Roles](assets/screenshots/roles_permisos.webp)
 
 ---
 
@@ -572,7 +572,7 @@ Muestra la gestión de roles y la configuración de permisos específicos para c
 **Descripción:**  
 Ejemplo de cómo se asignan equipos a proyectos, permitiendo la selección múltiple de equipos de trabajo.  
 
-![Proyectos](assets/screenshots/proyectos_equipos.png)
+![Proyectos](assets/screenshots/proyectos_equipos.webp)
 
 ---
 
@@ -581,7 +581,7 @@ Ejemplo de cómo se asignan equipos a proyectos, permitiendo la selección múlt
 **Descripción:**  
 Pantalla de gestión de equipos con selección de miembros y asignación de roles dentro del equipo.  
 
-![Equipos](assets/screenshots/equipos_miembros_roles.png)
+![Equipos](assets/screenshots/equipos_miembros_roles.webp)
 
 ---
 
@@ -590,7 +590,7 @@ Pantalla de gestión de equipos con selección de miembros y asignación de role
 **Descripción:**  
 Destaca la funcionalidad de ingreso de ítems, aplicación automática de impuestos y descuentos, y cálculo final del presupuesto.  
 
-![Presupuesto](assets/screenshots/presupuesto_items.png)
+![Presupuesto](assets/screenshots/presupuesto_items.webp)
 
 ---
 
@@ -605,7 +605,7 @@ Esta pantalla muestra las acciones disponibles sobre las facturas según su esta
 - **Restricciones completas:** Las facturas en estado pagada no se pueden eliminar ni anular.
 - **Impresión:** Las facturas en estado Pagada, Generada o Anulada pueden imprimirse.  
 
-![Facturas](assets/screenshots/facturas_acciones.png)
+![Facturas](assets/screenshots/facturas_acciones.webp)
 
 ---
 
@@ -614,7 +614,7 @@ Esta pantalla muestra las acciones disponibles sobre las facturas según su esta
 **Descripción:**  
 Ejemplo de cómo agregar ítems adicionales a una factura ya creada, reflejando flexibilidad en la gestión.  
 
-![Facturas Ítems Extras](assets/screenshots/facturas_items_extras.png)
+![Facturas Ítems Extras](assets/screenshots/facturas_items_extras.webp)
 
 ---
 
@@ -628,11 +628,11 @@ Esta pantalla permite gestionar la generación e impresión de facturas a partir
 
 Este flujo garantiza que solo las facturas completas y validadas sean emitidas oficialmente, preservando la integridad de los documentos contables.  
 
-![Facturas Generar e Imprimir](assets/screenshots/facturas_generar_imprimir.png)
+![Facturas Generar e Imprimir](assets/screenshots/facturas_generar_imprimir.webp)
 
-![Facturas Generar e Imprimir](assets/screenshots/facturas_generar_imprimir2.png)
+![Facturas Generar e Imprimir](assets/screenshots/facturas_generar_imprimir2.webp)
 
-![Facturas Generar e Imprimir](assets/screenshots/facturas_generar_imprimir3.png)
+![Facturas Generar e Imprimir](assets/screenshots/facturas_generar_imprimir3.webp)
 
 
 
