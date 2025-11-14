@@ -16,9 +16,61 @@ async function seedDatabase() {
 
     // Crear roles por defecto
     const roles = [
-      { code: 'ROL-001', name: 'admin', description: 'Administrador del sistema con acceso completo', permissions: ['all'] },
-      { code: 'ROL-002', name: 'manager', description: 'Gerente con permisos de gestión', permissions: ['read', 'write', 'update'] },
-      { code: 'ROL-003', name: 'user', description: 'Usuario estándar con permisos básicos', permissions: ['read'] }
+      { 
+        code: 'ROL-001', 
+        name: 'admin', 
+        description: 'Administrador del sistema con acceso completo', 
+        permissions: [
+          'view_users',
+          'edit_users',
+          'create_users',
+          'delete_users',
+          'view_projects',
+          'edit_projects',
+          'create_projects',
+          'delete_projects',
+          'view_tasks',
+          'edit_tasks',
+          'create_tasks',
+          'delete_tasks',
+          'log_time',
+          'view_reports',
+          'manage_roles',
+        ] 
+      },
+      { code: 'ROL-002', 
+        name: 'manager', 
+        description: 'Gerente con permisos de gestión', 
+        permissions: [
+          'view_users',
+          'edit_users',
+          'create_users',
+          'delete_users',
+          'view_projects',
+          'edit_projects',
+          'create_projects',
+          'delete_projects',
+          'view_tasks',
+          'edit_tasks',
+          'create_tasks',
+          'delete_tasks',
+          'log_time',
+          'view_reports',
+          'manage_roles',
+        ] 
+      },
+      { 
+        code: 'ROL-003', 
+        name: 'user', 
+        description: 'Usuario estándar con permisos básicos', 
+        permissions: [
+          'view_users',
+          'view_projects',
+          'view_tasks',
+          'log_time',
+          'view_reports',
+        ] 
+      }
     ];
 
     console.log('\nCreando roles...');

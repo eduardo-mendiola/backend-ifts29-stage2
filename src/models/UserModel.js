@@ -27,6 +27,11 @@ userSchema.pre('save', async function(next) {
   // Solo hashear si la contraseña fue modificada (o es nueva)
   if (!this.isModified('password_hash')) return next();
   
+  // Verificar que no sea ya un hash de bcrypt (evitar rehashear)
+  if (this.password_hash.startsWith('$2b$') || this.password_hash.startsWith('$2a$')) {
+    return next();
+  }
+  
   try {
     const salt = await bcrypt.genSalt(10);
     this.password_hash = await bcrypt.hash(this.password_hash, salt);

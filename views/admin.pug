@@ -5,8 +5,8 @@ block content
     // Mostrar información del usuario
     if user
       .alert.alert-success.w-50.text-center(role="alert")
-        h5.mb-0 Bienvenido, #{user.username}!
-        small.text-muted Rol: #{user.role_id ? user.role_id.name : 'Usuario'}
+        h3.mb-0 Bienvenido, #{user.username}!
+        h4.text-muted Rol: #{user.role_id ? user.role_id.name : 'Usuario'}
     
     h1.display-1.text-center.mb-4 ClickWave
     p.lead.text-center.mb-4 La aplicación para gestionar tus proyectos
@@ -16,7 +16,4 @@ block content
       a.btn.btn-gray.btn-lg(href="/projects") Ir a Proyectos
       a.btn.btn-gray.btn-lg(href="/clients") Ir a Clientes
       a.btn.btn-gray.btn-lg(href="/invoices") Ir a Facturas
-    
-    .mt-4.d-flex.gap-2
-      a.btn.btn-outline-primary(href="/profile") Mi Perfil
-      a.btn.btn-outline-danger(href="/logout") Cerrar Sesión
+  
