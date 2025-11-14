@@ -1,0 +1,30 @@
+extends layout-public.pug
+
+block content
+  .container.mt-5
+    .row.justify-content-center
+      .col-md-8.col-lg-6
+        .card.border-warning
+          .card-header.bg-warning.text-dark.text-center
+            h2.mb-0
+              i.bi.bi-exclamation-triangle-fill.me-2
+              | Acceso Denegado
+          .card-body.text-center
+            h4.card-title= title || 'Permisos Insuficientes'
+            p.card-text.lead= message || 'No tienes los permisos necesarios para acceder a esta página.'
+            
+            hr.my-4
+            
+            .d-grid.gap-2.d-md-flex.justify-content-md-center
+              if user
+                a.btn.btn-primary.btn-lg(href="/admin/dashboard") 
+                  i.bi.bi-house-door.me-2
+                  | Ir al Dashboard
+              else
+                a.btn.btn-primary.btn-lg(href="/") 
+                  i.bi.bi-box-arrow-in-right.me-2
+                  | Iniciar Sesión
+              
+              a.btn.btn-outline-secondary.btn-lg(href="javascript:history.back()") 
+                i.bi.bi-arrow-left.me-2
+                | Volver

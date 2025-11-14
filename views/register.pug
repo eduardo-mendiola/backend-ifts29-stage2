@@ -1,0 +1,73 @@
+extends layout-public.pug
+
+block content
+  .d-flex.justify-content-center.align-items-center.min-vh-100
+    .card(style="min-width: 400px; max-width: 500px;")
+      .card-header.bg-primary.text-white.text-center
+        h4.mb-0 Crear Cuenta
+      .card-body
+        // Mensajes de error
+        if error && error.length > 0
+          .alert.alert-danger= error[0]
+
+        form(action="/register" method="POST")
+          // Username
+          .form-floating.mb-3
+            input.form-control(
+              type="text" 
+              id="username" 
+              name="username" 
+              placeholder="Usuario" 
+              required 
+              minlength="3"
+              pattern="[a-zA-Z0-9_]+"
+              title="Solo letras, números y guión bajo"
+            )
+            label(for="username") Nombre de Usuario
+
+          // Email
+          .form-floating.mb-3
+            input.form-control(
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="email@ejemplo.com" 
+              required
+            )
+            label(for="email") Correo Electrónico
+
+          // Password
+          .form-floating.mb-3
+            input.form-control(
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="Contraseña" 
+              required 
+              minlength="6"
+            )
+            label(for="password") Contraseña
+            .form-text Mínimo 6 caracteres
+
+          // Confirm Password
+          .form-floating.mb-3
+            input.form-control(
+              type="password" 
+              id="password_confirm" 
+              name="password_confirm" 
+              placeholder="Confirmar Contraseña" 
+              required 
+              minlength="6"
+            )
+            label(for="password_confirm") Confirmar Contraseña
+
+          // Submit
+          button.btn.btn-primary.w-100.py-2(type="submit") Registrarse
+
+        // Link a login
+        .mt-3.text-center
+          p ¿Ya tienes cuenta? 
+            a(href="/") Inicia sesión aquí
+
+      .card-footer.text-center.text-muted
+        small © 2025 ClickWave - Eduardo Mendiola
