@@ -40,4 +40,7 @@ router.get('/admin/dashboard', isAuthenticated, AuthController.showDashboard);
 // Perfil de usuario
 router.get('/profile', isAuthenticated, AuthController.showProfile);
 
+// Cambiar contraseña desde perfil
+router.post('/profile/change-password', isAuthenticated, AuthController.changePassword);
+
 export default router;

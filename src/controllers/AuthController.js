@@ -167,6 +167,58 @@ export const showProfile = async (req, res) => {
   }
 };
 
+/**
+ * Cambiar contraseña desde el perfil
+ */
+export const changePassword = async (req, res) => {
+  try {
+    const { current_password, new_password, confirm_password } = req.body;
+    const userId = req.user._id;
+
+    // Validaciones
+    if (!current_password || !new_password || !confirm_password) {
+      req.flash('error', 'Todos los campos son requeridos');
+      return res.redirect('/profile');
+    }
+
+    if (new_password !== confirm_password) {
+      req.flash('error', 'Las contraseñas nuevas no coinciden');
+      return res.redirect('/profile');
+    }
+
+    if (new_password.length < 6) {
+      req.flash('error', 'La nueva contraseña debe tener al menos 6 caracteres');
+      return res.redirect('/profile');
+    }
+
+    // Obtener usuario con password
+    const user = await UserModel.model.findById(userId);
+
+    if (!user) {
+      req.flash('error', 'Usuario no encontrado');
+      return res.redirect('/profile');
+    }
+
+    // Verificar contraseña actual
+    const isMatch = await user.comparePassword(current_password);
+    if (!isMatch) {
+      req.flash('error', 'La contraseña actual es incorrecta');
+      return res.redirect('/profile');
+    }
+
+    // Actualizar contraseña (se hasheará automáticamente por el hook pre-save)
+    user.password_hash = new_password;
+    await user.save();
+
+    req.flash('success', 'Contraseña actualizada exitosamente');
+    res.redirect('/profile');
+  } catch (error) {
+    console.error('Error al cambiar contraseña:', error);
+    req.flash('error', 'Error al cambiar la contraseña. Intenta nuevamente.');
+    res.redirect('/profile');
+  }
+};
+
 export default {
   showLogin,
   processLogin,
@@ -174,5 +226,6 @@ export default {
   showRegister,
   register,
   showDashboard,
-  showProfile
+  showProfile,
+  changePassword
 };
