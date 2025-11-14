@@ -1,12 +1,12 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Client from '../models/ClientModel.js';
 import Contact from '../models/ContactModel.js';
 import Project from '../models/ProjectModel.js';
 
 
-class ClientController extends BaseController {
+class ClientController extends PermissionAwareController {
     constructor() {
-        super(Client, 'clients', 'CLI-');
+        super(Client, 'clients', 'clients', 'CLI-');
     }
 
     // Sobrescribir getByIdView para incluir contactos

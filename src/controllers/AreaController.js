@@ -1,9 +1,9 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Area from '../models/AreaModel.js';
 
-class AreaController extends BaseController {
+class AreaController extends PermissionAwareController {
     constructor() {
-        super(Area, 'areas', 'ARE-');
+        super(Area, 'areas', 'areas', 'ARE-');
     }
 
     // TODO: Las áreas desactivadas no aparecen como opciones disponibles en la asignación de empleados.

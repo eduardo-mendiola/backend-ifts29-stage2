@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js'
+import PermissionAwareController from './PermissionAwareController.js';
 import Payment from '../models/PaymentModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
@@ -23,9 +23,9 @@ const status_labels = {
     cancelled: 'Cancelado'
 };
 
-class PaymentController extends BaseController {
+class PaymentController extends PermissionAwareController {
     constructor() {
-        super(Payment, 'payments', 'PAY-');
+        super(Payment, 'payments', 'payments', 'PAY-');
     }
 
     getAllView = async (req, res) => {

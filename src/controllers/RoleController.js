@@ -1,11 +1,11 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Role from '../models/RoleModel.js';
 import { allPermissions, permissionLabels } from '../config/permissions.js';
 
 
-class RoleController extends BaseController {
+class RoleController extends PermissionAwareController {
     constructor() {
-        super(Role, 'roles', 'ROL-');
+        super(Role, 'roles', 'roles', 'ROL-');
     }
 
     // Sobrescribir getEditView para incluir permisos

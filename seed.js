@@ -78,7 +78,7 @@ async function seedDatabase() {
       const existingRole = await RoleModel.model.findOne({ name: roleData.name });
       if (!existingRole) {
         await RoleModel.create(roleData);
-        console.log(`   ✓ Rol creado: ${roleData.name}`);
+        console.log(`   - Rol creado: ${roleData.name}`);
       } else {
         console.log(`   - Rol ya existe: ${roleData.name}`);
       }
@@ -89,7 +89,7 @@ async function seedDatabase() {
     const existingAdmin = await UserModel.model.findOne({ username: 'admin' });
 
     if (!existingAdmin) {
-      console.log('\n👤 Creando usuario administrador...');
+      console.log('\nCreando usuario administrador...');
       
       const adminUser = new UserModel.model({
         code: 'USR-0001',

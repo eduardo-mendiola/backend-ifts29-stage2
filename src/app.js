@@ -13,6 +13,7 @@ import apiAuthRoutes from './routes/api-auth-routes.js';
 
 // Importar middleware de autenticación
 import { isAuthenticated } from './middleware/authMiddleware.js';
+import { injectPermissionHelpers } from './middleware/permissionMiddleware.js';
 
 // Importar rutas de cada entidad
 import clientRoutes from './routes/client-routes.js';
@@ -105,6 +106,9 @@ app.use(flash());
 // Inicializar Passport y sesiones
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Middleware para inyectar helpers de permisos en todas las vistas
+app.use(injectPermissionHelpers);
 
 // Variables globales para todas las vistas
 app.use((req, res, next) => {

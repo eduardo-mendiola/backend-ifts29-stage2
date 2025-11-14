@@ -1,9 +1,9 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Position from '../models/PositionModel.js';
 
-class PositionController extends BaseController {
+class PositionController extends PermissionAwareController {
     constructor() {
-        super(Position, 'positions', 'POS-');
+        super(Position, 'positions', 'positions', 'POS-');
     }
 }
 

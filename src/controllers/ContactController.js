@@ -1,10 +1,10 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Contact from '../models/ContactModel.js';
 import Client from '../models/ClientModel.js';
 
-class ContactController extends BaseController {
+class ContactController extends PermissionAwareController {
     constructor() {
-        super(Contact, 'contacts', 'CON-');
+        super(Contact, 'contacts', 'contacts', 'CNT-');
     }
 
     // Sobrescribir getEditView para incluir permisos

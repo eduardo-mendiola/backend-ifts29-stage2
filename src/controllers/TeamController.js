@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import TeamModel from '../models/TeamModel.js';
 import Employee from '../models/EmployeeModel.js';
 import mongoose from 'mongoose';
@@ -7,9 +7,9 @@ import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 
 
-class TeamController extends BaseController {
+class TeamController extends PermissionAwareController {
     constructor() {
-        super(TeamModel, 'teams', 'TEM-');
+        super(TeamModel, 'teams', 'teams', 'TEA-');
     }
 
 

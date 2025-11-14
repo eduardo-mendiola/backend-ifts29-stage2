@@ -1,13 +1,13 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import TimeEntry from '../models/TimeEntryModel.js';
 import Task from '../models/TaskModel.js';
 import Employee from '../models/EmployeeModel.js';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
-class TimeEntryController extends BaseController {
+class TimeEntryController extends PermissionAwareController {
     constructor() {
-        super(TimeEntry, 'time-entries', 'ACT-');
+        super(TimeEntry, 'time-entries', 'time_entries', 'TIM-');
     }
 
     // Sobrescribimos createView para actualizar la tarea correspondiente

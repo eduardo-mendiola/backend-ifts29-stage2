@@ -1,35 +1,197 @@
 export const allPermissions = [
-  'view_users',
-  'edit_users',
-  'create_users',
-  'delete_users',
+  'view_dashboard',
+
+  'create_clients',
+  'view_clients',
+  'edit_clients',
+  'delete_clients',
+
+  'create_contacts',
+  'view_contacts',
+  'edit_contacts',
+  'delete_contacts',
+
+  'create_projects',
   'view_projects',
   'edit_projects',
-  'create_projects',
   'delete_projects',
+
+  'create_tasks',
   'view_tasks',
   'edit_tasks',
-  'create_tasks',
   'delete_tasks',
-  'log_time',
-  'view_reports',
-  'manage_roles',
+
+  'create_time_entries',
+  'view_time_entries',
+  'edit_time_entries',
+  'delete_time_entries',
+
+  'create_document_files',
+  'view_document_files',
+  'edit_document_files',
+  'delete_document_files',
+
+  'create_invoices',
+  'view_invoices',
+  'edit_invoices',
+  'delete_invoices',
+
+  'create_payments',
+  'view_payments',
+  'edit_payments',
+  'delete_payments',
+
+  'create_receipts',
+  'view_receipts',
+  'edit_receipts',
+  'delete_receipts',
+
+  'create_estimates',
+  'view_estimates',
+  'edit_estimates',
+  'delete_estimates',
+
+  'create_expenses',
+  'view_expenses',
+  'edit_expenses',
+  'delete_expenses',
+
+  'create_expense_categories',
+  'view_expense_categories',
+  'edit_expense_categories',
+  'delete_expense_categories',
+
+  'create_users',
+  'view_users',
+  'edit_users',
+  'delete_users',
+
+  'create_employees',
+  'view_employees',
+  'edit_employees',
+  'delete_employees',
+
+  'create_roles',
+  'view_roles',
+  'edit_roles',
+  'delete_roles',
+
+  'create_areas',
+  'view_areas',
+  'edit_areas',
+  'delete_areas',
+
+  'create_positions',
+  'view_positions',
+  'edit_positions',
+  'delete_positions',
+
+  'create_teams',
+  'view_teams',
+  'edit_teams',
+  'delete_teams',
+
+  'create_team_roles',
+  'view_team_roles',
+  'edit_team_roles',
+  'delete_team_roles'
 ];
 
 export const permissionLabels = {
-  view_users: "Usuarios: Ver",
-  edit_users: "Usuarios: Editar",
-  create_users: "Usuarios: Crear",
-  delete_users: "Usuarios: Eliminar",
+  view_dashboard: "Dashboard: Ver",
+
+  create_clients: "Clientes: Crear",
+  view_clients: "Clientes: Ver",
+  edit_clients: "Clientes: Editar",
+  delete_clients: "Clientes: Eliminar",
+
+  create_contacts: "Contactos: Crear",
+  view_contacts: "Contactos: Ver",
+  edit_contacts: "Contactos: Editar",
+  delete_contacts: "Contactos: Eliminar",
+
+  create_projects: "Proyectos: Crear",
   view_projects: "Proyectos: Ver",
   edit_projects: "Proyectos: Editar",
-  create_projects: "Proyectos: Crear",
   delete_projects: "Proyectos: Eliminar",
+
+  create_tasks: "Tareas: Crear",
   view_tasks: "Tareas: Ver",
   edit_tasks: "Tareas: Editar",
-  create_tasks: "Tareas: Crear",
   delete_tasks: "Tareas: Eliminar",
-  log_time: "Registrar Horas",
-  view_reports: "Reportes: Ver",
-  manage_roles: "Roles: Gestionar"
+
+  create_time_entries: "Registro de Actividades: Crear",
+  view_time_entries: "Registro de Actividades: Ver",
+  edit_time_entries: "Registro de Actividades: Editar",
+  delete_time_entries: "Registro de Actividades: Eliminar",
+
+  create_document_files: "Documentos: Crear",
+  view_document_files: "Documentos: Ver",
+  edit_document_files: "Documentos: Editar",
+  delete_document_files: "Documentos: Eliminar",
+
+  create_invoices: "Facturas: Crear",
+  view_invoices: "Facturas: Ver",
+  edit_invoices: "Facturas: Editar",
+  delete_invoices: "Facturas: Eliminar",
+
+  create_payments: "Pagos: Crear",
+  view_payments: "Pagos: Ver",
+  edit_payments: "Pagos: Editar",
+  delete_payments: "Pagos: Eliminar",
+
+  create_receipts: "Cobros: Crear",
+  view_receipts: "Cobros: Ver",
+  edit_receipts: "Cobros: Editar",
+  delete_receipts: "Cobros: Eliminar",
+
+  create_estimates: "Presupuestos: Crear",
+  view_estimates: "Presupuestos: Ver",
+  edit_estimates: "Presupuestos: Editar",
+  delete_estimates: "Presupuestos: Eliminar",
+
+  create_expenses: "Gastos: Crear",
+  view_expenses: "Gastos: Ver",
+  edit_expenses: "Gastos: Editar",
+  delete_expenses: "Gastos: Eliminar",
+
+  create_expense_categories: "Categorías de Gastos: Crear",
+  view_expense_categories: "Categorías de Gastos: Ver",
+  edit_expense_categories: "Categorías de Gastos: Editar",
+  delete_expense_categories: "Categorías de Gastos: Eliminar",
+
+  create_users: "Usuarios: Crear",
+  view_users: "Usuarios: Ver",
+  edit_users: "Usuarios: Editar",
+  delete_users: "Usuarios: Eliminar",
+
+  create_employees: "Empleados: Crear",
+  view_employees: "Empleados: Ver",
+  edit_employees: "Empleados: Editar",
+  delete_employees: "Empleados: Eliminar",
+
+  create_roles: "Roles: Crear",
+  view_roles: "Roles: Ver",
+  edit_roles: "Roles: Editar",
+  delete_roles: "Roles: Eliminar",
+
+  create_areas: "Áreas: Crear",
+  view_areas: "Áreas: Ver",
+  edit_areas: "Áreas: Editar",
+  delete_areas: "Áreas: Eliminar",
+
+  create_positions: "Cargos: Crear",
+  view_positions: "Cargos: Ver",
+  edit_positions: "Cargos: Editar",
+  delete_positions: "Cargos: Eliminar",
+
+  create_teams: "Equipos: Crear",
+  view_teams: "Equipos: Ver",
+  edit_teams: "Equipos: Editar",
+  delete_teams: "Equipos: Eliminar",
+
+  create_team_roles: "Roles de Equipo: Crear",
+  view_team_roles: "Roles de Equipo: Ver",
+  edit_team_roles: "Roles de Equipo: Editar",
+  delete_team_roles: "Roles de Equipo: Eliminar"
 };

@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js'
+import PermissionAwareController from './PermissionAwareController.js';
 import Task from '../models/TaskModel.js';
 import Project from '../models/ProjectModel.js';
 import Employee from '../models/EmployeeModel.js';
@@ -10,9 +10,9 @@ const statusLabels = {
     completed: 'Completado'
 };
 
-class TaskController extends BaseController {
+class TaskController extends PermissionAwareController {
     constructor() {
-        super(Task, 'tasks', 'TSK-');
+        super(Task, 'tasks', 'tasks', 'TSK-');
     }
 
     getAllView = async (req, res) => {

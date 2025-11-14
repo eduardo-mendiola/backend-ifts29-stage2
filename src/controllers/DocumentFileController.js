@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import DocumentFile from '../models/DocumentFileModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
@@ -18,9 +18,9 @@ const FILE_CATEGORY_LABELS = {
 };
 
 
-class DocumentController extends BaseController {
+class DocumentController extends PermissionAwareController {
     constructor() {
-        super(DocumentFile, 'document-files', 'DOC-');
+        super(DocumentFile, 'document-files', 'document_files', 'DOC-');
     }
 
     getByIdView = async (req, res) => {

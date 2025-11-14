@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Invoice from '../models/InvoiceModel.js';
 import Client from '../models/ClientModel.js';
 import Estimate from '../models/EstimateModel.js';
@@ -26,9 +26,9 @@ const currency_labels = {
 
 const invoiceTypes = ['A', 'B', 'C', 'E'];
 
-class InvoiceController extends BaseController {
+class InvoiceController extends PermissionAwareController {
   constructor() {
-    super(Invoice, 'invoices', 'INV-');
+    super(Invoice, 'invoices', 'invoices', 'INV-');
   }
 
   getAllView = async (req, res) => {

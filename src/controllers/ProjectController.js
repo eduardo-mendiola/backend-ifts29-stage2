@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js'
+import PermissionAwareController from './PermissionAwareController.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
 import Team from '../models/TeamModel.js';
@@ -18,9 +18,9 @@ const billingTypeLabels = {
   fixed: 'Fijo'
 };
 
-class ProjectController extends BaseController {
+class ProjectController extends PermissionAwareController {
   constructor() {
-    super(Project, 'projects', 'PRJ-');
+    super(Project, 'projects', 'projects', 'PRJ-');
   }
 
   getAllView = async (req, res) => {

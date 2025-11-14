@@ -13,7 +13,7 @@ const resetPassword = async () => {
     const [,, email, newPassword] = process.argv;
 
     if (!email || !newPassword) {
-      console.error('❌ Uso: node reset-password.js <email> <nueva_contraseña>');
+      console.error('Uso: node reset-password.js <email> <nueva_contraseña>');
       console.error('   Ejemplo: node reset-password.js usuario@ejemplo.com mi_nueva_pass');
       process.exit(1);
     }
@@ -23,19 +23,19 @@ const resetPassword = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    console.log('✅ Conectado a MongoDB\n');
+    console.log('Conectado a MongoDB\n');
 
     // Buscar usuario
     const user = await UserModel.model.findOne({ email });
 
     if (!user) {
-      console.error(`❌ No se encontró ningún usuario con el email: ${email}`);
+      console.error(`No se encontró ningún usuario con el email: ${email}`);
       await mongoose.disconnect();
       process.exit(1);
     }
 
-    console.log(`👤 Usuario encontrado: ${user.username} (${user.email})`);
-    console.log(`🔄 Reseteando contraseña...`);
+    console.log(`Usuario encontrado: ${user.username} (${user.email})`);
+    console.log(`Reseteando contraseña...`);
 
     // Hashear nueva contraseña
     const salt = await bcrypt.genSalt(10);
@@ -46,14 +46,14 @@ const resetPassword = async () => {
       password_hash: hashedPassword
     });
 
-    console.log(`✅ Contraseña actualizada exitosamente para ${user.email}`);
+    console.log(`Contraseña actualizada exitosamente para ${user.email}`);
     console.log(`   Nueva contraseña: ${newPassword}\n`);
 
     await mongoose.disconnect();
-    console.log('✅ Desconectado de MongoDB');
+    console.log('Desconectado de MongoDB');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('Error:', error.message);
     await mongoose.disconnect();
     process.exit(1);
   }

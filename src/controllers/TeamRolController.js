@@ -1,9 +1,9 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import TeamRoleModel from '../models/TeamRoleModel.js';
 
-class TeamRoleController extends BaseController {
+class TeamRoleController extends PermissionAwareController {
     constructor() {
-        super(TeamRoleModel, 'team-roles', 'TER-');
+        super(TeamRoleModel, 'team-roles', 'team_roles', 'TRL-');
     }
 
     
