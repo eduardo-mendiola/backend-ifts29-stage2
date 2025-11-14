@@ -5,7 +5,7 @@ block content
     // Mostrar información del usuario
     if user
       .alert.alert-success.w-50.text-center(role="alert")
-        h3.mb-0 Bienvenido, #{user.username}!
+        h3.mb-0 Bienvenido, #{user.employee && user.employee.first_name ? user.employee.first_name + ' ' + user.employee.last_name : user.username}!
         h4.text-muted Rol: #{user.role_id ? user.role_id.name : 'Usuario'}
     
     h1.display-1.text-center.mb-4 ClickWave

@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import UserModel from '../models/UserModel.js';
+import EmployeeModel from '../models/EmployeeModel.js';
 
 // Estrategia Local para login con username y password
 passport.use(new LocalStrategy(
@@ -53,7 +54,18 @@ passport.deserializeUser(async (id, done) => {
     const user = await UserModel.model.findById(id)
       .populate('role_id')
       .select('-password_hash');
-    done(null, user);
+    
+    // Buscar el empleado asociado al usuario
+    const employee = await EmployeeModel.model.findOne({ user_id: id })
+      .select('first_name last_name');
+    
+    // Convertir a objeto plano y agregar el empleado si existe
+    const userObj = user.toObject();
+    if (employee) {
+      userObj.employee = employee.toObject();
+    }
+    
+    done(null, userObj);
   } catch (error) {
     console.error('Error en deserialización:', error);
     done(error);
