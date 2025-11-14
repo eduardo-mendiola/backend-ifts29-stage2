@@ -207,12 +207,22 @@ class BaseController {
     updateView = async (req, res) => {
         try {
             const { id } = req.params;
+            console.log('🔄 BaseController.updateView - ID:', id);
+            console.log('📦 Datos del body:', req.body);
+            
             const updatedItem = await this.model.update(id, req.body);
-            if (!updatedItem) return res.render('error404', { title: `${this.viewPath} no encontrado para actualizar.` });
+            
+            if (!updatedItem) {
+                console.error('❌ Item no encontrado para actualizar:', id);
+                return res.render('error404', { title: `${this.viewPath} no encontrado para actualizar.` });
+            }
+            
+            console.log('✅ Item actualizado exitosamente:', updatedItem._id);
             res.redirect(`/${this.viewPath}/${id}`);
         } catch (error) {
-            console.error(`Error al actualizar ${this.viewPath}:`, error.message);
-            res.status(500).render('error500', { title: 'Error de servidor' });
+            console.error(`❌ Error al actualizar ${this.viewPath}:`, error.message);
+            console.error('Stack:', error.stack);
+            res.status(500).render('error500', { title: 'Error de servidor', message: error.message });
         }
     };
 }

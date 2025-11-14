@@ -2,7 +2,7 @@ extends ../layout.pug
 
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action="/users", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form#userForm.bg-dark.text-white.p-4.rounded.shadow.needs-validation(action="/users", method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;", novalidate)
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Crear Nuevo Usuario
         a.btn.btn-gray(href="/users", tabindex="7") Volver a la lista
@@ -13,13 +13,33 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="email") Email
-            input#email.form-control(type="email", name="email", required, tabindex="1")
+            input#email.form-control(
+              type="email", 
+              name="email", 
+              required, 
+              tabindex="1",
+              pattern="^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+            )
+            .invalid-feedback Por favor ingresa un email válido con dominio completo (ej: usuario@dominio.com)
           .mb-3
             label.form-label(for="username") Nombre de usuario
-            input#username.form-control(type="text", name="username", tabindex="3")
+            input#username.form-control(
+              type="text", 
+              name="username", 
+              tabindex="3",
+              minlength="3",
+              title="Mínimo 3 caracteres"
+            )
           .mb-3
             label.form-label(for="password_hash") Contraseña
-            input#password_hash.form-control(type="text", name="password_hash", required, tabindex="5")
+            input#password_hash.form-control(
+              type="text", 
+              name="password_hash", 
+              required, 
+              tabindex="5",
+              minlength="6",
+              title="Mínimo 6 caracteres"
+            )
 
         // Columna derecha
         .col-md-6
@@ -40,3 +60,31 @@ block content
 
       button.btn.btn-primary.mt-3(type="submit", tabindex="5") Crear Usuario
       a.btn.btn-danger-soft.mt-3.ms-3(href="/users", tabindex="6") Cancelar
+
+  script.
+    // Validación de Bootstrap en tiempo real
+    (function() {
+      'use strict';
+      const form = document.getElementById('userForm');
+      const emailInput = document.getElementById('email');
+      
+      // Validar en tiempo real mientras escribes
+      emailInput.addEventListener('input', function() {
+        if (this.checkValidity()) {
+          this.classList.remove('is-invalid');
+          this.classList.add('is-valid');
+        } else {
+          this.classList.remove('is-valid');
+          this.classList.add('is-invalid');
+        }
+      });
+      
+      // Validar al enviar
+      form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    })();

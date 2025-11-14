@@ -75,6 +75,36 @@ class UserModel extends BaseModel {
       { new: true }
     );
   }
+
+  // Sobrescribir método update para hashear contraseña si fue modificada
+  async update(id, updateData) {
+    console.log('🔍 UserModel.update - Datos recibidos:', updateData);
+    
+    // Si password_hash está vacío o solo espacios, eliminarlo del update
+    if (updateData.password_hash !== undefined && updateData.password_hash.trim() === '') {
+      console.log('🔑 Eliminando password_hash vacío');
+      delete updateData.password_hash;
+    }
+    
+    // Solo hashear si se está actualizando la contraseña Y no está vacía
+    if (updateData.password_hash) {
+      console.log('🔑 Procesando password_hash:', updateData.password_hash.substring(0, 10) + '...');
+      // Verificar que no sea ya un hash de bcrypt (comienza con $2b$ o $2a$)
+      if (!updateData.password_hash.startsWith('$2b$') && !updateData.password_hash.startsWith('$2a$')) {
+        console.log('🔐 Hasheando nueva contraseña');
+        const salt = await bcrypt.genSalt(10);
+        updateData.password_hash = await bcrypt.hash(updateData.password_hash, salt);
+      } else {
+        console.log('✅ Contraseña ya está hasheada, no rehashear');
+      }
+    }
+    
+    console.log('💾 Actualizando usuario con:', Object.keys(updateData));
+    return this.model.findByIdAndUpdate(id, updateData, { 
+      new: true, 
+      runValidators: true 
+    });
+  }
 }
 
 export default new UserModel();

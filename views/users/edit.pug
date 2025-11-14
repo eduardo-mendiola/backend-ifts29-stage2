@@ -2,7 +2,7 @@ extends ../layout.pug
 
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(action=`/users/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;")
+    form#userEditForm.bg-dark.text-white.p-4.rounded.shadow.needs-validation(action=`/users/${item.id}?_method=PUT`, method="POST", style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;", novalidate)
       .d-flex.justify-content-between.align-items-center.mb-3
         h1.mb-0 Editar Usuario
         a.btn.btn-gray(href="/users", tabindex="7") Volver a la lista
@@ -13,13 +13,36 @@ block content
         .col-md-6
           .mb-3
             label.form-label(for="email") Email
-            input#email.form-control(type="email", name="email", value=item.email || "", required, tabindex="1")
+            input#email.form-control(
+              type="email", 
+              name="email", 
+              value=item.email || "", 
+              required, 
+              tabindex="1",
+              pattern="^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+            )
+            .invalid-feedback Por favor ingresa un email válido con dominio completo (ej: usuario@dominio.com)
           .mb-3
             label.form-label(for="username") Nombre de usuario
-            input#username.form-control(type="text", name="username", value=item.username || "", required, tabindex="3")
+            input#username.form-control(
+              type="text", 
+              name="username", 
+              value=item.username || "", 
+              required, 
+              tabindex="3",
+              minlength="3",
+              title="Mínimo 3 caracteres"
+            )
           .mb-3
-            label.form-label(for="password_hash") Contraseña
-            input#password_hash.form-control(type="text", name="password_hash", value=item.password_hash || "", required, tabindex="5") 
+            label.form-label(for="password_hash") Contraseña (dejar en blanco para no cambiar)
+            input#password_hash.form-control(
+              type="password", 
+              name="password_hash", 
+              placeholder="••••••••",
+              tabindex="5",
+              minlength="6",
+              title="Mínimo 6 caracteres. Dejar vacío si no deseas cambiarla"
+            ) 
 
         // Columna derecha
         .col-md-6
@@ -40,3 +63,31 @@ block content
          
       button.btn.btn-success.mt-3(type="submit", tabindex="5") Actualizar Usuario
       a.btn.btn-danger-soft.mt-3.ms-3(href="/users", tabindex="6") Cancelar
+
+  script.
+    // Validación de Bootstrap en tiempo real
+    (function() {
+      'use strict';
+      const form = document.getElementById('userEditForm');
+      const emailInput = document.getElementById('email');
+      
+      // Validar en tiempo real mientras escribes
+      emailInput.addEventListener('input', function() {
+        if (this.checkValidity()) {
+          this.classList.remove('is-invalid');
+          this.classList.add('is-valid');
+        } else {
+          this.classList.remove('is-valid');
+          this.classList.add('is-invalid');
+        }
+      });
+      
+      // Validar al enviar
+      form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    })();
