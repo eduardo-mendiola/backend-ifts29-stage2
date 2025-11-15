@@ -201,7 +201,7 @@ class TeamController extends PermissionAwareController {
                 }
             }
 
-            // 🔹 1. Crear el documento SIN el código
+            // 1. Crear el documento SIN el código
             const createData = {
                 name,
                 description,
@@ -221,7 +221,7 @@ class TeamController extends PermissionAwareController {
 
             console.log('Equipo creado con ID y code:', createdItem._id);
 
-            // 🔹 3. Redirigir al detalle
+            // 3. Redirigir al detalle
             res.redirect(`/teams/${createdItem._id}`);
 
         } catch (error) {

@@ -37,6 +37,13 @@ export const requirePermission = (permission) => {
     const user = req.user || req.session?.user;
     
     if (!user) {
+      // Para peticiones JSON (API), responder con JSON
+      if (req.xhr || req.headers.accept?.indexOf('json') > -1) {
+        return res.status(401).json({ 
+          message: 'No autenticado. Debe iniciar sesión para acceder a este recurso'
+        });
+      }
+      // Para peticiones HTML, renderizar vista de error
       return res.status(401).render('error403', { 
         title: 'Acceso Denegado',
         message: 'Debe iniciar sesión para acceder a este recurso'
@@ -44,6 +51,13 @@ export const requirePermission = (permission) => {
     }
 
     if (!hasPermission(user, permission)) {
+      // Para peticiones JSON (API), responder con JSON
+      if (req.xhr || req.headers.accept?.indexOf('json') > -1) {
+        return res.status(403).json({ 
+          message: `Permiso denegado. Se requiere: ${permission}`
+        });
+      }
+      // Para peticiones HTML, renderizar vista de error
       return res.status(403).render('error403', { 
         title: 'Acceso Denegado',
         message: 'No tiene permisos suficientes para realizar esta acción'

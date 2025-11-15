@@ -27,7 +27,9 @@ block content
           td= item.title || 'N/A'
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/document-files/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/document-files/${item.id}/edit`) Editar
-            form(action=`/api/document-files/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
-              input(type="hidden", name="_method", value="DELETE")
-              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+            if hasPermission('edit_document_files')
+              a.btn.btn-gray.btn-sm.me-2(href=`/document-files/${item.id}/edit`) Editar
+            if hasPermission('delete_document_files')
+              form(action=`/api/document-files/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+                input(type="hidden", name="_method", value="DELETE")
+                button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar

@@ -12,8 +12,12 @@ block content
     p.lead.text-center.mb-4 La aplicación para gestionar tus proyectos
     
     .d-flex.gap-3.mt-3.flex-wrap.justify-content-center
-      a.btn.btn-gray.btn-lg(href="/employees") Ir a Empleados
-      a.btn.btn-gray.btn-lg(href="/projects") Ir a Proyectos
-      a.btn.btn-gray.btn-lg(href="/clients") Ir a Clientes
-      a.btn.btn-gray.btn-lg(href="/invoices") Ir a Facturas
+      if hasPermission('view_employees') 
+        a.btn.btn-gray.btn-lg(href="/employees") Ir a Empleados
+      if hasPermission('view_projects') 
+        a.btn.btn-gray.btn-lg(href="/projects") Ir a Proyectos
+      if hasPermission('view_clients')
+        a.btn.btn-gray.btn-lg(href="/clients") Ir a Clientes
+      if hasPermission('view_invoices')
+        a.btn.btn-gray.btn-lg(href="/invoices") Ir a Facturas
   

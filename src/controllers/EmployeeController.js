@@ -142,7 +142,7 @@ class EmployeeController extends PermissionAwareController {
                 area_id,
                 nationality,
                 birth_date,
-                address, // ✅ ahora sí es un objeto válido
+                address, 
                 gender,
                 hire_date,
                 position_id,

@@ -368,7 +368,7 @@ html(lang="es")
           });
         }
 
-        // --- NUEVO: Cambiar íconos de caret según el estado ---
+        // Cambiar íconos de caret según el estado 
         document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(trigger => {
           const icon = trigger.querySelector('i.bi-caret-down-fill, i.bi-caret-right-fill');
           const targetId = trigger.getAttribute('href')?.replace('#', '');
