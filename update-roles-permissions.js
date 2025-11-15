@@ -8,7 +8,7 @@ dotenv.config();
 async function updateRolesWithPermissions() {
   try {
     await mongoose.connect(process.env.MONGO_URI_ATLAS);
-    console.log('✅ Conectado a MongoDB');
+    console.log('Conectado a MongoDB');
 
     // Obtener todos los roles existentes
     const allRoles = await Role.findAll();
@@ -17,7 +17,7 @@ async function updateRolesWithPermissions() {
     let adminRole = allRoles.find(r => r.name === 'Administrador');
     if (adminRole) {
       await Role.update(adminRole._id, { permissions: allPermissions });
-      console.log('✅ Rol Administrador actualizado con todos los permisos');
+      console.log('Rol Administrador actualizado con todos los permisos');
     } else {
       await Role.create({
         name: 'Administrador',
@@ -25,7 +25,7 @@ async function updateRolesWithPermissions() {
         permissions: allPermissions,
         is_active: true
       });
-      console.log('✅ Rol Administrador creado con todos los permisos');
+      console.log('Rol Administrador creado con todos los permisos');
     }
 
     // Refrescar la lista de roles
@@ -56,7 +56,7 @@ async function updateRolesWithPermissions() {
         permissions: employeePermissions,
         is_active: true
       });
-      console.log('✅ Rol Empleado creado');
+      console.log('Rol Empleado creado');
     }
 
     // Refrescar la lista de roles
@@ -89,7 +89,7 @@ async function updateRolesWithPermissions() {
 
     if (managerRole) {
       await Role.update(managerRole._id, { permissions: managerPermissions });
-      console.log('✅ Rol Gerente de Proyecto actualizado');
+      console.log('Rol Gerente de Proyecto actualizado');
     } else {
       await Role.create({
         name: 'Gerente de Proyecto',
@@ -97,7 +97,7 @@ async function updateRolesWithPermissions() {
         permissions: managerPermissions,
         is_active: true
       });
-      console.log('✅ Rol Gerente de Proyecto creado');
+      console.log('Rol Gerente de Proyecto creado');
     }
 
     // Refrescar la lista de roles
@@ -133,7 +133,7 @@ async function updateRolesWithPermissions() {
 
     if (accountantRole) {
       await Role.update(accountantRole._id, { permissions: accountantPermissions });
-      console.log('✅ Rol Contador actualizado');
+      console.log('Rol Contador actualizado');
     } else {
       await Role.create({
         code: 'ROL-CONT',
@@ -142,10 +142,10 @@ async function updateRolesWithPermissions() {
         permissions: accountantPermissions,
         is_active: true
       });
-      console.log('✅ Rol Contador creado');
+      console.log('Rol Contador creado');
     }
 
-    console.log('\n📊 Resumen de permisos disponibles:');
+    console.log('\nResumen de permisos disponibles:');
     console.log(`Total de permisos en el sistema: ${allPermissions.length}`);
     
     const finalRoles = await Role.findAll();
@@ -155,10 +155,10 @@ async function updateRolesWithPermissions() {
       console.log(`  - ${role.name}: ${(role.permissions || []).length} permisos`);
     }
 
-    console.log('\n✅ Actualización de roles completada exitosamente');
+    console.log('\nActualización de roles completada exitosamente');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('Error:', error);
     process.exit(1);
   }
 }
