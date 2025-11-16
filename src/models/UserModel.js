@@ -19,7 +19,17 @@ const userSchema = new mongoose.Schema({
   is_active: { type: Boolean, default: true },
 }, {
   collection: 'users',
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Virtual para obtener el empleado asociado
+userSchema.virtual('employee', {
+  ref: 'Employee',
+  localField: '_id',
+  foreignField: 'user_id',
+  justOne: true
 });
 
 // Método para hashear contraseña antes de guardar

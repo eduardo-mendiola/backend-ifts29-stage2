@@ -32,8 +32,11 @@ block content
         th Estado
         td= statusLabels[item.status]
       tr
-        th Asignado
+        th Asignado a
         td= item.assigned_to.first_name + " " + item.assigned_to.last_name
+      tr
+        th Asignado por
+        td= item.assigned_by && item.assigned_by.employee ? (item.assigned_by.employee.first_name + " " + item.assigned_by.employee.last_name) : 'N/A'
       tr
         th Estimación (horas)
         td= item.estimated_hours + ' hrs'

@@ -20,11 +20,13 @@ export const allPermissions = [
   'view_tasks',
   'edit_tasks',
   'delete_tasks',
+  'view_all_tasks',
 
   'create_time_entries',
   'view_time_entries',
   'edit_time_entries',
   'delete_time_entries',
+  'view_all_time_entries',
 
   'create_document_files',
   'view_document_files',
@@ -119,11 +121,13 @@ export const permissionLabels = {
   view_tasks: "Tareas: Ver",
   edit_tasks: "Tareas: Editar",
   delete_tasks: "Tareas: Eliminar",
+  view_all_tasks: "Tareas: Ver Todas (Admin)",
 
   create_time_entries: "Registro de Actividades: Crear",
   view_time_entries: "Registro de Actividades: Ver",
   edit_time_entries: "Registro de Actividades: Editar",
   delete_time_entries: "Registro de Actividades: Eliminar",
+  view_all_time_entries: "Registro de Actividades: Ver Todas (Admin)",
 
   create_document_files: "Documentos: Crear",
   view_document_files: "Documentos: Ver",

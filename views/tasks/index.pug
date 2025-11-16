@@ -15,7 +15,8 @@ block content
         th №
         th Código
         th Título 
-        th Asignado 
+        th Asignado a
+        th Asignado por
         th Estado
         th.text-end.pe-5 Acciones
     tbody
@@ -25,6 +26,7 @@ block content
           td= item.code
           td= item.title
           td= item.assigned_to.first_name + " " + item.assigned_to.last_name
+          td= item.assigned_by && item.assigned_by.employee ? (item.assigned_by.employee.first_name + " " + item.assigned_by.employee.last_name) : 'N/A'
           td= statusLabels[item.status]
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/tasks/${item.id}`) Ver

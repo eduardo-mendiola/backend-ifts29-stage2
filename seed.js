@@ -2,6 +2,9 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import UserModel from './src/models/UserModel.js';
 import RoleModel from './src/models/RoleModel.js';
+import EmployeeModel from './src/models/EmployeeModel.js';
+import AreaModel from './src/models/AreaModel.js';
+import PositionModel from './src/models/PositionModel.js';
 
 /**
  * Script de inicialización para crear roles y usuario administrador
@@ -84,6 +87,33 @@ async function seedDatabase() {
       }
     }
 
+    // Crear área y posición por defecto para empleados
+    console.log('\nCreando área y posición por defecto...');
+    let defaultArea = await AreaModel.model.findOne({ name_area: 'Administración' });
+    if (!defaultArea) {
+      defaultArea = await AreaModel.create({
+        code: 'ARE-001',
+        name_area: 'Administración',
+        description: 'Área administrativa',
+        is_active: true
+      });
+      console.log('   - Área creada: Administración');
+    } else {
+      console.log('   - Área ya existe: Administración');
+    }
+
+    let defaultPosition = await PositionModel.model.findOne({ name: 'Administrador' });
+    if (!defaultPosition) {
+      defaultPosition = await PositionModel.create({
+        code: 'POS-001',
+        name: 'Administrador',
+        description: 'Administrador del sistema'
+      });
+      console.log('   - Posición creada: Administrador');
+    } else {
+      console.log('   - Posición ya existe: Administrador');
+    }
+
     // Crear usuario administrador
     const adminRole = await RoleModel.model.findOne({ name: 'admin' });
     const existingAdmin = await UserModel.model.findOne({ username: 'admin' });
@@ -102,11 +132,47 @@ async function seedDatabase() {
 
       await adminUser.save();
       console.log('   Usuario administrador creado exitosamente');
+      
+      // Crear empleado para el admin
+      const adminEmployee = await EmployeeModel.create({
+        code: 'EMP-0001',
+        user_id: adminUser._id,
+        first_name: 'Admin',
+        last_name: 'Sistema',
+        dni: '00000000',
+        phone: '000-0000000',
+        area_id: defaultArea._id,
+        position_id: defaultPosition._id,
+        hire_date: new Date(),
+        employment_type: 'full-time',
+        is_active: true
+      });
+      console.log('   Empleado administrador creado exitosamente');
       console.log('   Email: admin@clickwave.com');
       console.log('   Password: admin123');
       console.log('   IMPORTANTE: Cambia esta contraseña después del primer login');
     } else {
       console.log('\n   - Usuario administrador ya existe');
+      
+      // Verificar si el admin tiene empleado
+      const adminEmployee = await EmployeeModel.model.findOne({ user_id: existingAdmin._id });
+      if (!adminEmployee) {
+        console.log('   - Creando empleado para usuario admin existente...');
+        await EmployeeModel.create({
+          code: 'EMP-0001',
+          user_id: existingAdmin._id,
+          first_name: 'Admin',
+          last_name: 'Sistema',
+          dni: '00000000',
+          phone: '000-0000000',
+          area_id: (await AreaModel.model.findOne({ name_area: 'Administración' }))._id,
+          position_id: (await PositionModel.model.findOne({ name: 'Administrador' }))._id,
+          hire_date: new Date(),
+          employment_type: 'full-time',
+          is_active: true
+        });
+        console.log('   - Empleado administrador creado');
+      }
     }
 
     // Crear usuario de prueba
@@ -126,11 +192,48 @@ async function seedDatabase() {
       });
 
       await testUser.save();
+      
+      // Crear empleado para testuser
+      await EmployeeModel.create({
+        code: 'EMP-0002',
+        user_id: testUser._id,
+        first_name: 'Test',
+        last_name: 'User',
+        dni: '11111111',
+        phone: '111-1111111',
+        area_id: (await AreaModel.model.findOne({ name_area: 'Administración' }))._id,
+        position_id: (await PositionModel.model.findOne({ name: 'Administrador' }))._id,
+        hire_date: new Date(),
+        employment_type: 'full-time',
+        is_active: true
+      });
+      
       console.log('   Usuario de prueba creado exitosamente');
+      console.log('   Empleado de prueba creado exitosamente');
       console.log('   Email: test@clickwave.com');
       console.log('   Password: test123');
     } else {
       console.log('\n   - Usuario de prueba ya existe');
+      
+      // Verificar si testuser tiene empleado
+      const testEmployee = await EmployeeModel.model.findOne({ user_id: existingTestUser._id });
+      if (!testEmployee) {
+        console.log('   - Creando empleado para testuser existente...');
+        await EmployeeModel.create({
+          code: 'EMP-0002',
+          user_id: existingTestUser._id,
+          first_name: 'Test',
+          last_name: 'User',
+          dni: '11111111',
+          phone: '111-1111111',
+          area_id: (await AreaModel.model.findOne({ name_area: 'Administración' }))._id,
+          position_id: (await PositionModel.model.findOne({ name: 'Administrador' }))._id,
+          hire_date: new Date(),
+          employment_type: 'full-time',
+          is_active: true
+        });
+        console.log('   - Empleado de prueba creado');
+      }
     }
 
     console.log('\nInicialización completada exitosamente\n');

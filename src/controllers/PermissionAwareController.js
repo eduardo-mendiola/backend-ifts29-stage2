@@ -93,6 +93,20 @@ class PermissionAwareController extends BaseController {
     if (!this.checkPermission(req, `view_${this.resourceName}`)) {
       return res.status(403).json({ success: false, message: 'Acceso denegado' });
     }
+    
+    // Si el modelo tiene findByUserProjects y el usuario NO tiene permiso view_all_[resource]
+    if (typeof this.model.findByUserProjects === 'function' && 
+        !this.checkPermission(req, `view_all_${this.resourceName}`)) {
+      try {
+        const userId = req.user?._id || req.session?.user?._id;
+        const items = await this.model.findByUserProjects(userId);
+        return res.status(200).json(this.formatItems(items));
+      } catch (error) {
+        console.error('Error al obtener todos:', error.message);
+        return res.status(500).json({ message: 'Error interno del servidor al obtener todos.' });
+      }
+    }
+    
     return super.getAll(req, res);
   }
 
