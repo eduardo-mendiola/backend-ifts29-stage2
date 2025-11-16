@@ -37,6 +37,25 @@ class DocumentModel extends BaseModel {
             'uploaded_by'
         ]); // populate automático
     }
+
+    async findByUserProjects(userId) {
+        // 1. Encontrar el empleado asociado al usuario
+        const Employee = mongoose.model('Employee');
+        const employee = await Employee.findOne({ user_id: userId });
+        
+        if (!employee) {
+            return [];
+        }
+
+        // Solo obtener documentos subidos por el empleado
+        const query = { uploaded_by: employee._id };
+        
+        const documents = await this.model.find(query)
+            .populate('project_id')
+            .populate('uploaded_by');
+        
+        return documents;
+    }
     
 }
 

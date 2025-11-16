@@ -32,6 +32,7 @@ export const allPermissions = [
   'view_document_files',
   'edit_document_files',
   'delete_document_files',
+  'view_all_document_files',
 
   'create_invoices',
   'view_invoices',
@@ -133,6 +134,7 @@ export const permissionLabels = {
   view_document_files: "Documentos: Ver",
   edit_document_files: "Documentos: Editar",
   delete_document_files: "Documentos: Eliminar",
+  view_all_document_files: "Documentos: Ver Todos (Admin)",
 
   create_invoices: "Facturas: Crear",
   view_invoices: "Facturas: Ver",
