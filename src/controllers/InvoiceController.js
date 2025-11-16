@@ -117,7 +117,7 @@ class InvoiceController extends PermissionAwareController {
       const estimates = await Estimate.findAll();
 
 
-      const nextInvoiceNumber = await invoiceNumberGenerator();
+      const nextInvoiceNumber = await getNextInvoiceNumberPreview();
 
       const estimateData = estimates.map(e => ({
         id: e._id,
