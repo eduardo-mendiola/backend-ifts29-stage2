@@ -1,43 +1,72 @@
 extends layout-public.pug
 
 block content
-  .d-flex.justify-content-center.align-items-center.min-vh-100
-    form.mt-5.text-center(style="min-width: 350px;" action="/login" method="POST")
-      // Logo de ejemplo
-      img.mb-4(src="/images/logo_cw.webp" alt="Logo" width="100" height="100")
-      h1.h1.mb-3.fw-normal.text-center ClickWave
-      h2.fs-5.text.mb-3.fw-normal.text-center Iniciar Sesión
+  .container-fluid.p-0
+    .row.g-0.min-vh-100
 
-      // Email o Username
-      .form-floating.mb-3
-        input.form-control(type="text" id="floatingInput" name="email" placeholder="usuario o email" required autofocus)
-        label(for="floatingInput") Usuario o Email
+      // COLUMNA IZQUIERDA 
+      .col-12.col-md-3.d-flex.flex-column.justify-content-between.align-items-center.p-5(style="background: #071C34; min-height: 100vh;")
+        
+        // Logo grande centrado
+        .d-flex.flex-grow-1.w-100.justify-content-center.align-items-center
+          img(src="/images/logo_nexus.webp" alt="NexusFlow" style="width: 210px; height: auto;")
 
-      // Password
-      .form-floating.mb-3.position-relative
-        input.form-control(type="password" id="floatingPassword" name="password" placeholder="Contraseña" required style="padding-right: 45px;")
-        label(for="floatingPassword") Contraseña
-        button.btn.position-absolute.top-50.end-0.translate-middle-y.border-0.bg-transparent(type="button" id="togglePassword" style="z-index: 10; padding-right: 15px;")
-          i.bi.bi-eye#eyeIcon
+        // Logo pequeño inferior
+        img.mb-3(src="/images/devpulse_logo.webp" alt="DevPulse" style="width: 130px; height: auto; opacity: 0.95;")
+        p.mt-1.mb-1(style="font-size: .75rem; color: #ffffffff;") 
+          | © 2025 - Eduardo Mendiola
 
-      // Remember me
-      .form-check.text-start.mb-3
-        input.form-check-input(type="checkbox" value="remember-me" id="checkDefault")
-        label.form-check-label(for="checkDefault") Recordarme
+      // COLUMNA DERECHA 
+      .col-12.col-md-9.d-flex.justify-content-center.align-items-center.p-4
+        form.text-center(style="width: 100%; max-width: 420px;" action="/login" method="POST")
+          
+          // Logo ClickWave
+          img.mb-3(src="/images/logo_cw.webp" alt="ClickWave" width="130")
 
-      // Submit
-      button.btn.btn-primary.w-100.py-2(type="submit") Ingresar
+          h1.mb-1.fw-semibold(style="font-size: 1.5rem;") Ingreso a NexusFlow
+          p(style="font-size: .8rem; color: #d3d3d3ff; margin-top: -2px;") Plataforma de gestión unificada PSA/ERP.
 
-      // Mensajes de error y éxito (debajo del botón)
-      if error && error.length > 0
-        .alert.alert-danger.text-center.mt-3.mb-0(role="alert")
-          i.bi.bi-exclamation-circle-fill.me-2
-          strong ¡Error! 
-          = error[0]
-      if success && success.length > 0
-        .alert.alert-success.text-center.mt-3.mb-0(role="alert")
-          i.bi.bi-check-circle-fill.me-2
-          = success[0]
+          // Email o Username
+          .form-floating.mb-3
+            input.form-control(type="text" id="floatingInput" name="email" placeholder="usuario o email" required autofocus)
+            label(for="floatingInput") Usuario o Email
 
-      // Pie de página
-      p.mt-5.mb-3.text-light-emphasis © 2025 ClickWave - Eduardo Mendiola
+          // Password
+          .form-floating.mb-1.position-relative
+            input.form-control(type="password" id="floatingPassword" name="password" placeholder="Contraseña" required style="padding-right: 45px;")
+            label(for="floatingPassword") Contraseña
+            button.btn.position-absolute.top-50.end-0.translate-middle-y.border-0.bg-transparent(type="button" id="togglePassword" style="z-index: 10; padding-right: 15px;")
+              i.bi.bi-eye#eyeIcon
+
+          .div.text-end.w-100.mb-4
+            a(href="#", style="font-size: .8rem; color: #d3d3d3ff; text-decoration: none;")
+              | ¿Olvidaste tu contraseña?
+
+          // Remember me
+          //- .form-check.text-start.mb-3
+          //-   input.form-check-input(type="checkbox" value="remember-me" id="checkDefault")
+          //-   label.form-check-label(for="checkDefault") Recordarme
+
+          // Submit button
+          button.btn.btn-primary.w-100.py-2(type="submit") Ingresar
+
+          if error && error.length > 0
+            .alert.alert-danger.text-center.mt-3.mb-0(role="alert")
+              i.bi.bi-exclamation-circle-fill.me-2
+              strong ¡Error! 
+              = error[0]
+
+          if success && success.length > 0
+            .alert.alert-success.text-center.mt-3.mb-0(role="alert")
+              i.bi.bi-check-circle-fill.me-2
+              = success[0]
+
+          p.mt-4.text-center(style="font-size: .85rem;")
+            a(href="#", style="color: #d3d3d3ff; text-decoration: none;")
+              | Términos de Servicio y Privacidad
+
+          p.text-center(style="font-size: .75rem; color: #d3d3d3ff;")
+            | Powered by 
+            img(src="/images/aws.webp" alt="AWS" style="height: 18px; margin-left: 4px; opacity: 0.9;")
+
+
