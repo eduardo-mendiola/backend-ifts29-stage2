@@ -297,7 +297,7 @@ html(lang="es")
             a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(
               href="#" data-bs-toggle="dropdown" aria-expanded="false")
               img.rounded-circle.me-2(src="/images/user.png" alt="" width="32" height="32")
-              strong Admin
+              strong #{user.employee && user.employee.first_name ? user.employee.first_name + ' ' + user.employee.last_name : user.username}
             ul.dropdown-menu.dropdown-menu-dark.text-small.shadow(aria-labelledby="dropdownUser1")
               li
                 a.dropdown-item(href="#") Settings
