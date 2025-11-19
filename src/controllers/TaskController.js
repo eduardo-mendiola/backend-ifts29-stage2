@@ -1,8 +1,9 @@
-import BaseController from './BaseController.js'
+import PermissionAwareController from './PermissionAwareController.js';
 import Task from '../models/TaskModel.js';
 import Project from '../models/ProjectModel.js';
 import Employee from '../models/EmployeeModel.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
+import CodeGenerator from '../utils/CodeGenerator.js';
 
 const statusLabels = {
     pending: 'Pendiente',
@@ -10,14 +11,32 @@ const statusLabels = {
     completed: 'Completado'
 };
 
-class TaskController extends BaseController {
+class TaskController extends PermissionAwareController {
     constructor() {
-        super(Task, 'tasks', 'TSK-');
+        super(Task, 'tasks', 'tasks', 'TSK-');
+        this.codeGenerator = new CodeGenerator(Task);
     }
 
     getAllView = async (req, res) => {
         try {
-            const items = await this.model.findAll();
+            const userId = req.user?._id || req.session?.user?._id;
+            const user = req.user || req.session?.user;
+            console.log('Usuario:', user.username, 'userId:', userId);
+            console.log('Tiene view_all_tasks?', this.checkPermission(req, 'view_all_tasks'));
+            
+            let items;
+            
+            // Si tiene permiso view_all_tasks, ver todas las tareas
+            if (this.checkPermission(req, 'view_all_tasks')) {
+                console.log('Mostrando TODAS las tareas');
+                items = await this.model.findAll();
+            } else {
+                // Si no, solo ver tareas de sus proyectos
+                console.log('Filtrando tareas por proyectos del usuario');
+                items = await this.model.findByUserProjects(userId);
+                console.log('Tareas filtradas:', items.length);
+            }
+            
             res.render(`${this.viewPath}/index`, {
                 title: `Lista de ${this.viewPath}`,
                 items: this.formatItems(items),
@@ -92,6 +111,38 @@ class TaskController extends BaseController {
             });
         } catch (error) {
             console.error('Error al abrir formulario de tareas:', error.message);
+            res.status(500).render('error500', { title: 'Error de servidor' });
+        }
+    };
+
+    createView = async (req, res) => {
+        try {
+            const newItem = { ...req.body };
+            
+            // Agregar el usuario que está creando la tarea
+            const userId = req.user?._id || req.session?.user?._id;
+            console.log('Usuario creando tarea:', userId);
+            if (userId) {
+                newItem.assigned_by = userId;
+            }
+
+            console.log('Datos a crear:', newItem);
+
+            // 1. Crear el documento SIN el código
+            const createdItem = await this.model.create(newItem);
+            console.log('Tarea creada:', createdItem);
+
+            // 2. Generar el código usando el ObjectId real del documento creado
+            if (this.codePrefix) {
+                const code = this.codeGenerator.generateCodeFromId(createdItem._id, this.codePrefix);
+                // 3. Actualizar el documento con el código correcto
+                await this.model.update(createdItem._id, { code });
+            }
+
+            res.redirect(`/${this.viewPath}/${createdItem._id}`);
+        } catch (error) {
+            console.error(`Error al crear ${this.viewPath}:`, error.message);
+            console.error('Stack:', error.stack);
             res.status(500).render('error500', { title: 'Error de servidor' });
         }
     };

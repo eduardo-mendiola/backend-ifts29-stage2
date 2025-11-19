@@ -2,6 +2,18 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import methodOverride from 'method-override';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import flash from 'connect-flash';
+import passport from './config/passport.js';
+
+// Importar rutas de autenticación
+import authRoutes from './routes/auth-routes.js';
+import apiAuthRoutes from './routes/api-auth-routes.js';
+
+// Importar middleware de autenticación
+import { isAuthenticated } from './middleware/authMiddleware.js';
+import { injectPermissionHelpers, requirePermission } from './middleware/permissionMiddleware.js';
 
 // Importar rutas de cada entidad
 import clientRoutes from './routes/client-routes.js';
@@ -69,188 +81,233 @@ app.use(express.static(join(__dirname, '..', 'public')));
 // Middleware para soportar otros métodos HTTP como DELETE y PUT
 app.use(methodOverride('_method'));
 
+// Configuración de sesiones con MongoDB
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_session_secret_here',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI_ATLAS,
+    touchAfter: 24 * 3600, // Actualizar sesión solo una vez cada 24 horas
+    crypto: {
+      secret: process.env.SESSION_SECRET || 'your_session_secret_here'
+    }
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production' // HTTPS en producción
+  }
+}));
+
+// Flash messages
+app.use(flash());
+
+// Inicializar Passport y sesiones
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Middleware para inyectar helpers de permisos en todas las vistas
+app.use(injectPermissionHelpers);
+
+// Variables globales para todas las vistas
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  res.locals.error = req.flash('error');
+  res.locals.success = req.flash('success');
+  res.locals.isAuthenticated = req.isAuthenticated();
+  
+  // Log temporal para depuración
+  if (res.locals.error.length > 0) {
+    console.log('🔴 Flash Error Messages:', res.locals.error);
+  }
+  if (res.locals.success.length > 0) {
+    console.log('🟢 Flash Success Messages:', res.locals.success);
+  }
+  
+  next();
+});
+
 
 // ||----------------------------------- Rutas para las vistas Pug -----------------------------------------||
 
-// Ruta de bienvenida 
-app.get('/', (req, res) => {
-    res.render('index', { title: 'ClickWave' });
-});
+// Rutas de autenticación (login, register, logout)
+app.use('/', authRoutes);
 
-// POST login (temporal)
-app.post('/admin', (req, res) => {
-  // Por ahora no validamos usuarios, solo redirige
-  res.redirect('/admin/dashboard');
-});
+// NOTA: Las rutas protegidas ahora usan el middleware isAuthenticated
 
-// GET dashboard
-app.get('/admin/dashboard', (req, res) => {
-  res.render('admin', { title: 'Dashboard Admin' });
-});
+// GET dashboard (protegido por auth-routes.js)
+// app.get('/admin/dashboard', isAuthenticated, ...) - Ahora en auth-routes.js
 
 // ||--------------------------- Rutas para las vistas del CRUD (HTML) - Pug -------------------------------||
+// TODAS LAS RUTAS DE VISTAS AHORA ESTÁN PROTEGIDAS CON isAuthenticated
+
 // Client
-app.get('/clients/new', ClientController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
-app.post('/clients', ClientController.createView); // Ruta para procesar la creación
-app.get('/clients', ClientController.getAllView); // Ruta para listar todos los clientes
-app.get('/clients/:id', ClientController.getByIdView); // Ruta para mostrar detalles (con contactos asociados)
-app.get('/clients/:id/edit', ClientController.getEditView); // Ruta para mostrar formulario de edición
-app.put('/clients/:id', ClientController.updateView); // Ruta para procesar la actualización
+app.get('/clients/new', isAuthenticated, ClientController.newView); // IMPORTANTE: Esta ruta debe ir antes de la ruta con :id
+app.post('/clients', isAuthenticated, ClientController.createView); // Ruta para procesar la creación
+app.get('/clients', isAuthenticated, ClientController.getAllView); // Ruta para listar todos los clientes
+app.get('/clients/:id', isAuthenticated, ClientController.getByIdView); // Ruta para mostrar detalles (con contactos asociados)
+app.get('/clients/:id/edit', isAuthenticated, ClientController.getEditView); // Ruta para mostrar formulario de edición
+app.put('/clients/:id', isAuthenticated, ClientController.updateView); // Ruta para procesar la actualización
 
 // User
-app.get('/users/new', UserController.newView); 
-app.post('/users', UserController.createView);
-app.get('/users', UserController.getAllView);
-app.get('/users/:id', UserController.getByIdView);
-app.get('/users/:id/edit', UserController.getEditView); 
-app.put('/users/:id', UserController.updateView); 
+app.get('/users/new', isAuthenticated, requirePermission('create_users'), UserController.newView); 
+app.post('/users', isAuthenticated, requirePermission('create_users'), UserController.createView);
+app.get('/users', isAuthenticated, UserController.getAllView);
+app.get('/users/:id', isAuthenticated, UserController.getByIdView);
+app.get('/users/:id/edit', isAuthenticated, requirePermission('edit_users'), UserController.getEditView); 
+app.put('/users/:id', isAuthenticated, requirePermission('edit_users'), UserController.updateView); 
 
 // Employee
-app.get('/employees/new', EmployeeController.newView); 
-app.post('/employees', EmployeeController.createView);
-app.get('/employees', EmployeeController.getAllView);
-app.get('/employees/:id', EmployeeController.getByIdView);
-app.get('/employees/:id/edit', EmployeeController.getEditView); 
-app.put('/employees/:id', EmployeeController.updateView); 
+app.get('/employees/new', isAuthenticated, requirePermission('create_employees'), EmployeeController.newView); 
+app.post('/employees', isAuthenticated, requirePermission('create_employees'), EmployeeController.createView);
+app.get('/employees', isAuthenticated, EmployeeController.getAllView);
+app.get('/employees/:id', isAuthenticated, EmployeeController.getByIdView);
+app.get('/employees/:id/edit', isAuthenticated, requirePermission('edit_employees'), EmployeeController.getEditView); 
+app.put('/employees/:id', isAuthenticated, requirePermission('edit_employees'), EmployeeController.updateView); 
 
 // Project
-app.get('/projects/new', ProjectController.newView); 
-app.post('/projects', ProjectController.createView);
-app.get('/projects', ProjectController.getAllView);
-app.get('/projects/:id', ProjectController.getByIdView);
-app.get('/projects/:id/edit', ProjectController.getEditView); 
-app.put('/projects/:id', ProjectController.updateView); 
+app.get('/projects/new', isAuthenticated, requirePermission('create_projects'), ProjectController.newView); 
+app.post('/projects', isAuthenticated, requirePermission('create_projects'), ProjectController.createView);
+app.get('/projects', isAuthenticated, ProjectController.getAllView);
+app.get('/projects/:id', isAuthenticated, ProjectController.getByIdView);
+app.get('/projects/:id/edit', isAuthenticated, requirePermission('edit_projects'), ProjectController.getEditView); 
+app.put('/projects/:id', isAuthenticated, requirePermission('edit_projects'), ProjectController.updateView); 
 
 // Vistas Pug para áreas
-app.get('/areas', AreaController.getAllView);
-app.get('/areas/new', AreaController.newView);
-app.get('/areas/:id/edit', AreaController.getEditView);
-app.get('/areas/:id', AreaController.getByIdView);
-app.post('/areas', AreaController.createView);
-app.put('/areas/:id', AreaController.updateView);
+app.get('/areas', isAuthenticated, AreaController.getAllView);
+app.get('/areas/new', isAuthenticated, AreaController.newView);
+app.get('/areas/:id/edit', isAuthenticated, AreaController.getEditView);
+app.get('/areas/:id', isAuthenticated, AreaController.getByIdView);
+app.post('/areas', isAuthenticated, AreaController.createView);
+app.put('/areas/:id', isAuthenticated, AreaController.updateView);
 
 // Vistas Pug para roles
-app.get('/roles', RoleController.getAllView);          
-app.get('/roles/new', RoleController.newView);        
-app.get('/roles/:id/edit', RoleController.getEditView); 
-app.get('/roles/:id', RoleController.getByIdView);  
-app.post('/roles', RoleController.createView);        
-app.put('/roles/:id', RoleController.updateView);    
+app.get('/roles', isAuthenticated, RoleController.getAllView);          
+app.get('/roles/new', isAuthenticated, requirePermission('create_roles'), RoleController.newView);        
+app.get('/roles/:id/edit', isAuthenticated, requirePermission('edit_roles'), RoleController.getEditView); 
+app.get('/roles/:id', isAuthenticated, RoleController.getByIdView);  
+app.post('/roles', isAuthenticated, requirePermission('create_roles'), RoleController.createView);        
+app.put('/roles/:id', isAuthenticated, requirePermission('edit_roles'), RoleController.updateView);    
 
 // Vistas Pug para tasks
-app.get('/tasks', TaskController.getAllView);          
-app.get('/tasks/new', TaskController.newView);        
-app.get('/tasks/:id/edit', TaskController.getEditView); 
-app.get('/tasks/:id', TaskController.getByIdView);  
-app.post('/tasks', TaskController.createView);        
-app.put('/tasks/:id', TaskController.updateView); 
+app.get('/tasks', isAuthenticated, TaskController.getAllView);          
+app.get('/tasks/new', isAuthenticated, requirePermission('create_tasks'), TaskController.newView);        
+app.get('/tasks/:id/edit', isAuthenticated, requirePermission('edit_tasks'), TaskController.getEditView); 
+app.get('/tasks/:id', isAuthenticated, TaskController.getByIdView);  
+app.post('/tasks', isAuthenticated, requirePermission('create_tasks'), TaskController.createView);        
+app.put('/tasks/:id', isAuthenticated, requirePermission('edit_tasks'), TaskController.updateView); 
 
 // Vistas Pug para teams
-app.get('/teams', TeamController.getAllView);          
-app.get('/teams/new', TeamController.newView);        
-app.get('/teams/:id/edit', TeamController.getEditView); 
-app.get('/teams/:id', TeamController.getByIdView);  
-app.post('/teams', TeamController.createView);        
-app.put('/teams/:id', TeamController.updateView); 
+app.get('/teams', isAuthenticated, TeamController.getAllView);          
+app.get('/teams/new', isAuthenticated, TeamController.newView);        
+app.get('/teams/:id/edit', isAuthenticated, TeamController.getEditView); 
+app.get('/teams/:id', isAuthenticated, TeamController.getByIdView);  
+app.post('/teams', isAuthenticated, TeamController.createView);        
+app.put('/teams/:id', isAuthenticated, TeamController.updateView); 
 
 // Vistas Pug para team_roles
-app.get('/team-roles', TeamRolController.getAllView);          
-app.get('/team-roles/new', TeamRolController.newView);        
-app.get('/team-roles/:id/edit', TeamRolController.getEditView); 
-app.get('/team-roles/:id', TeamRolController.getByIdView);  
-app.post('/team-roles', TeamRolController.createView);        
-app.put('/team-roles/:id', TeamRolController.updateView); 
+app.get('/team-roles', isAuthenticated, TeamRolController.getAllView);          
+app.get('/team-roles/new', isAuthenticated, TeamRolController.newView);        
+app.get('/team-roles/:id/edit', isAuthenticated, TeamRolController.getEditView); 
+app.get('/team-roles/:id', isAuthenticated, TeamRolController.getByIdView);  
+app.post('/team-roles', isAuthenticated, TeamRolController.createView);        
+app.put('/team-roles/:id', isAuthenticated, TeamRolController.updateView); 
 
 // Vistas Pug para time_entries
-app.get('/time-entries', TimeEntryController.getAllView);          
-app.get('/time-entries/new', TimeEntryController.newView);        
-app.get('/time-entries/:id/edit', TimeEntryController.getEditView); 
-app.get('/time-entries/:id', TimeEntryController.getByIdView);  
-app.post('/time-entries', TimeEntryController.createView);        
-app.put('/time-entries/:id', TimeEntryController.updateView); 
+app.get('/time-entries', isAuthenticated, TimeEntryController.getAllView);          
+app.get('/time-entries/new', isAuthenticated, TimeEntryController.newView);        
+app.get('/time-entries/:id/edit', isAuthenticated, TimeEntryController.getEditView); 
+app.get('/time-entries/:id', isAuthenticated, TimeEntryController.getByIdView);  
+app.post('/time-entries', isAuthenticated, TimeEntryController.createView);        
+app.put('/time-entries/:id', isAuthenticated, TimeEntryController.updateView); 
 
 // Vistas Pug para positions
-app.get('/positions', PositionController.getAllView);          
-app.get('/positions/new', PositionController.newView);        
-app.get('/positions/:id/edit', PositionController.getEditView); 
-app.get('/positions/:id', PositionController.getByIdView);  
-app.post('/positions', PositionController.createView);        
-app.put('/positions/:id', PositionController.updateView); 
+app.get('/positions', isAuthenticated, PositionController.getAllView);          
+app.get('/positions/new', isAuthenticated, PositionController.newView);        
+app.get('/positions/:id/edit', isAuthenticated, PositionController.getEditView); 
+app.get('/positions/:id', isAuthenticated, PositionController.getByIdView);  
+app.post('/positions', isAuthenticated, PositionController.createView);        
+app.put('/positions/:id', isAuthenticated, PositionController.updateView); 
 
 // Vistas Pug para contacts
-app.get('/contacts', ContactController.getAllView);          
-app.get('/contacts/new', ContactController.newView);        
-app.get('/contacts/:id/edit', ContactController.getEditView); 
-app.get('/contacts/:id', ContactController.getByIdView);  
-app.post('/contacts', ContactController.createView);        
-app.put('/contacts/:id', ContactController.updateView); 
+app.get('/contacts', isAuthenticated, ContactController.getAllView);          
+app.get('/contacts/new', isAuthenticated, ContactController.newView);        
+app.get('/contacts/:id/edit', isAuthenticated, ContactController.getEditView); 
+app.get('/contacts/:id', isAuthenticated, ContactController.getByIdView);  
+app.post('/contacts', isAuthenticated, ContactController.createView);        
+app.put('/contacts/:id', isAuthenticated, ContactController.updateView); 
 
 // Vistas Pug para Estimates
-app.get('/estimates', EstimateController.getAllView);          
-app.get('/estimates/new', EstimateController.newView);        
-app.get('/estimates/:id/edit', EstimateController.getEditView); 
-app.get('/estimates/:id', EstimateController.getByIdView);  
-app.post('/estimates', EstimateController.createView);        
-app.put('/estimates/:id', EstimateController.updateView); 
+app.get('/estimates', isAuthenticated, EstimateController.getAllView);          
+app.get('/estimates/new', isAuthenticated, EstimateController.newView);        
+app.get('/estimates/:id/edit', isAuthenticated, EstimateController.getEditView); 
+app.get('/estimates/:id', isAuthenticated, EstimateController.getByIdView);  
+app.post('/estimates', isAuthenticated, EstimateController.createView);        
+app.put('/estimates/:id', isAuthenticated, EstimateController.updateView); 
 
 // Vistas Pug para Expenses
-app.get('/expenses', ExpenseController.getAllView);          
-app.get('/expenses/new', ExpenseController.newView);
-app.get('/expenses/:id/edit', ExpenseController.getEditView);
-app.get('/expenses/:id', ExpenseController.getByIdView);  
-app.post('/expenses', ExpenseController.createView);        
-app.put('/expenses/:id', ExpenseController.updateView);
+app.get('/expenses', isAuthenticated, ExpenseController.getAllView);          
+app.get('/expenses/new', isAuthenticated, ExpenseController.newView);
+app.get('/expenses/:id/edit', isAuthenticated, ExpenseController.getEditView);
+app.get('/expenses/:id', isAuthenticated, ExpenseController.getByIdView);  
+app.post('/expenses', isAuthenticated, ExpenseController.createView);        
+app.put('/expenses/:id', isAuthenticated, ExpenseController.updateView);
 
 // Vistas Pug para Invoices
-app.get('/invoices', InvoiceController.getAllView);          
-app.get('/invoices/new', InvoiceController.newView);
-app.put('/invoices/:id/generate', InvoiceController.generateInvoiceView);
-app.get('/invoices/:id/preview', InvoiceController.previewInvoiceView);
-app.post('/invoices/:id/confirm-generate', InvoiceController.confirmGenerateInvoice);
-app.get('/invoices/:id/edit', InvoiceController.getEditView);
-app.get('/invoices/:id', InvoiceController.getByIdView);  
-app.post('/invoices', InvoiceController.createView);        
-app.put('/invoices/:id', InvoiceController.updateView);
-app.put('/invoices/:id/status', InvoiceController.updateStatus);
+app.get('/invoices', isAuthenticated, InvoiceController.getAllView);          
+app.get('/invoices/new', isAuthenticated, InvoiceController.newView);
+app.put('/invoices/:id/generate', isAuthenticated, InvoiceController.generateInvoiceView);
+app.get('/invoices/:id/preview', isAuthenticated, InvoiceController.previewInvoiceView);
+app.post('/invoices/:id/confirm-generate', isAuthenticated, InvoiceController.confirmGenerateInvoice);
+app.get('/invoices/:id/edit', isAuthenticated, InvoiceController.getEditView);
+app.get('/invoices/:id', isAuthenticated, InvoiceController.getByIdView);  
+app.post('/invoices', isAuthenticated, InvoiceController.createView);        
+app.put('/invoices/:id', isAuthenticated, InvoiceController.updateView);
+app.put('/invoices/:id/status', isAuthenticated, InvoiceController.updateStatus);
 
 // Vistas Pug para Receipts
-app.get('/receipts', ReceiptController.getAllView);          
-app.get('/receipts/new', ReceiptController.newView);
-app.get('/receipts/:id/edit', ReceiptController.getEditView);
-app.get('/receipts/:id', ReceiptController.getByIdView);  
-app.post('/receipts', ReceiptController.createView);        
-app.put('/receipts/:id', ReceiptController.updateView);
-app.put('/receipts/:id/status', ReceiptController.updateStatus);
+app.get('/receipts', isAuthenticated, ReceiptController.getAllView);          
+app.get('/receipts/new', isAuthenticated, ReceiptController.newView);
+app.get('/receipts/:id/edit', isAuthenticated, ReceiptController.getEditView);
+app.get('/receipts/:id', isAuthenticated, ReceiptController.getByIdView);  
+app.post('/receipts', isAuthenticated, ReceiptController.createView);        
+app.put('/receipts/:id', isAuthenticated, ReceiptController.updateView);
+app.put('/receipts/:id/status', isAuthenticated, ReceiptController.updateStatus);
 
 // Vistas Pug para Payments
-app.get('/payments', PaymentController.getAllView);          
-app.get('/payments/new', PaymentController.newView);
-app.get('/payments/:id/edit', PaymentController.getEditView);
-app.get('/payments/:id', PaymentController.getByIdView);  
-app.post('/payments', PaymentController.createView);        
-app.put('/payments/:id', PaymentController.updateView);
-app.put('/payments/:id/status', PaymentController.updateStatus);
+app.get('/payments', isAuthenticated, PaymentController.getAllView);          
+app.get('/payments/new', isAuthenticated, PaymentController.newView);
+app.get('/payments/:id/edit', isAuthenticated, PaymentController.getEditView);
+app.get('/payments/:id', isAuthenticated, PaymentController.getByIdView);  
+app.post('/payments', isAuthenticated, PaymentController.createView);        
+app.put('/payments/:id', isAuthenticated, PaymentController.updateView);
+app.put('/payments/:id/status', isAuthenticated, PaymentController.updateStatus);
 
 // Vistas Pug para Expense Categories
-app.get('/expense-categories', ExpenseCategoryController.getAllView);          
-app.get('/expense-categories/new', ExpenseCategoryController.newView);
-app.get('/expense-categories/:id/edit', ExpenseCategoryController.getEditView);
-app.get('/expense-categories/:id', ExpenseCategoryController.getByIdView);  
-app.post('/expense-categories', ExpenseCategoryController.createView);        
-app.put('/expense-categories/:id', ExpenseCategoryController.updateView);
+app.get('/expense-categories', isAuthenticated, ExpenseCategoryController.getAllView);          
+app.get('/expense-categories/new', isAuthenticated, ExpenseCategoryController.newView);
+app.get('/expense-categories/:id/edit', isAuthenticated, ExpenseCategoryController.getEditView);
+app.get('/expense-categories/:id', isAuthenticated, ExpenseCategoryController.getByIdView);  
+app.post('/expense-categories', isAuthenticated, ExpenseCategoryController.createView);        
+app.put('/expense-categories/:id', isAuthenticated, ExpenseCategoryController.updateView);
 
 // Vistas Pug para Documents
-app.get('/document-files', DocumentFileController.getAllView);          
-app.get('/document-files/new', DocumentFileController.newView);
-app.get('/document-files/:id/edit', DocumentFileController.getEditView);
-app.get('/document-files/:id', DocumentFileController.getByIdView);  
-app.post('/document-files', DocumentFileController.createView);        
-app.put('/document-files/:id', DocumentFileController.updateView);
+app.get('/document-files', isAuthenticated, DocumentFileController.getAllView);          
+app.get('/document-files/new', isAuthenticated, DocumentFileController.newView);
+app.get('/document-files/:id/edit', isAuthenticated, DocumentFileController.getEditView);
+app.get('/document-files/:id', isAuthenticated, DocumentFileController.getByIdView);  
+app.post('/document-files', isAuthenticated, DocumentFileController.createView);        
+app.put('/document-files/:id', isAuthenticated, DocumentFileController.updateView);
 
 
 
 
 // || -----------------------------Rutas base (endpoints de la API) ------------------------------||
+// Rutas de autenticación API (JWT)
+app.use('/api/auth', apiAuthRoutes);
+
+// Rutas de API existentes (sin protección por defecto - pueden protegerse individualmente)
 app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);

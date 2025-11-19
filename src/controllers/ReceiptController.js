@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js'
+import PermissionAwareController from './PermissionAwareController.js';
 import Receipt from '../models/ReceiptModel.js';
 import Project from '../models/ProjectModel.js';
 import Invoice from '../models/InvoiceModel.js';
@@ -26,9 +26,9 @@ const status_labels = {
     cancelled: 'Cancelado'
 };
 
-class ReceiptController extends BaseController {
+class ReceiptController extends PermissionAwareController {
     constructor() {
-        super(Receipt, 'receipts', 'REC-');
+        super(Receipt, 'receipts', 'receipts', 'REC-');
     }
 
     getAllView = async (req, res) => {

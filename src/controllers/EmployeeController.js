@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Employee from '../models/EmployeeModel.js';
 import User from '../models/UserModel.js';
 import Role from '../models/RoleModel.js';
@@ -8,9 +8,9 @@ import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 
-class EmployeeController extends BaseController {
+class EmployeeController extends PermissionAwareController {
     constructor() {
-        super(Employee, 'employees', 'EMP-');
+        super(Employee, 'employees', 'employees', 'EMP-');
     }
 
     // Sobrescribimos getEditView para incluir roles, áreas y supervisores
@@ -142,7 +142,7 @@ class EmployeeController extends BaseController {
                 area_id,
                 nationality,
                 birth_date,
-                address, // ✅ ahora sí es un objeto válido
+                address, 
                 gender,
                 hire_date,
                 position_id,

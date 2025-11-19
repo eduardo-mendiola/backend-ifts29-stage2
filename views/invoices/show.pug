@@ -147,16 +147,17 @@ block content
 
   .mt-3
     a.btn.btn-gray.me-2(href="/invoices", tabindex="2") Volver a la lista
-    a.btn.me-2(
-              class=item.status === 'draft' ? 'btn-primary' : 'btn-success',
-              style="width: 100px; text-align:center;",
-              href=item.status === 'draft' 
-                ? `/invoices/${item.id}/edit`
-                : `/invoices/${item.id}/preview`
-            )= item.status === 'draft' ? 'Editar' : 'Imprimir'
+    if hasPermission('edit_invoices')
+      a.btn.me-2(
+                class=item.status === 'draft' ? 'btn-primary' : 'btn-success',
+                style="width: 100px; text-align:center;",
+                href=item.status === 'draft' 
+                  ? `/invoices/${item.id}/edit`
+                  : `/invoices/${item.id}/preview`
+              )= item.status === 'draft' ? 'Editar' : 'Imprimir'
 
-    if item.status === 'draft'
-      a.btn.btn-success.me-2(href=`/invoices/${item.id}/preview`, tabindex="2") Generar Factura
+      if item.status === 'draft'
+        a.btn.btn-success.me-2(href=`/invoices/${item.id}/preview`, tabindex="2") Generar Factura
               
     //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
     //-   input(type="hidden", name="_method", value="DELETE")

@@ -96,7 +96,7 @@ block content
 
           .mb-3
             label.form-label(for="estimate_total") Monto del presupuesto
-            input#estimate_total.form-control(type="number", name="estimate_total", value=item.estimate_id ? item.estimate_id.total_amount : 0, readonly)
+            input#estimate_total.form-control(type="number", name="estimate_total", value="0", readonly)
 
           .mb-3
             label.form-label(for="discount_percent") Descuento %
@@ -306,6 +306,9 @@ block content
       discountPercentInput.addEventListener('input', recalcTotals);
       taxPercentInput.addEventListener('input', recalcTotals);
 
+      // Recalcular cuando cambie el monto del presupuesto
+      estimateTotalInput.addEventListener('input', recalcTotals);
+
       // Render inicial de ítems
       renderItems();
     });
@@ -378,11 +381,14 @@ block content
     document.addEventListener('DOMContentLoaded', () => {
       const estimateSelect = document.getElementById('estimate_id');
       const estimateTotalInput = document.getElementById('estimate_total');
+      
       estimateSelect.addEventListener('change', () => {
         const selectedId = estimateSelect.value;
         const selected = estimateData.find(e => e.id === selectedId);
         estimateTotalInput.value = selected ? selected.total.toFixed(2) : 0;
-        const event = new Event('input');
+        
+        // Disparar evento input para recalcular totales
+        const event = new Event('input', { bubbles: true });
         estimateTotalInput.dispatchEvent(event);
       });
     });

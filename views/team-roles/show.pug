@@ -29,7 +29,8 @@ block content
 
   .mt-3
     a.btn.btn-gray.me-2(href="/team-roles", tabindex="2") Volver a la lista
-    a.btn.btn-primary.me-2(href=`/team-roles/${item.id}/edit`, tabindex="3") Editar
+    if hasPermission('edit_team_roles')
+      a.btn.btn-primary.me-2(href=`/team-roles/${item.id}/edit`, tabindex="3") Editar
     //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
     //-   input(type="hidden", name="_method", value="DELETE")
     //-   button.btn.btn-danger-soft(type="submit") Eliminar

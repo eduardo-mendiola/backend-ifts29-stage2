@@ -29,7 +29,9 @@ block content
           td= statusLabels[item.status] || 'N/A'
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/estimates/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/estimates/${item.id}/edit`) Editar
-            form(action=`/api/estimates/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
-              input(type="hidden", name="_method", value="DELETE")
-              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+            if hasPermission('edit_estimates')
+              a.btn.btn-gray.btn-sm.me-2(href=`/estimates/${item.id}/edit`) Editar
+            if hasPermission('delete_estimates')
+              form(action=`/api/estimates/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+                input(type="hidden", name="_method", value="DELETE")
+                button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar

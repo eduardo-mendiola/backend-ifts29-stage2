@@ -1,9 +1,9 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import ExpenseCategory from '../models/ExpenseCategoryModel.js';
 
-class ExpenseCategoryController extends BaseController {
+class ExpenseCategoryController extends PermissionAwareController {
     constructor() {
-        super(ExpenseCategory, 'expense-categories', 'CEX-');
+        super(ExpenseCategory, 'expense-categories', 'expense_categories', 'EXC-');
     }
 }
 

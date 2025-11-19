@@ -1,19 +1,59 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import TimeEntry from '../models/TimeEntryModel.js';
 import Task from '../models/TaskModel.js';
 import Employee from '../models/EmployeeModel.js';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
-class TimeEntryController extends BaseController {
+class TimeEntryController extends PermissionAwareController {
     constructor() {
-        super(TimeEntry, 'time-entries', 'ACT-');
+        super(TimeEntry, 'time-entries', 'time_entries', 'TIM-');
     }
+
+    getAllView = async (req, res) => {
+        try {
+            const userId = req.user?._id || req.session?.user?._id;
+            let items;
+            
+            // Si tiene permiso view_all_time_entries, ver todas
+            if (this.checkPermission(req, 'view_all_time_entries')) {
+                items = await this.model.findAll();
+            } else {
+                // Si no, solo ver sus propios registros
+                items = await this.model.findByUserProjects(userId);
+            }
+            
+            res.render(`${this.viewPath}/index`, {
+                title: `Lista de ${this.viewPath}`,
+                items: this.formatItems(items)
+            });
+        } catch (error) {
+            console.error(`Error al obtener todos en vista (${this.viewPath}):`, error.message);
+            res.render('error500', { title: 'Error de servidor' });
+        }
+    };
 
     // Sobrescribimos createView para actualizar la tarea correspondiente
     createView = async (req, res) => {
         try {
-            const createdEntry = await this.model.create(req.body);
+            const userId = req.user?._id || req.session?.user?._id;
+            
+            // Buscar el empleado asociado al usuario logueado
+            const employee = await Employee.model.findOne({ user_id: userId });
+            if (!employee) {
+                return res.status(400).render('error500', { 
+                    title: 'Error', 
+                    message: 'No se encontró un empleado asociado al usuario' 
+                });
+            }
+            
+            // Asignar automáticamente el employee_id del usuario logueado
+            const newEntry = { 
+                ...req.body, 
+                employee_id: employee._id 
+            };
+            
+            const createdEntry = await this.model.create(newEntry);
 
             // Generar el código si aplica
             if (this.codePrefix) {
@@ -41,7 +81,10 @@ class TimeEntryController extends BaseController {
             const oldEntry = await this.model.findById(id);
             if (!oldEntry) return res.render('error404', { title: `${this.viewPath} no encontrado para actualizar.` });
 
-            const updatedEntry = await this.model.update(id, req.body);
+            // Remover employee_id del body para que no se pueda cambiar
+            const { employee_id, ...updateData } = req.body;
+            
+            const updatedEntry = await this.model.update(id, updateData);
 
             // Si cambió la tarea, mover el entry
             if (oldEntry.task_id.toString() !== updatedEntry.task_id.toString()) {
@@ -72,7 +115,6 @@ class TimeEntryController extends BaseController {
             const time_entry = await this.model.findById(id);
             if (!time_entry) return res.render('error404', { title: 'Registro no encontrado' });
 
-            const employees = await Employee.findAll();
             const tasks = await Task.findAll();
             const approved_by = await Employee.findAll();
             const managers = filterManagers(approved_by);
@@ -82,7 +124,6 @@ class TimeEntryController extends BaseController {
             res.render(`${this.viewPath}/edit`, {
                 title: `Editar Time Entry: ${formattedTimeEntry.code}`,
                 item: formattedTimeEntry,
-                employees,
                 tasks,
                 managers
             });
@@ -95,7 +136,9 @@ class TimeEntryController extends BaseController {
     // Sobrescribimos newView para pasar usuarios y tareas
     newView = async (req, res) => {
         try {
-            const employees = await Employee.findAll();
+            const userId = req.user?._id || req.session?.user?._id;
+            const currentEmployee = await Employee.model.findOne({ user_id: userId });
+            
             const tasks = await Task.findAll();
             const approved_by = await Employee.findAll();
             const managers = filterManagers(approved_by);
@@ -103,7 +146,7 @@ class TimeEntryController extends BaseController {
             res.render(`${this.viewPath}/new`, {
                 title: `Nueva Tarea`,
                 item: {},
-                employees,
+                currentEmployee: currentEmployee ? this.formatItem(currentEmployee) : null,
                 tasks,
                 managers
             });

@@ -50,7 +50,7 @@ block content
               option(value="in_progress" selected=(item.status === "in_progress")) En Progreso
               option(value="completed" selected=(item.status === "completed")) Finalizado
           .mb-3
-            label.form-label(for="assigned_to") Asignado
+            label.form-label(for="assigned_to") Asignado a
             select#assigned_to.form-select(name="assigned_to", required, tabindex="8")
               if employees && employees.length > 0
                 each employee in employees

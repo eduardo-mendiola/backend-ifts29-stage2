@@ -30,15 +30,8 @@ block content
             textarea#description.form-control(name="description", required, tabindex="5")= item.description || ""
           .mb-3
             label.form-label(for="employee_id") Usuario
-            select#employee_id.form-select(name="employee_id", required, tabindex="7")
-              if employees && employees.length > 0
-                each employee in employees
-                  option(
-                    value=employee._id 
-                    selected=(item.employee_id && employee._id.toString() === item.employee_id._id.toString())
-                  ) #{employee.first_name + ' ' + employee.last_name}  
-              else
-                option(value="") No hay usuarios disponibles
+            input#employee_name.form-control(type="text", value=item.employee_id ? (item.employee_id.first_name + ' ' + item.employee_id.last_name) : 'No disponible', disabled, tabindex="7")
+            p.text-muted.small.mt-1 El empleado no puede ser modificado
           .mb-3
             label.form-label(for="hours_worked") Horas trabajadas
             input#hours_worked.form-control(

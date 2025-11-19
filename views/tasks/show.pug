@@ -32,8 +32,11 @@ block content
         th Estado
         td= statusLabels[item.status]
       tr
-        th Asignado
+        th Asignado a
         td= item.assigned_to.first_name + " " + item.assigned_to.last_name
+      tr
+        th Asignado por
+        td= item.assigned_by && item.assigned_by.employee ? (item.assigned_by.employee.first_name + " " + item.assigned_by.employee.last_name) : 'N/A'
       tr
         th Estimación (horas)
         td= item.estimated_hours + ' hrs'
@@ -59,7 +62,8 @@ block content
 
   .mt-3
     a.btn.btn-gray.me-2(href="/tasks", tabindex="2") Volver a la lista
-    a.btn.btn-primary.me-2(href=`/tasks/${item.id}/edit`, tabindex="3") Editar
+    if hasPermission('edit_tasks')
+      a.btn.btn-primary.me-2(href=`/tasks/${item.id}/edit`, tabindex="3") Editar
     //- form(action=`/api/employees/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
     //-   input(type="hidden", name="_method", value="DELETE")
     //-   button.btn.btn-danger-soft(type="submit") Eliminar

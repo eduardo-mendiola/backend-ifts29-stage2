@@ -20,12 +20,8 @@ block content
 
           .mb-3
             label.form-label(for="uploaded_by") Cargado por
-            select#uploaded_by.form-select(name="uploaded_by", required, tabindex="3")
-              if employees && employees.length > 0
-                each employee in employees
-                  option(value=employee._id) #{employee.full_name}
-              else
-                option(value="") No hay usuarios disponibles
+            input#uploaded_name.form-control(type="text", value=currentEmployee ? (currentEmployee.first_name + ' ' + currentEmployee.last_name) : 'No disponible', disabled, tabindex="3")
+            p.text-muted.small.mt-1 El documento se creará automáticamente para tu usuario
 
           .mb-3
             label.form-label(for="title") Título

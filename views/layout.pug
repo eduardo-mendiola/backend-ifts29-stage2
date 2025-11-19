@@ -169,118 +169,144 @@ html(lang="es")
       .sidebar
         .sidebar-header.p-3
           a.d-flex.align-items-center.mb-3.mb-md-0.me-md-auto.text-white.text-decoration-none(href="/admin/dashboard")
-            img.fs-2.me-2(src="/images/favicon.webp" alt="Logo" width="30px" height="30px" style="height:30px; width:auto;")
-            span.fs-4 ClickWare
+            img.fs-2.me-2(src="/images/logo_cw3.webp" alt="" width="139px" height="30px" style="height:30px; width:auto;")
+            //- span.fs-4 ClickWare
           hr
 
         .sidebar-content.px-1
           ul.nav.nav-pills.flex-column.mb-auto
-            li.nav-item
-              a.nav-link.text-white(href="/admin/dashboard")
-                i.bi.bi-house-door.me-2
-                | Inicio
+            if hasPermission('view_dashboard')
+              li.nav-item
+                a.nav-link.text-white(href="/admin/dashboard")
+                  i.bi.bi-house-door.me-2
+                  | Inicio
             
-            li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuUsuarios" role="button")
-                i.bi.bi-person-lines-fill.me-2
-                i.bi.bi-caret-down-fill
-                |  Usuarios 
-                
-              ul.collapse#menuUsuarios.ms-3
-                li
-                  a.nav-link.text-white(href="/users") Usuarios
-                li
-                  a.nav-link.text-white(href="/employees") Empleados
+            if hasAny(['view_users', 'view_employees'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuUsuarios" role="button")
+                  i.bi.bi-person-lines-fill.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Usuarios 
+                  
+                ul.collapse#menuUsuarios.ms-3
+                  if hasPermission('view_users')
+                    li
+                      a.nav-link.text-white(href="/users") Usuarios
+                  if hasPermission('view_employees')
+                    li
+                      a.nav-link.text-white(href="/employees") Empleados
 
-            li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")
-                i.bi.bi-briefcase-fill.me-2
-                i.bi.bi-caret-down-fill
-                |  Clientes y contactos 
-                
-              ul.collapse#menuClientes.ms-3
-                li
-                  a.nav-link.text-white(href="/clients") Clientes
-                li
-                  a.nav-link.text-white(href="/contacts") Contactos
+            if hasAny(['view_clients', 'view_contacts'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuClientes" role="button")
+                  i.bi.bi-briefcase-fill.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Clientes y contactos 
+                  
+                ul.collapse#menuClientes.ms-3
+                  if hasPermission('view_clients')
+                    li
+                      a.nav-link.text-white(href="/clients") Clientes
+                  if hasPermission('view_contacts')
+                    li
+                      a.nav-link.text-white(href="/contacts") Contactos
 
-            li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button")
-                i.bi.bi-diagram-3.me-2
-                i.bi.bi-caret-down-fill
-                |  Organización 
-                
-              ul.collapse#menuRoles.ms-3
-                li
-                  a.nav-link.text-white(href="/roles") Roles
-                li
-                  a.nav-link.text-white(href="/positions") Cargos
-                li
-                  a.nav-link.text-white(href="/areas") Áreas
+            if hasAny(['view_roles', 'view_positions', 'view_areas'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuRoles" role="button")
+                  i.bi.bi-diagram-3.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Organización 
+                  
+                ul.collapse#menuRoles.ms-3
+                  if hasPermission('view_roles')
+                    li
+                      a.nav-link.text-white(href="/roles") Roles
+                  if hasPermission('view_positions')
+                    li
+                      a.nav-link.text-white(href="/positions") Cargos
+                  if hasPermission('view_areas')
+                    li
+                      a.nav-link.text-white(href="/areas") Áreas
 
-            li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button")
-                i.bi.bi-list-check.me-2
-                i.bi.bi-caret-down-fill
-                |  Actividades 
-                
-              ul.collapse#menuTareas.ms-3
-                li
-                  a.nav-link.text-white(href="/projects") Proyectos
-                li
-                  a.nav-link.text-white(href="/tasks") Tareas
-                li
-                  a.nav-link.text-white(href="/time-entries") Registro de actividades
-                li 
-                  a.nav-link.text-white(href="/document-files") Documentos
+            if hasAny(['view_projects', 'view_tasks', 'view_time_entries', 'view_document_files'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuTareas" role="button")
+                  i.bi.bi-list-check.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Actividades 
+                  
+                ul.collapse#menuTareas.ms-3
+                  if hasPermission('view_projects')
+                    li
+                      a.nav-link.text-white(href="/projects") Proyectos
+                  if hasPermission('view_tasks')
+                    li
+                      a.nav-link.text-white(href="/tasks") Tareas
+                  if hasPermission('view_time_entries')
+                    li
+                      a.nav-link.text-white(href="/time-entries") Registro de actividades
+                  if hasPermission('view_document_files')
+                    li 
+                      a.nav-link.text-white(href="/document-files") Documentos
 
-            li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuEquipos" role="button")
-                i.bi.bi-people-fill.me-2
-                i.bi.bi-caret-down-fill
-                |  Equipos 
-                
-              ul.collapse#menuEquipos.ms-3
-                li
-                  a.nav-link.text-white(href="/teams") Equipos
-                li
-                  a.nav-link.text-white(href="/team-roles") Roles de Equipo
+            if hasAny(['view_teams', 'view_team_roles'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuEquipos" role="button")
+                  i.bi.bi-people-fill.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Equipos 
+                  
+                ul.collapse#menuEquipos.ms-3
+                  if hasPermission('view_teams')
+                    li
+                      a.nav-link.text-white(href="/teams") Equipos
+                  if hasPermission('view_team_roles')
+                    li
+                      a.nav-link.text-white(href="/team-roles") Roles de Equipo
             
-            li
-              a.nav-link.text-white(data-bs-toggle="collapse" href="#menuContabilidad" role="button")
-                i.bi.bi-table.me-2
-                i.bi.bi-caret-down-fill
-                |  Contabilidad 
-                
-              ul.collapse#menuContabilidad.ms-3
-                li
-                  a.nav-link.text-white(href="/estimates") Presupuestos
-                li
-                  a.nav-link.text-white(href="/expenses") Gastos
-                li
-                  a.nav-link.text-white(href="/expense-categories") Categorías de Gastos
-                li
-                  a.nav-link.text-white(href="/invoices") Facturas
-                li
-                  a.nav-link.text-white(href="/receipts") Cobros
-                li
-                  a.nav-link.text-white(href="/payments") Pagos
+            if hasAny(['view_estimates', 'view_expenses', 'view_expense_categories', 'view_invoices', 'view_receipts', 'view_payments'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuContabilidad" role="button")
+                  i.bi.bi-table.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Contabilidad 
+                  
+                ul.collapse#menuContabilidad.ms-3
+                  if hasPermission('view_estimates')
+                    li
+                      a.nav-link.text-white(href="/estimates") Presupuestos
+                  if hasPermission('view_expenses')
+                    li
+                      a.nav-link.text-white(href="/expenses") Gastos
+                  if hasPermission('view_expense_categories')
+                    li
+                      a.nav-link.text-white(href="/expense-categories") Categorías de Gastos
+                  if hasPermission('view_invoices')
+                    li
+                      a.nav-link.text-white(href="/invoices") Facturas
+                  if hasPermission('view_receipts')
+                    li
+                      a.nav-link.text-white(href="/receipts") Cobros
+                  if hasPermission('view_payments')
+                    li
+                      a.nav-link.text-white(href="/payments") Pagos
 
         .sidebar-footer.p-3
           .dropdown
             a#dropdownUser1.d-flex.align-items-center.text-white.text-decoration-none.dropdown-toggle(
               href="#" data-bs-toggle="dropdown" aria-expanded="false")
               img.rounded-circle.me-2(src="/images/user.png" alt="" width="32" height="32")
-              strong Admin
+              strong #{user.employee && user.employee.first_name ? user.employee.first_name + ' ' + user.employee.last_name : user.username}
             ul.dropdown-menu.dropdown-menu-dark.text-small.shadow(aria-labelledby="dropdownUser1")
               li
                 a.dropdown-item(href="#") Settings
               li
-                a.dropdown-item(href="#") Profile
+                a.dropdown-item(href="/profile") Mi perfil
               li
                 hr.dropdown-divider
               li
-                a.dropdown-item(href="/") Sign out
+                a.dropdown-item(href="/logout") Cerrar Sesión
 
       main.flex-grow-1.p-4
         block content
@@ -342,7 +368,7 @@ html(lang="es")
           });
         }
 
-        // --- NUEVO: Cambiar íconos de caret según el estado ---
+        // Cambiar íconos de caret según el estado 
         document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(trigger => {
           const icon = trigger.querySelector('i.bi-caret-down-fill, i.bi-caret-right-fill');
           const targetId = trigger.getAttribute('href')?.replace('#', '');

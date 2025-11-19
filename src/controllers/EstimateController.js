@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import Estimate from '../models/EstimateModel.js';
 import Project from '../models/ProjectModel.js';
 import Client from '../models/ClientModel.js';
@@ -23,9 +23,9 @@ const currency_labels = {
     ARG: 'Peso argentino'
 };
 
-class EstimateController extends BaseController {
+class EstimateController extends PermissionAwareController {
     constructor() {
-        super(Estimate, 'estimates', 'EST-');
+        super(Estimate, 'estimates', 'estimates', 'EST-');
     }
 
     getAllView = async (req, res) => {

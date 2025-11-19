@@ -41,16 +41,16 @@ const clientSchema = new mongoose.Schema({
 
 // Virtual populate: traer los contactos de este cliente
 clientSchema.virtual('contacts', {
-  ref: 'Contact',           // modelo referenciado
-  localField: '_id',        // campo local (Client)
-  foreignField: 'client_id' // campo en Contact
+  ref: 'Contact',           
+  localField: '_id',        
+  foreignField: 'client_id' 
 });
 
 // Virtual populate: traer los proyectos de este cliente
 clientSchema.virtual('projects', {
-  ref: 'Project',           // modelo referenciado
-  localField: '_id',        // campo local (Client)
-  foreignField: 'client_id' // campo en Project
+  ref: 'Project',           
+  localField: '_id',        
+  foreignField: 'client_id' 
 });
 
 

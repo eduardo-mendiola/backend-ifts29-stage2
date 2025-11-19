@@ -2,8 +2,9 @@ extends ../layout.pug
 
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1.mb-0 Lista de Usuarios del Sistema
-    a.btn.btn-primary(href="/users/new") Nuevo Usuario
+    h1.mb-0 Lista de Usuarios
+    if hasPermission('create_users')
+      a.btn.btn-primary(href="/users/new") Nuevo Usuario
 
   //- Incluir barra de búsqueda, modal y JS común
   include ../partials/common-table-scripts.pug
@@ -13,23 +14,33 @@ block content
       tr
         th №
         th Código
-        th Nombre de Usurrio
-        th Contraseña
+        th Nombre de Usuario
         th Email
         th Rol
+        th Estado
         th.text-end.pe-5 Acciones
     tbody
-      each item, index in items
-        tr(data-id=item.id, data-code=item.code, data-textmodal1=`Nombre de usuario: ${item.username}`)
-          td= index + 1 || "N/A"
-          td= item.code || "N/A"
-          td= item.username || "N/A"
-          td= item.password_hash || "N/A"
-          td= item.email || "N/A"
-          td= item.role_id.name || "N/A"
-          td.text-end
-            a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}`) Ver
-            a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}/edit`) Editar
-            form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
-              input(type="hidden", name="_method", value="DELETE")
-              button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+      if items && items.length
+        each item, index in items
+          tr(data-id=item.id, data-code=item.code, data-textmodal1=`Usuario: ${item.username}`)
+            td= index + 1
+            td= item.code || "N/A"
+            td= item.username || "N/A"
+            td= item.email || "N/A"
+            td= item.role_id ? item.role_id.name : "N/A"
+            td
+              if item.is_active
+                span.badge.bg-success Activo
+              else
+                span.badge.bg-danger Inactivo
+            td.text-end
+              a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}`) Ver
+              if hasPermission('edit_users')
+                a.btn.btn-gray.btn-sm.me-2(href=`/users/${item.id}/edit`) Editar
+              if hasPermission('delete_users')
+                form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
+                  input(type="hidden", name="_method", value="DELETE")
+                button.btn.btn-danger-soft.btn-sm.delete-btn(data-id=item.id) Eliminar
+      else
+        tr
+          td(colspan="7", class="text-center py-4 text-muted") No hay usuarios registrados.

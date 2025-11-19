@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import User from '../models/UserModel.js';
 import Role from '../models/RoleModel.js';
 import Area from '../models/AreaModel.js';
@@ -6,9 +6,9 @@ import Position from '../models/PositionModel.js';
 import { filterManagers } from '../utils/userHelpers.js';
 import { formatDatesForInput } from '../utils/dateHelpers.js';
 
-class UserController extends BaseController {
+class UserController extends PermissionAwareController {
     constructor() {
-        super(User, 'users', 'USR-');
+        super(User, 'users', 'users', 'USR-');
     }
 
     // Sobrescribimos getEditView para incluir roles, áreas y supervisores

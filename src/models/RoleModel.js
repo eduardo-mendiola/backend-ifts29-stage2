@@ -5,7 +5,7 @@ const roleSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     name: { type: String, required: true },
     description: { type: String },
-    permissions: { type: [String], default: [] } // nuevo campo permissions
+    permissions: { type: [String], default: [] } 
 }, { 
     collection: 'roles',
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } 

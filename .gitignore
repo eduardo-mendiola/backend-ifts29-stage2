@@ -1,3 +1,12 @@
 /node_modules
 /.env
 /.vscode/
+/AUTH_DOCUMENTATION.md
+/COMMIT_MESSAGE.md
+/IMPLEMENTATION_SUMMARY.md
+/PROTECT_API_ROUTES.md
+/QUICK_START.md
+/TESTING_CHECKLIST.md
+/update-roles-permissions.js
+/reset-all-passwords.js
+/reset-password.js

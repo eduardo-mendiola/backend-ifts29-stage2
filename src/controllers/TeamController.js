@@ -1,4 +1,4 @@
-import BaseController from './BaseController.js';
+import PermissionAwareController from './PermissionAwareController.js';
 import TeamModel from '../models/TeamModel.js';
 import Employee from '../models/EmployeeModel.js';
 import mongoose from 'mongoose';
@@ -7,9 +7,9 @@ import { formatDatesForInput } from '../utils/dateHelpers.js';
 
 
 
-class TeamController extends BaseController {
+class TeamController extends PermissionAwareController {
     constructor() {
-        super(TeamModel, 'teams', 'TEM-');
+        super(TeamModel, 'teams', 'teams', 'TEA-');
     }
 
 
@@ -201,7 +201,7 @@ class TeamController extends BaseController {
                 }
             }
 
-            // 🔹 1. Crear el documento SIN el código
+            // 1. Crear el documento SIN el código
             const createData = {
                 name,
                 description,
@@ -221,7 +221,7 @@ class TeamController extends BaseController {
 
             console.log('Equipo creado con ID y code:', createdItem._id);
 
-            // 🔹 3. Redirigir al detalle
+            // 3. Redirigir al detalle
             res.redirect(`/teams/${createdItem._id}`);
 
         } catch (error) {

@@ -3,28 +3,29 @@ import express from 'express';
 const router = express.Router(); 
 import clientController from '../controllers/ClientController.js';
 // Importar middleware de validación
-import { validateClientInput } from '../middleware/validationMiddleware.js'; 
+import { validateClientInput } from '../middleware/validationMiddleware.js';
+import { requirePermission } from '../middleware/permissionMiddleware.js'; 
 import emptyToNull from '../middleware/emptyToNullMiddleware.js';
 
 // Rutas CRUD para Clientes
 
 // POST /api/clients - Crear un nuevo cliente
-router.post('/', validateClientInput, emptyToNull, clientController.create); // Middleware de validación antes del controlador
+router.post('/', requirePermission('create_clients'), validateClientInput, emptyToNull, clientController.create); // Middleware de validación antes del controlador
 
 // PUT /api/clients/:id - Actualizar un cliente por ID
-router.put('/:id', emptyToNull, clientController.update);
+router.put('/:id', requirePermission('edit_clients'), emptyToNull, clientController.update);
 
 // PUT /api/clients/:id - Actualizar un cliente por ID
-router.patch('/:id', emptyToNull, clientController.patch);
+router.patch('/:id', requirePermission('edit_clients'), emptyToNull, clientController.patch);
 
 // GET /api/clients - Obtener todos los clientes
-router.get('/', clientController.getAll);
+router.get('/', requirePermission('view_clients'), clientController.getAll);
 
 // GET /api/clients/:id - Obtener un cliente por ID
-router.get('/:id', clientController.getById);// Ruta dinámica con parámetro `:id`
+router.get('/:id', requirePermission('view_clients'), clientController.getById);// Ruta dinámica con parámetro `:id`
 
 
 // DELETE /api/clients/:id - Eliminar un cliente por ID
-router.delete('/:id', clientController.delete);
+router.delete('/:id', requirePermission('delete_clients'), clientController.delete);
 
 export default router;

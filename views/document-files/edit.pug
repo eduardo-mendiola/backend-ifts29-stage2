@@ -26,15 +26,8 @@ block content
 
           .mb-3
             label.form-label(for="uploaded_by") Cargado por
-            select#uploaded_by.form-select(name="uploaded_by", required, tabindex="3")
-              if employees && employees.length > 0
-                each employee in employees
-                  option(
-                    value=employee._id
-                    selected=(item.uploaded_by && employee._id.toString() === item.uploaded_by._id.toString())
-                  ) #{employee.full_name}
-              else
-                option(value="") No hay usuarios disponibles
+            input#uploaded_name.form-control(type="text", value=item.uploaded_by ? (item.uploaded_by.first_name + ' ' + item.uploaded_by.last_name) : 'No disponible', disabled, tabindex="3")
+            p.text-muted.small.mt-1 El empleado que cargó el documento no puede ser modificado
 
           .mb-3
             label.form-label(for="title") Título
