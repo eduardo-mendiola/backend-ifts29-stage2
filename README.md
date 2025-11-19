@@ -58,24 +58,36 @@
    4.5 [Ejecutar la aplicación](#45-ejecutar-la-aplicación)  
    4.6 [Abrir la aplicación en el navegador](#46-abrir-la-aplicación-en-el-navegador)  
 
-5. [Documentación de Interfaces y Funcionalidades](#5-documentación-de-interfaces-y-funcionalidades)  
-   5.1 [Menú y navegación entre módulos](#51-menú-y-navegación-entre-módulos)  
-   5.2 [Patrón CRUD general (un ejemplo completo)](#52-patrón-crud-general-un-ejemplo-completo)  
-   5.3 [Casos especiales por módulo](#53-casos-especiales-por-módulo)  
-       5.3.1 [Usuarios y Empleados (filtros de selección)](#531-usuarios-y-empleados-filtros-de-selección)  
-       5.3.2 [Roles (opciones de permisos)](#532-roles-opciones-de-permisos)  
-       5.3.3 [Proyectos (selección de equipos)](#533-proyectos-selección-de-equipos)  
-       5.3.4 [Equipos (selección miembros y asignación de roles)](#534-equipos-selección-miembros-y-asignación-de-roles)  
-       5.3.5 [Presupuesto (carga de ítems y cálculo de impuestos y descuentos)](#535-presupuesto-carga-de-ítems-y-cálculo-de-impuestos-y-descuentos)  
-       5.3.6 [Facturas (editar, eliminar y anular)](#536-facturas-editar-eliminar-y-anular)  
-       5.3.7 [Facturas (carga de ítems extras)](#537-facturas-carga-de-ítems-extras)  
-       5.3.8 [Facturas (generar e imprimir factura)](#538-facturas-generar-e-imprimir-factura)  
+5. [Sistema de Autenticación](#5-sistema-de-autenticación)  
+   5.1 [Características](#características)  
+   5.2 [Documentación Completa](#documentación-completa)  
+   5.3 [Inicio Rápido con Autenticación](#inicio-rápido-con-autenticación)  
 
-6. [Uso de IAs](#6-uso-de-ias)  
-   6.1 [Modelos](#61-modelos)  
-   6.2 [Prompts](#62-prompts)  
+6. [Sistema de Testing](#6-sistema-de-testing)  
+   6.1 [Testing con TDD](#testing-con-tdd-test-driven-development)  
+   6.2 [Stack de Testing](#stack-de-testing)  
+   6.3 [Comandos Disponibles](#comandos-disponibles)  
+   6.4 [Tests Implementados](#tests-implementados)  
+   6.5 [Documentación Completa](#documentación-completa-1)  
 
-7. [Bibliografía y Fuentes](#7-bibliografía-y-fuentes)
+7. [Documentación de Interfaces y Funcionalidades](#7-documentación-de-interfaces-y-funcionalidades)  
+   7.1 [Menú y navegación entre módulos](#71-menú-y-navegación-entre-módulos)  
+   7.2 [Patrón CRUD general (un ejemplo completo)](#72-patrón-crud-general-un-ejemplo-completo)  
+   7.3 [Casos especiales por módulo](#73-casos-especiales-por-módulo)  
+       7.3.1 [Usuarios y Empleados (filtros de selección)](#731-usuarios-y-empleados-filtros-de-selección)  
+       7.3.2 [Roles (opciones de permisos)](#732-roles-opciones-de-permisos)  
+       7.3.3 [Proyectos (selección de equipos)](#733-proyectos-selección-de-equipos)  
+       7.3.4 [Equipos (selección miembros y asignación de roles)](#734-equipos-selección-miembros-y-asignación-de-roles)  
+       7.3.5 [Presupuesto (carga de ítems y cálculo de impuestos y descuentos)](#735-presupuesto-carga-de-ítems-y-cálculo-de-impuestos-y-descuentos)  
+       7.3.6 [Facturas (editar, eliminar y anular)](#736-facturas-editar-eliminar-y-anular)  
+       7.3.7 [Facturas (carga de ítems extras)](#737-facturas-carga-de-ítems-extras)  
+       7.3.8 [Facturas (generar e imprimir factura)](#738-facturas-generar-e-imprimir-factura)  
+
+8. [Uso de IAs](#8-uso-de-ias)  
+   8.1 [Modelos](#81-modelos)  
+   8.2 [Prompts](#82-prompts)  
+
+9. [Bibliografía y Fuentes](#9-bibliografía-y-fuentes)
  
 
 ---
@@ -486,23 +498,20 @@ Si no has definido un puerto, por defecto será `http://localhost:3000`.
 
 ### Documentación Completa
 - [`AUTH_DOCUMENTATION.md`](./AUTH_DOCUMENTATION.md) - Guía completa de autenticación
-- [`TESTING_CHECKLIST.md`](./TESTING_CHECKLIST.md) - Checklist de pruebas
-- [`PROTECT_API_ROUTES.md`](./PROTECT_API_ROUTES.md) - Cómo proteger rutas API
-- [`IMPLEMENTATION_SUMMARY.md`](./IMPLEMENTATION_SUMMARY.md) - Resumen de implementación
 
 ### Inicio Rápido con Autenticación
 ```bash
-# 1. Instalar dependencias
-npm install
+    # 1. Instalar dependencias
+    npm install
 
-# 2. Crear usuarios de prueba
-node seed.js
+    # 2. Crear usuarios de prueba
+    node seed.js
 
-# 3. Iniciar servidor
-npm run dev
+    # 3. Iniciar servidor
+    npm run dev
 
-# 4. Acceder a http://localhost:4000
-# Login: admin@clickwave.com / admin123
+    # 4. Acceder a http://localhost:4000
+    # Login: admin@clickwave.com / admin123
 ```
 
 ---
@@ -533,9 +542,126 @@ NODE_ENV=development
 ---
 
 
-# 5. Documentación de Interfaces y Funcionalidades
+# 6. Sistema de Testing
 
-## 5.1 Menú y navegación entre módulos
+## Testing con TDD (Test Driven Development)
+
+Este proyecto cuenta con un **sistema completo de testing profesional** implementado siguiendo las mejores prácticas de TDD (Test Driven Development).
+
+### Stack de Testing
+
+- **Jest**: Framework principal de testing
+- **Supertest**: Testing de endpoints HTTP
+- **MongoDB Memory Server**: Base de datos en memoria para tests aislados
+
+### Comandos Disponibles
+
+```bash
+# Ejecutar todos los tests
+npm test
+
+# Modo watch (desarrollo)
+npm run test:watch
+
+# Con reporte de cobertura
+npm run test:coverage
+```
+
+### Estructura de Tests
+
+```
+__tests__/
+├── setup/              # Configuración global
+├── helpers/            # Utilidades compartidas
+├── builders/           # Patrón Builder para datos
+├── fixtures/           # Datos estáticos de prueba
+├── integration/        # Tests de endpoints completos
+└── unit/              # Tests unitarios con mocks
+```
+
+### Tests Implementados
+
+- **67+ tests de integración** para endpoints CRUD
+- **30+ tests unitarios** con mocking
+- Tests de validaciones de campos requeridos
+- Tests de enumeraciones y referencias
+- Tests de funciones puras
+- Patrón Builder para datos de prueba
+- Helpers y fixtures reutilizables
+
+### Resultados de Tests
+
+#### 1. Smoke Tests (7/7)
+Verificación básica del sistema de testing: Jest, operaciones básicas, async/await, helpers globales.
+
+![Smoke Tests](./assets/screenshots/smoke-tests.png)
+
+#### 2. Unit Tests - dateHelpers (18/18)
+Tests unitarios para funciones de formateo de fechas: `formatDate`, `formatDatesForInput`, edge cases.
+
+![Unit Tests - dateHelpers](./assets/screenshots/unit-datehelpers.png)
+
+#### 3. Integration Tests - POST /api/projects (14/14)
+Tests de integración completos para creación de proyectos:
+- Creación con datos válidos
+- Validación de campos requeridos (name, client_id, project_manager)
+- Validación de enumeraciones (billing_type, status)
+- Validación de referencias (ObjectIds)
+- Campos opcionales y valores por defecto
+
+![Integration Tests - POST](./assets/screenshots/integration-projects-post.png)
+
+#### 4. Integration Tests - CRUD /api/projects (15/15)
+Tests de integración para operaciones CRUD completas:
+- **GET** /api/projects - Listar todos los proyectos
+- **GET** /api/projects/:id - Obtener proyecto específico
+- **PUT** /api/projects/:id - Actualizar proyecto
+- **DELETE** /api/projects/:id - Eliminar proyecto
+- Manejo de errores (404, 500)
+
+![Integration Tests - CRUD](./assets/screenshots/integration-projects-crud.png)
+
+#### 5. Suite Completa (56/56 - 100%)
+Ejecución de toda la suite de tests:
+- 7 Smoke tests
+- 18 Unit tests
+- 29 Integration tests (projects)
+- 2 Example pattern tests
+
+**Resultado: 56 tests pasando, 0 fallando**
+
+![Test Suite Completa](./assets/screenshots/full-test-suite.png)
+
+### Documentación Completa
+
+Para información detallada sobre cómo escribir y ejecutar tests:
+
+- **[TESTING_GUIDE.md](./TESTING_GUIDE.md)** - Guía completa de testing
+- **[TESTING_QUICK_REFERENCE.md](./TESTING_QUICK_REFERENCE.md)** - Referencia rápida
+- **[__tests__/README.md](./__tests__/README.md)** - Estructura de carpetas
+
+### Ejemplo Rápido
+
+```javascript
+// Test de integración
+describe('POST /api/projects', () => {
+  it('debe crear proyecto con datos válidos', async () => {
+    const response = await request(app)
+      .post('/api/projects')
+      .send(validProjectData)
+      .expect(201);
+    
+    expect(response.body).toHaveProperty('_id');
+  });
+});
+```
+
+---
+
+
+# 7. Documentación de Interfaces y Funcionalidades
+
+## 7.1 Menú y navegación entre módulos
 
 **Descripción:**  
 Esta sección muestra la estructura principal de la aplicación y cómo se accede a cada módulo. La navegación está centrada en una sidebar con menús desplegables, que agrupa las 19 entidades en 6 bloques principales:
@@ -555,7 +681,7 @@ Esta estructura asegura que los usuarios puedan localizar rápidamente cualquier
 
 ---
 
-## 5.2 Patrón CRUD general (un ejemplo completo)
+## 7.2 Patrón CRUD general (un ejemplo completo)
 
 **Descripción:**  
 Se presenta un caso representativo del patrón CRUD que se aplica de manera consistente en la mayoría de las entidades del sistema, evitando mostrar todas las pantallas repetitivas.
@@ -584,9 +710,9 @@ Este patrón uniforme garantiza consistencia en la experiencia del usuario y fac
 
 ---
 
-## 5.3 Casos especiales por módulo
+## 7.3 Casos especiales por módulo
 
-### 5.3.1 Usuarios y Empleados (filtros de selección)
+### 7.3.1 Usuarios y Empleados (filtros de selección)
 
 **Descripción:**  
 Demuestra la funcionalidad de filtros y búsqueda avanzada para seleccionar usuarios o empleados de manera eficiente.  
@@ -597,7 +723,7 @@ Demuestra la funcionalidad de filtros y búsqueda avanzada para seleccionar usua
 
 ---
 
-### 5.3.2 Roles (opciones de permisos)
+### 7.3.2 Roles (opciones de permisos)
 
 **Descripción:**  
 Muestra la gestión de roles y la configuración de permisos específicos para cada tipo de usuario.  
@@ -606,7 +732,7 @@ Muestra la gestión de roles y la configuración de permisos específicos para c
 
 ---
 
-### 5.3.3 Proyectos (selección de equipos)
+### 7.3.3 Proyectos (selección de equipos)
 
 **Descripción:**  
 Ejemplo de cómo se asignan equipos a proyectos, permitiendo la selección múltiple de equipos de trabajo.  
@@ -615,7 +741,7 @@ Ejemplo de cómo se asignan equipos a proyectos, permitiendo la selección múlt
 
 ---
 
-### 5.3.4 Equipos (selección miembros y asignación de roles)
+### 7.3.4 Equipos (selección miembros y asignación de roles)
 
 **Descripción:**  
 Pantalla de gestión de equipos con selección de miembros y asignación de roles dentro del equipo.  
@@ -624,7 +750,7 @@ Pantalla de gestión de equipos con selección de miembros y asignación de role
 
 ---
 
-### 5.3.5 Presupuesto (carga de ítems y cálculo de impuestos y descuentos)
+### 7.3.5 Presupuesto (carga de ítems y cálculo de impuestos y descuentos)
 
 **Descripción:**  
 Destaca la funcionalidad de ingreso de ítems, aplicación automática de impuestos y descuentos, y cálculo final del presupuesto.  
@@ -633,7 +759,7 @@ Destaca la funcionalidad de ingreso de ítems, aplicación automática de impues
 
 ---
 
-### 5.3.6 Facturas (editar, eliminar y anular)
+### 7.3.6 Facturas (editar, eliminar y anular)
 
 **Descripción:**  
 Esta pantalla muestra las acciones disponibles sobre las facturas según su estado, reflejando las restricciones de negocio:
@@ -648,7 +774,7 @@ Esta pantalla muestra las acciones disponibles sobre las facturas según su esta
 
 ---
 
-### 5.3.7 Facturas (carga de ítems extras)
+### 7.3.7 Facturas (carga de ítems extras)
 
 **Descripción:**  
 Ejemplo de cómo agregar ítems adicionales a una factura ya creada, reflejando flexibilidad en la gestión.  
@@ -657,7 +783,7 @@ Ejemplo de cómo agregar ítems adicionales a una factura ya creada, reflejando 
 
 ---
 
-### 5.3.8 Facturas (generar e imprimir factura)
+### 7.3.8 Facturas (generar e imprimir factura)
 
 **Descripción:**  
 Esta pantalla permite gestionar la generación e impresión de facturas a partir de la información ya cargada:
@@ -675,9 +801,9 @@ Este flujo garantiza que solo las facturas completas y validadas sean emitidas o
 
 
 
-# 6. Uso de IAs
+# 8. Uso de IAs
 
-## 6.1 Modelos
+## 8.1 Modelos
 
 Durante el desarrollo de este proyecto se emplearon herramientas de Inteligencia Artificial (IA) para mejorar la eficiencia en la codificación, la comprensión teórica y la elaboración de documentación.  
 
@@ -695,7 +821,7 @@ El uso de la IA incluyó las siguientes funciones principales:
 
 ---
 
-## 6.2 Prompts
+## 8.2 Prompts
 
 ### AI: ChatGPT  
 **Modelo:** GPT-5 Mini  
@@ -773,24 +899,24 @@ getEditView = async (req, res) => {
 getEditView = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('📌 Parámetro recibido:', id);
+        console.log('Parámetro recibido:', id);
 
         const task = await this.model.findById(id);
-        console.log('📌 Resultado de findById:', task);
+        console.log('Resultado de findById:', task);
 
         if (!task) {
-            console.log('⚠️ No se encontró la tarea con el id proporcionado');
+            console.log('No se encontró la tarea con el id proporcionado');
             return res.render('error404', { title: 'Tarea no encontrada' });
         }
 
         const users = await User.findAll();
-        console.log('📌 Usuarios obtenidos:', users.length);
+        console.log('Usuarios obtenidos:', users.length);
 
         const projects = await Project.findAll();
-        console.log('📌 Proyectos obtenidos:', projects.length);
+        console.log('Proyectos obtenidos:', projects.length);
 
         const formattedTask = formatDatesForInput(this.formatItem(task), ['due_date', 'created_at']);
-        console.log('📌 Tarea después de formatear fechas:', formattedTask);
+        console.log('Tarea después de formatear fechas:', formattedTask);
 
         res.render(`${this.viewPath}/edit`, {
             title: `Editar Task`,
@@ -798,9 +924,9 @@ getEditView = async (req, res) => {
             users,
             projects
         });
-        console.log('✅ Renderizado de la vista edit completado correctamente');
+        console.log('Renderizado de la vista edit completado correctamente');
     } catch (error) {
-        console.error('❌ Error en getEditView:', error.message);
+        console.error('Error en getEditView:', error.message);
         res.status(500).render('error500', { title: 'Error del servidor' });
     }
 };
@@ -808,7 +934,7 @@ getEditView = async (req, res) => {
 
 ---
 
-# 7. Bibliografía y Fuentes
+# 9. Bibliografía y Fuentes
 
 * IFTS Nro. 29, Tecnicatura Superior en Desarrollo de Software a Distancia, Desarrollo de Sistemas Web (Back End) - 2° (2025). [Link](https://aulasvirtuales.bue.edu.ar/course/view.php?id=22553)
 * The Net Ninja. (2022). MERN Stack Crash Course Tutorial [Playlist]. YouTube. [Link](https://youtube.com/playlist?list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&si=TEi7PZTW6xPRlSSk)
@@ -822,4 +948,10 @@ getEditView = async (req, res) => {
 * Mongoose (s.f.). Documentación oficial de Mongoose 8.19.0. Recuperado en octubre de 2025, de [https://mongoosejs.com/docs/guide.html](https://mongoosejs.com/docs/guide.html)
 * Leonardo Jose Castillo Lacruz - FreeCodeCamp Español. (05/11/2024). Curso API CRUD - Node.js, Express, MongoDB y Autenticación. YouTube, [Link](https://www.youtube.com/watch?v=Oa5blAV7Fyg)
 * Dave Gray. (2022). MERN Stack Tutorials [Playlist]. YouTube. [Link](https://youtube.com/playlist?list=PL0Zuz27SZ-6P4dQUsoDatjEGpmBpcOW8V&si=YQyOf194iv0GNgUH)
+* Passport.js (s.f.). Documentación oficial de Passport.js. Recuperado en noviembre de 2025, de [http://www.passportjs.org/](http://www.passportjs.org/)
+* JWT.io (s.f.). JSON Web Tokens - Introduction. Recuperado en noviembre de 2025, de [https://jwt.io/introduction](https://jwt.io/introduction)
+* bcrypt (s.f.). bcrypt - npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/bcrypt](https://www.npmjs.com/package/bcrypt)
+* Jest (s.f.). Documentación oficial de Jest. Recuperado en noviembre de 2025, de [https://jestjs.io/docs/getting-started](https://jestjs.io/docs/getting-started)
+* Supertest (s.f.). Supertest - npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/supertest](https://www.npmjs.com/package/supertest)
+* MongoDB Memory Server (s.f.). mongodb-memory-server - npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/mongodb-memory-server](https://www.npmjs.com/package/mongodb-memory-server)
 

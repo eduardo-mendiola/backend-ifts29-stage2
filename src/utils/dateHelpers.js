@@ -10,14 +10,16 @@ export function formatDatesForInput(item, fields = []) {
     if (!item) return item;
 
     const formatDate = (date) => {
-        if (!date) return '';
+        if (date === null || date === undefined) return '';
         const d = new Date(date);
+        // Validar que la fecha sea válida
+        if (isNaN(d.getTime())) return date; // Retornar el valor original si no es una fecha válida
         return d.toISOString().split('T')[0];
     };
 
     const formatted = { ...item };
     fields.forEach(field => {
-        if (item[field]) {
+        if (item[field] !== undefined) {
             formatted[field] = formatDate(item[field]);
         }
     });

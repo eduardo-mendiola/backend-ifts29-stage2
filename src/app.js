@@ -90,7 +90,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI_ATLAS,
+    mongoUrl: process.env.MONGO_URI_ATLAS || process.env.MONGO_URI_TEST || 'mongodb://localhost:27017/test',
     touchAfter: 24 * 3600, // Actualizar sesión solo una vez cada 24 horas
     crypto: {
       secret: process.env.SESSION_SECRET || 'your_session_secret_here'
@@ -111,6 +111,31 @@ app.use(flash());
 // Inicializar Passport y sesiones
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Bypass de autenticación para tests (solo en NODE_ENV=test)
+if (process.env.NODE_ENV === 'test') {
+  app.use((req, res, next) => {
+    // Mock user con permisos completos para tests
+    req.user = {
+      _id: '000000000000000000000001',
+      username: 'test_user',
+      email: 'test@example.com',
+      role_id: {
+        _id: '000000000000000000000002',
+        name: 'admin',
+        permissions: [
+          'view_projects', 'create_projects', 'edit_projects', 'delete_projects',
+          'view_clients', 'create_clients', 'edit_clients', 'delete_clients',
+          'view_employees', 'create_employees', 'edit_employees', 'delete_employees',
+          'view_tasks', 'create_tasks', 'edit_tasks', 'delete_tasks',
+          'view_all'
+        ]
+      }
+    };
+    req.isAuthenticated = () => true;
+    next();
+  });
+}
 
 // Middleware para inyectar helpers de permisos en todas las vistas
 app.use(injectPermissionHelpers);
