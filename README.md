@@ -10,66 +10,6 @@
 
 ---
 
-## Nuevo Sistema de Autenticación 
-
-**Se ha implementado una arquitectura completa de autenticación con Passport.js + JWT**
-
-### Características
-- Login/Registro con sesiones persistentes
-- API REST protegida con tokens JWT
-- Hash de contraseñas con bcrypt
-- Protección de todas las rutas
-- Gestión de perfiles y permisos
-
-### Documentación Completa
-- [`AUTH_DOCUMENTATION.md`](./AUTH_DOCUMENTATION.md) - Guía completa de autenticación
-- [`TESTING_CHECKLIST.md`](./TESTING_CHECKLIST.md) - Checklist de pruebas
-- [`PROTECT_API_ROUTES.md`](./PROTECT_API_ROUTES.md) - Cómo proteger rutas API
-- [`IMPLEMENTATION_SUMMARY.md`](./IMPLEMENTATION_SUMMARY.md) - Resumen de implementación
-
-### Inicio Rápido con Autenticación
-```bash
-# 1. Instalar dependencias
-npm install
-
-# 2. Crear usuarios de prueba
-node seed.js
-
-# 3. Iniciar servidor
-npm run dev
-
-# 4. Acceder a http://localhost:4000
-# Login: admin@clickwave.com / admin123
-```
-
----
-
-## Para ejecutar el proyecto (¡Importante la conexión a MongoDB!):  
-1. Clonar el repositorio.  
-2. Instalar dependencias con `npm install`.  
-3. **NUEVO:** Ejecutar `node seed.js` para crear usuarios de prueba.
-4. Crear un archivo `.env` en la raíz del proyecto para la configuración de la base de datos.  
-
-### Contenido Mínimo del `.env`:  
-```bash
-# Puerto donde se ejecutará la aplicación
-PORT=4000
-
-# URI de conexión a MongoDB (local o Atlas)
-MONGO_URI_ATLAS="mongodb://localhost:27017/clickwavedb" 
-# o MONGO_URI_ATLAS="mongodb+srv://user:password@cluster.mongodb.net/..."
-
-# NUEVO: Secrets para autenticación
-JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_clickwave2025
-SESSION_SECRET=your_super_secret_session_key_change_this_in_production_clickwave2025
-NODE_ENV=development
-````
-
-4. Ejecutar la aplicación con `npm run dev` (o `npm start`).
-
----
-
-## Índice
 
 ## Índice
 
@@ -533,6 +473,65 @@ Si no has definido un puerto, por defecto será `http://localhost:3000`.
 
 
 ---
+# 5. Sistema de Autenticación 
+
+**Se ha implementado una arquitectura completa de autenticación con Passport.js + JWT**
+
+### Características
+- Login/Registro con sesiones persistentes
+- API REST protegida con tokens JWT
+- Hash de contraseñas con bcrypt
+- Protección de todas las rutas
+- Gestión de perfiles y permisos
+
+### Documentación Completa
+- [`AUTH_DOCUMENTATION.md`](./AUTH_DOCUMENTATION.md) - Guía completa de autenticación
+- [`TESTING_CHECKLIST.md`](./TESTING_CHECKLIST.md) - Checklist de pruebas
+- [`PROTECT_API_ROUTES.md`](./PROTECT_API_ROUTES.md) - Cómo proteger rutas API
+- [`IMPLEMENTATION_SUMMARY.md`](./IMPLEMENTATION_SUMMARY.md) - Resumen de implementación
+
+### Inicio Rápido con Autenticación
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Crear usuarios de prueba
+node seed.js
+
+# 3. Iniciar servidor
+npm run dev
+
+# 4. Acceder a http://localhost:4000
+# Login: admin@clickwave.com / admin123
+```
+
+---
+
+## Para ejecutar el proyecto (¡Importante la conexión a MongoDB!):  
+1. Clonar el repositorio.  
+2. Instalar dependencias con `npm install`.  
+3. **NUEVO:** Ejecutar `node seed.js` para crear usuarios de prueba.
+4. Crear un archivo `.env` en la raíz del proyecto para la configuración de la base de datos.  
+
+### Contenido Mínimo del `.env`:  
+```bash
+# Puerto donde se ejecutará la aplicación
+PORT=4000
+
+# URI de conexión a MongoDB (local o Atlas)
+MONGO_URI_ATLAS="mongodb://localhost:27017/clickwavedb" 
+# o MONGO_URI_ATLAS="mongodb+srv://user:password@cluster.mongodb.net/..."
+
+# NUEVO: Secrets para autenticación
+JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_clickwave2025
+SESSION_SECRET=your_super_secret_session_key_change_this_in_production_clickwave2025
+NODE_ENV=development
+````
+
+4. Ejecutar la aplicación con `npm run dev` (o `npm start`).
+
+---
+
 
 # 5. Documentación de Interfaces y Funcionalidades
 
