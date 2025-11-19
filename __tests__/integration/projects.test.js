@@ -73,14 +73,14 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert: Verificar resultado
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('id');
       expect(response.body.name).toBe('Website Redesign');
       expect(response.body.description).toBe('Complete redesign of company website');
       expect(response.body.budget).toBe(50000);
       expect(response.body.status).toBe('in_progress');
       
-      // Verificar que el _id es un ObjectId válido de MongoDB
-      expectValidMongoId(response.body._id);
+      // Verificar que el id es un ObjectId válido de MongoDB
+      expectValidMongoId(response.body.id);
       
       // Verificar que se crearon timestamps
       expectValidTimestamp(response.body.created_at);
@@ -108,7 +108,7 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.body).toHaveProperty('code');
-      expect(response.body.code).toMatch(/^PRJ-\d+$/);
+      expect(response.body.code).toMatch(/^PRJ-[a-f0-9]+$/i);
     });
 
     it('debe crear proyecto con tipo de facturación "hourly"', async () => {
@@ -162,8 +162,8 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
-      expect(response.body.error).toMatch(/name|nombre|requerido/i);
+      expect(response.body).toHaveProperty('message');
+      expect(response.body.message).toMatch(/name|nombre|required|requerido/i);
     });
 
     it('debe retornar 400 cuando falta el client_id', async () => {
@@ -184,8 +184,8 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
-      expect(response.body.error).toMatch(/client|requerido/i);
+      expect(response.body).toHaveProperty('message');
+      expect(response.body.message).toMatch(/client|required|requerido/i);
     });
 
     it('debe retornar 400 cuando falta el project_manager', async () => {
@@ -203,8 +203,8 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
-      expect(response.body.error).toMatch(/manager|requerido/i);
+      expect(response.body).toHaveProperty('message');
+      expect(response.body.message).toMatch(/manager|required|requerido/i);
     });
   });
 
@@ -236,7 +236,7 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
 
     it('debe retornar 400 con status inválido', async () => {
@@ -261,7 +261,7 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
 
     it('debe aceptar todos los valores válidos de status', async () => {
@@ -318,7 +318,7 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
 
     it('debe retornar 400 con ObjectId de manager inválido', async () => {
@@ -337,7 +337,7 @@ describe('Integration Tests - POST /api/projects', () => {
 
       // Assert
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
   });
 

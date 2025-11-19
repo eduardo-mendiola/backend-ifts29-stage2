@@ -1,6 +1,7 @@
 /node_modules
 /.env
 /.vscode/
+/coverage
 /COMMIT_MESSAGE.md
 /IMPLEMENTATION_SUMMARY.md
 /PROTECT_API_ROUTES.md

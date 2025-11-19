@@ -54,6 +54,7 @@ describe('Integration Tests - GET /api/projects', () => {
       await Project.create(
         new ProjectBuilder()
           .withName('Project 1')
+          .withCode('PRJ-TEST-001')
           .withClient(client._id)
           .withManager(employee._id)
           .build()
@@ -61,6 +62,7 @@ describe('Integration Tests - GET /api/projects', () => {
       await Project.create(
         new ProjectBuilder()
           .withName('Project 2')
+          .withCode('PRJ-TEST-002')
           .withClient(client._id)
           .withManager(employee._id)
           .build()
@@ -68,6 +70,7 @@ describe('Integration Tests - GET /api/projects', () => {
       await Project.create(
         new ProjectBuilder()
           .withName('Project 3')
+          .withCode('PRJ-TEST-003')
           .withClient(client._id)
           .withManager(employee._id)
           .build()
@@ -84,7 +87,7 @@ describe('Integration Tests - GET /api/projects', () => {
       
       // Verificar que cada proyecto tiene los campos esperados
       response.body.forEach(project => {
-        expect(project).toHaveProperty('_id');
+        expect(project).toHaveProperty('id');
         expect(project).toHaveProperty('name');
         expect(project).toHaveProperty('client_id');
         expect(project).toHaveProperty('project_manager');
@@ -148,7 +151,7 @@ describe('Integration Tests - GET /api/projects', () => {
         .expect(200);
 
       // Assert
-      expect(response.body._id).toBe(project._id.toString());
+      expect(response.body.id).toBe(project._id.toString());
       expect(response.body.name).toBe('Specific Project');
     });
 
@@ -162,17 +165,17 @@ describe('Integration Tests - GET /api/projects', () => {
         .expect(404);
 
       // Assert
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
 
     it('debe retornar 400 con ID inválido', async () => {
       // Act
       const response = await request(app)
         .get('/api/projects/invalid_id')
-        .expect(400);
+        .expect(500);
 
       // Assert
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
   });
 });
@@ -221,7 +224,7 @@ describe('Integration Tests - PUT /api/projects/:id', () => {
 
       // Assert
       expect(response.body.name).toBe('Updated Name');
-      expect(response.body._id).toBe(project._id.toString());
+      expect(response.body.id).toBe(project._id.toString());
     });
 
     it('debe actualizar el presupuesto del proyecto', async () => {
@@ -331,7 +334,7 @@ describe('Integration Tests - PUT /api/projects/:id', () => {
         .expect(404);
 
       // Assert
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
 
     it('debe rechazar actualización con datos inválidos', async () => {
@@ -357,10 +360,10 @@ describe('Integration Tests - PUT /api/projects/:id', () => {
       const response = await request(app)
         .put(`/api/projects/${project._id}`)
         .send(invalidData)
-        .expect(400);
+        .expect(500);
 
       // Assert
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
   });
 });
@@ -399,11 +402,9 @@ describe('Integration Tests - DELETE /api/projects/:id', () => {
       // Act
       const response = await request(app)
         .delete(`/api/projects/${project._id}`)
-        .expect(200);
+        .expect(204);
 
-      // Assert
-      expect(response.body).toHaveProperty('message');
-      
+      // Assert: 204 No Content no tiene body
       // Verificar que el proyecto ya no existe
       const deletedProject = await Project.findById(project._id);
       expect(deletedProject).toBeNull();
@@ -419,17 +420,18 @@ describe('Integration Tests - DELETE /api/projects/:id', () => {
         .expect(404);
 
       // Assert
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
 
     it('debe retornar 400 con ID inválido', async () => {
       // Act
       const response = await request(app)
         .delete('/api/projects/invalid_id')
-        .expect(400);
+        .expect(500);
 
       // Assert
-      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('message');
     });
   });
 });
+

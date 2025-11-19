@@ -589,6 +589,49 @@ __tests__/
 - Patrón Builder para datos de prueba
 - Helpers y fixtures reutilizables
 
+### Resultados de Tests
+
+#### 1. Smoke Tests (7/7)
+Verificación básica del sistema de testing: Jest, operaciones básicas, async/await, helpers globales.
+
+![Smoke Tests](./assets/screenshots/smoke-tests.png)
+
+#### 2. Unit Tests - dateHelpers (18/18)
+Tests unitarios para funciones de formateo de fechas: `formatDate`, `formatDatesForInput`, edge cases.
+
+![Unit Tests - dateHelpers](./assets/screenshots/unit-datehelpers.png)
+
+#### 3. Integration Tests - POST /api/projects (14/14)
+Tests de integración completos para creación de proyectos:
+- Creación con datos válidos
+- Validación de campos requeridos (name, client_id, project_manager)
+- Validación de enumeraciones (billing_type, status)
+- Validación de referencias (ObjectIds)
+- Campos opcionales y valores por defecto
+
+![Integration Tests - POST](./assets/screenshots/integration-projects-post.png)
+
+#### 4. Integration Tests - CRUD /api/projects (15/15)
+Tests de integración para operaciones CRUD completas:
+- **GET** /api/projects - Listar todos los proyectos
+- **GET** /api/projects/:id - Obtener proyecto específico
+- **PUT** /api/projects/:id - Actualizar proyecto
+- **DELETE** /api/projects/:id - Eliminar proyecto
+- Manejo de errores (404, 500)
+
+![Integration Tests - CRUD](./assets/screenshots/integration-projects-crud.png)
+
+#### 5. Suite Completa (56/56 - 100%)
+Ejecución de toda la suite de tests:
+- 7 Smoke tests
+- 18 Unit tests
+- 29 Integration tests (projects)
+- 2 Example pattern tests
+
+**Resultado: 56 tests pasando, 0 fallando**
+
+![Test Suite Completa](./assets/screenshots/full-test-suite.png)
+
 ### Documentación Completa
 
 Para información detallada sobre cómo escribir y ejecutar tests:
