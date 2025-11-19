@@ -15,11 +15,21 @@ router.get('/', redirectIfAuthenticated, AuthController.showLogin);
 // Procesar login
 router.post('/login', 
   redirectIfAuthenticated,
+  (req, res, next) => {
+    console.log('[AUTH] POST /login recibido');
+    console.log('[AUTH] Email:', req.body.email);
+    console.log('[AUTH] Password:', req.body.password ? '***' : 'NO PROPORCIONADO');
+    next();
+  },
   passport.authenticate('local', {
     successRedirect: '/admin/dashboard',
     failureRedirect: '/',
     failureFlash: true
-  })
+  }),
+  (req, res) => {
+    console.log('[AUTH] Callback de autenticación fallida ejecutado');
+    res.redirect('/');
+  }
 );
 
 // Registro deshabilitado - Solo admins pueden crear usuarios

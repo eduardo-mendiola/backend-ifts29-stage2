@@ -25,17 +25,25 @@ export const showLogin = (req, res) => {
  * Esta función se ejecuta después de autenticación exitosa
  */
 export const processLogin = async (req, res) => {
-  const returnTo = req.session.returnTo || '/admin/dashboard';
-  delete req.session.returnTo;
-  
-  // Obtener nombre del empleado si existe
-  let welcomeName = req.user.username;
-  if (req.user.employee && req.user.employee.first_name && req.user.employee.last_name) {
-    welcomeName = `${req.user.employee.first_name} ${req.user.employee.last_name}`;
+  try {
+    console.log('[AUTH] Procesando login exitoso para usuario:', req.user._id);
+    
+    const returnTo = req.session.returnTo || '/admin/dashboard';
+    delete req.session.returnTo;
+    
+    // Obtener nombre del empleado si existe
+    let welcomeName = req.user.username;
+    if (req.user.employee && req.user.employee.first_name && req.user.employee.last_name) {
+      welcomeName = `${req.user.employee.first_name} ${req.user.employee.last_name}`;
+    }
+    
+    req.flash('success', `Bienvenido, ${welcomeName}`);
+    res.redirect(returnTo);
+  } catch (error) {
+    console.error('[AUTH] Error post-login:', error);
+    req.flash('error', 'Error al procesar login');
+    res.redirect('/');
   }
-  
-  req.flash('success', `Bienvenido, ${welcomeName}`);
-  res.redirect(returnTo);
 };
 
 /**
