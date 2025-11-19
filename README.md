@@ -1,12 +1,12 @@
 # Tecnicatura Superior en Desarrollo de Software  
-## 2° Entrega de Proyecto Parcial: Desarrollo Backend con MongoDB  
+## Entrega Final de Proyecto: Sistema de Gestión Integral NexusFlow para ClickWave 
 ### Caso 2: ClickWave  
 
 **Materia:** Desarrollo de Sistemas Web (Back End)  
 **Profesor:** Emir Eliezer Garcia Ontiveros  
 **Comisión:** A  
 **Alumno:** Mendiola, Eduardo E.  
-**Fecha de la Entrega:** 24-10-2025  
+**Fecha de la Entrega:** 19-11-2025  
 
 ---
 
@@ -94,7 +94,7 @@
 
 ## 1. Introducción del Caso
 
-El sistema **ClickWave** es una aplicación de gestión interna diseñada para optimizar la administración de Usuarios (User), Clientes (Client), y la estructura interna de la compañía (definición de Roles y Áreas).
+El sistema **NexusFlow** desarrollado para la empresa **ClickWave** es una aplicación de gestión interna diseñada para optimizar la administración de Usuarios (User), Clientes (Client), y la estructura interna de la compañía (definición de Roles y Áreas).
 
 La primera etapa se enfocó en la construcción de una API RESTful con persistencia basada en archivos JSON.
 
