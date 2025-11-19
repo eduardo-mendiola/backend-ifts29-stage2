@@ -68,6 +68,9 @@ const __dirname = dirname(__filename);
 // Inicialización y configuración básica
 const app = express();
 
+// Trust proxy - REQUERIDO para Render y otros servicios detrás de proxy reverso
+app.set('trust proxy', 1);
+
 // Configuración de Pug como motor de vistas
 app.set('views', join(__dirname,'..', 'views'));
 app.set('view engine', 'pug')
@@ -96,7 +99,9 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' // HTTPS en producción
+    secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Importante para CORS en producción
+    domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost' // Sin dominio específico en producción
   }
 }));
 

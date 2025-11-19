@@ -10,3 +10,7 @@
 /update-roles-permissions.js
 /reset-all-passwords.js
 /reset-password.js
+/DEPLOYMENT_GUIDE.md
+/CHANGES_SUMMARY.md
+/test-db-connection.js
+/DEPLOYMENT_CHECKLIST.md
