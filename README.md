@@ -1,5 +1,5 @@
 # Tecnicatura Superior en Desarrollo de Software  
-## Entrega Final de Proyecto: Sistema de Gestión Integral NexusFlow para ClickWave 
+## Entrega Final de Proyecto: Sistema de Gestión Integral NexusFlow v3.0 para ClickWave 
 ### Caso 2: ClickWave  
 
 **Materia:** Desarrollo de Sistemas Web (Back End)  
@@ -49,6 +49,7 @@
        3.5.1 [Ubicación de las Reglas de Negocio](#351-ubicación-de-las-reglas-de-negocio)  
        3.5.2 [Reglas de Negocio Clave Implementadas](#352-reglas-de-negocio-clave-implementadas)  
    3.6 [Interacción entre Módulos (usando MongoDB y Mongoose)](#36-interacción-entre-módulos-usando-mongodb-y-mongoose)  
+   3.7 [Versionado](#37-versionado)  
 
 4. [Cómo ejecutar este proyecto](#4-cómo-ejecutar-este-proyecto)  
    4.1 [Clonar el repositorio](#41-clonar-el-repositorio)  
@@ -421,6 +422,21 @@ La mayor parte de la lógica de negocio reside en los Controladores. Esta decisi
 - El modelo, definido mediante **Mongoose schemas**, se encarga de interactuar directamente con la colección de MongoDB, realizando operaciones de creación, lectura, actualización o eliminación de documentos. Mongoose maneja automáticamente la generación de IDs únicos (`_id`) y la validación de esquema.
 - El resultado de la operación se devuelve desde el modelo al controlador.
 - Finalmente, el controlador construye una respuesta HTTP (con un código de estado y datos en formato JSON) y la envía de vuelta al cliente.
+
+
+Perfecto, Ezequiel. Entonces podemos reformularlo así, usando “desarrollo del sistema” y explicando el motivo del salto entre versiones mayores:
+
+---
+
+## 3.7 Versionado
+
+El desarrollo del sistema seguirá un esquema de **versionado mayor**, reflejando cambios significativos en la funcionalidad o arquitectura del sistema. Cada versión mayor incluye nuevas características o modificaciones importantes que justifican un incremento de número completo, en lugar de versiones menores (por ejemplo, 1.1, 1.2), que se suelen reservar para ajustes o correcciones menores.
+
+* **v1.0** – CRUD básico utilizando archivos JSON como almacenamiento de datos.
+* **v2.0** – Migración a MongoDB y mejoras en la interfaz, incluyendo un sidebar más completo y funcional.
+* **v3.0** – Implementación del sistema de autenticación y autorización de usuarios.
+
+El salto de versión completa (1.0 → 2.0 → 3.0) se utiliza para reflejar que cada etapa representa un **avance importante en la arquitectura y funcionalidades**, diferenciándose claramente de simples correcciones o mejoras menores. Esto facilita el seguimiento del desarrollo y permite identificar rápidamente hitos clave en la evolución del sistema.
 
 
 ---
