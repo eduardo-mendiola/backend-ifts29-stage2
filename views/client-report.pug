@@ -1,0 +1,553 @@
+extends layout.pug
+
+block content
+  .container-fluid
+
+    //- ENCABEZADO
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h1.mb-1 Reporte de Clientes
+        p.text-secondary.mb-0 Análisis detallado de clientes, facturación y relaciones comerciales
+      div
+        .d-flex.gap-2
+          //- Selector de período
+          select#periodSelector.form-select(style="width: 200px;")
+            option(value="all") Todos
+            option(value="active") Clientes Activos
+            option(value="year") Año actual
+            option(value="quarter") Último trimestre
+          //- Botón de exportar
+          button.btn.btn-success(onclick="exportReport()")
+            i.bi.bi-download.me-2
+            | Exportar
+
+    //- RESUMEN DE CLIENTES (4 cards)
+    .row.g-3.mb-4
+      //- Total de Clientes
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-primary.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Total de Clientes
+                h3.mb-0.text-white#totalClients 0
+              .text-primary
+                i.bi.bi-people.fs-2
+            small.text-secondary#clientsBreakdown
+              span.text-success 0 activos
+              |  • 
+              span.text-secondary 0 inactivos
+
+      //- Valor Promedio por Cliente
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-success.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Valor Promedio/Cliente
+                h3.mb-0.text-white#avgClientValue $0.00
+              .text-success
+                i.bi.bi-currency-dollar.fs-2
+            small.text-secondary#valueInfo Facturación total/clientes
+
+      //- Clientes Nuevos
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-info.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Clientes Nuevos
+                h3.mb-0.text-white#newClients 0
+              .text-info
+                i.bi.bi-person-plus.fs-2
+            small.text-success#newClientsGrowth
+              i.bi.bi-arrow-up
+              |  +0% vs período anterior
+
+      //- Tasa de Retención
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-warning.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Tasa de Retención
+                h3.mb-0.text-white#retentionRate 0%
+              .text-warning
+                i.bi.bi-shield-check.fs-2
+            small.text-secondary#retentionInfo Clientes recurrentes
+
+    //- GRÁFICOS PRINCIPALES
+    .row.g-3.mb-4
+      //- Top 10 Clientes por Facturación
+      .col-12.col-lg-8
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-bar-chart.me-2
+              | Top 10 Clientes por Facturación
+            p.text-secondary.small.mb-0 Ingresos totales generados
+          .card-body
+            canvas#topClientsByRevenueChart(style="height: 350px;")
+
+      //- Distribución por Tipo
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-pie-chart.me-2
+              | Tipo de Clientes
+          .card-body
+            canvas#clientTypeChart(style="height: 350px;")
+
+    //- GRÁFICOS SECUNDARIOS
+    .row.g-3.mb-4
+      //- Clientes por Cantidad de Proyectos
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-folder.me-2
+              | Clientes por Cantidad de Proyectos
+          .card-body
+            canvas#clientsByProjectsChart(style="height: 300px;")
+
+      //- Evolución de Clientes
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-graph-up.me-2
+              | Evolución de Nuevos Clientes
+            p.text-secondary.small.mb-0 Últimos 12 meses
+          .card-body
+            canvas#clientEvolutionChart(style="height: 300px;")
+
+    //- TABLAS DE CLIENTES
+    .row.g-3.mb-4
+      //- Top Clientes VIP
+      .col-12.col-lg-6
+        .card.bg-dark.border-success
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-star.me-2
+              | Clientes VIP (Top 5)
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.mb-0
+                thead
+                  tr
+                    th Cliente
+                    th Proyectos
+                    th Facturación
+                    th Última Actividad
+                tbody#vipClientsTable
+                  tr
+                    td(colspan="4" class="text-center text-secondary") Cargando...
+
+      //- Clientes en Riesgo
+      .col-12.col-lg-6
+        .card.bg-dark.border-danger
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-exclamation-triangle.me-2
+              | Clientes en Riesgo
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.mb-0
+                thead
+                  tr
+                    th Cliente
+                    th Motivo
+                    th Días Inactivo
+                    th Acción
+                tbody#riskClientsTable
+                  tr
+                    td(colspan="4" class="text-center text-secondary") No hay clientes en riesgo
+
+    //- MÉTRICAS AVANZADAS
+    .row.g-3.mb-4
+      //- Análisis de Contactos
+      .col-12.col-md-6.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-person-lines-fill.me-2
+              | Contactos Registrados
+          .card-body
+            .mb-3
+              p.text-secondary.small.mb-1 Total de Contactos
+              h4.text-white.mb-0#totalContacts 0
+            .mb-3
+              p.text-secondary.small.mb-1 Promedio por Cliente
+              h4.text-info.mb-0#avgContactsPerClient 0.0
+            small.text-secondary
+              i.bi.bi-info-circle.me-1
+              | Clientes sin contactos: 
+              span#clientsWithoutContacts.text-warning 0
+
+      //- Análisis Geográfico
+      .col-12.col-md-6.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-geo-alt.me-2
+              | Distribución Geográfica
+          .card-body
+            canvas#geographicDistributionChart(style="height: 200px;")
+
+      //- Índice de Satisfacción
+      .col-12.col-md-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-emoji-smile.me-2
+              | Índice de Satisfacción
+          .card-body.text-center
+            .mb-3
+              h1.text-success.mb-0#satisfactionScore 85
+              p.text-secondary.small Puntuación promedio
+            .d-flex.justify-content-around.mt-3
+              div
+                h5.text-success.mb-0#highSatisfaction 0
+                small.text-secondary Alta
+              div
+                h5.text-warning.mb-0#mediumSatisfaction 0
+                small.text-secondary Media
+              div
+                h5.text-danger.mb-0#lowSatisfaction 0
+                small.text-secondary Baja
+
+    //- TABLA DETALLADA
+    .row.g-3.mb-4
+      .col-12
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-table.me-2
+              | Lista Completa de Clientes
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.table-hover.mb-0
+                thead
+                  tr
+                    th Código
+                    th Cliente
+                    th Tipo
+                    th Proyectos
+                    th Facturación
+                    th Contactos
+                    th Estado
+                    th Acciones
+                tbody#clientsDetailTable
+                  tr
+                    td(colspan="8" class="text-center text-secondary") Cargando...
+
+  //- SCRIPTS
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js")
+  
+  script.
+    // ============================================
+    // REPORTE DE CLIENTES - SCRIPTS
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      loadClientReport();
+      
+      document.getElementById('periodSelector').addEventListener('change', (e) => {
+        loadClientReport(e.target.value);
+      });
+    });
+
+    // Cargar reporte de clientes
+    async function loadClientReport(filter = 'all') {
+      try {
+        const response = await fetch(`/api/client-report?filter=${filter}`);
+        const data = await response.json();
+        
+        updateSummaryCards(data.summary);
+        updateCharts(data.charts);
+        updateTables(data.tables);
+        updateMetrics(data.metrics);
+        
+      } catch (error) {
+        console.error('Error al cargar reporte de clientes:', error);
+      }
+    }
+
+    // Actualizar cards de resumen
+    function updateSummaryCards(summary) {
+      document.getElementById('totalClients').textContent = summary.totalClients || 0;
+      document.getElementById('avgClientValue').textContent = 
+        `$${(summary.avgClientValue || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+      document.getElementById('newClients').textContent = summary.newClients || 0;
+      document.getElementById('retentionRate').textContent = `${(summary.retentionRate || 0).toFixed(1)}%`;
+      
+      // Breakdown
+      document.getElementById('clientsBreakdown').innerHTML = `
+        <span class="text-success">${summary.activeClients || 0} activos</span>
+        •
+        <span class="text-secondary">${summary.inactiveClients || 0} inactivos</span>
+      `;
+      
+      // Info adicional
+      document.getElementById('valueInfo').textContent = 
+        `$${(summary.totalRevenue || 0).toLocaleString('es-AR')} facturación total`;
+      
+      const growth = summary.newClientsGrowth || 0;
+      const growthEl = document.getElementById('newClientsGrowth');
+      growthEl.innerHTML = growth >= 0 
+        ? `<i class="bi bi-arrow-up"></i> +${growth.toFixed(0)}% vs período anterior`
+        : `<i class="bi bi-arrow-down"></i> ${growth.toFixed(0)}% vs período anterior`;
+      growthEl.className = growth >= 0 ? 'text-success' : 'text-danger';
+      
+      document.getElementById('retentionInfo').textContent = 
+        `${summary.recurringClients || 0} clientes con múltiples proyectos`;
+    }
+
+    // Variables globales para gráficos
+    let topClientsChart, clientTypeChart, clientsByProjectsChart, clientEvolutionChart, geoChart;
+
+    // Actualizar gráficos
+    function updateCharts(charts) {
+      // Top Clientes por Facturación
+      const topCtx = document.getElementById('topClientsByRevenueChart').getContext('2d');
+      if (topClientsChart) topClientsChart.destroy();
+      
+      topClientsChart = new Chart(topCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.topByRevenue.labels || [],
+          datasets: [{
+            label: 'Facturación',
+            data: charts.topByRevenue.data || [],
+            backgroundColor: 'rgba(25, 135, 84, 0.7)'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => '$' + value.toLocaleString()
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            y: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Tipo de Clientes
+      const typeCtx = document.getElementById('clientTypeChart').getContext('2d');
+      if (clientTypeChart) clientTypeChart.destroy();
+      
+      clientTypeChart = new Chart(typeCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Empresas', 'Personas'],
+          datasets: [{
+            data: charts.byType.data || [0, 0],
+            backgroundColor: [
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(25, 135, 84, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0' }
+            }
+          }
+        }
+      });
+
+      // Clientes por Cantidad de Proyectos
+      const projectsCtx = document.getElementById('clientsByProjectsChart').getContext('2d');
+      if (clientsByProjectsChart) clientsByProjectsChart.destroy();
+      
+      clientsByProjectsChart = new Chart(projectsCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.byProjects.labels || [],
+          datasets: [{
+            label: 'Clientes',
+            data: charts.byProjects.data || [],
+            backgroundColor: 'rgba(13, 110, 253, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#f0f0f0', stepSize: 1 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Evolución de Nuevos Clientes
+      const evolutionCtx = document.getElementById('clientEvolutionChart').getContext('2d');
+      if (clientEvolutionChart) clientEvolutionChart.destroy();
+      
+      clientEvolutionChart = new Chart(evolutionCtx, {
+        type: 'line',
+        data: {
+          labels: charts.evolution.labels || [],
+          datasets: [{
+            label: 'Nuevos Clientes',
+            data: charts.evolution.data || [],
+            borderColor: 'rgba(25, 135, 84, 1)',
+            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#f0f0f0', stepSize: 1 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Distribución Geográfica
+      const geoCtx = document.getElementById('geographicDistributionChart').getContext('2d');
+      if (geoChart) geoChart.destroy();
+      
+      geoChart = new Chart(geoCtx, {
+        type: 'pie',
+        data: {
+          labels: charts.geographic.labels || [],
+          datasets: [{
+            data: charts.geographic.data || [],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)',
+              'rgba(108, 117, 125, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Actualizar tablas
+    function updateTables(tables) {
+      // Clientes VIP
+      const vipTable = document.getElementById('vipClientsTable');
+      const vipClients = tables.vipClients || [];
+      
+      if (vipClients.length === 0) {
+        vipTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay datos</td></tr>';
+      } else {
+        vipTable.innerHTML = vipClients.map(client => `
+          <tr>
+            <td><strong class="text-warning">${client.name}</strong></td>
+            <td>${client.projects}</td>
+            <td class="text-success">$${client.revenue.toLocaleString('es-AR')}</td>
+            <td>${client.lastActivity}</td>
+          </tr>
+        `).join('');
+      }
+      
+      // Clientes en Riesgo
+      const riskTable = document.getElementById('riskClientsTable');
+      const riskClients = tables.riskClients || [];
+      
+      if (riskClients.length === 0) {
+        riskTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay clientes en riesgo</td></tr>';
+      } else {
+        riskTable.innerHTML = riskClients.map(client => `
+          <tr>
+            <td>${client.name}</td>
+            <td><span class="badge bg-danger">${client.reason}</span></td>
+            <td>${client.daysInactive} días</td>
+            <td><a href="/clients/${client.id}" class="btn btn-sm btn-outline-warning">Contactar</a></td>
+          </tr>
+        `).join('');
+      }
+      
+      // Detalle completo
+      const detailTable = document.getElementById('clientsDetailTable');
+      const allClients = tables.detail || [];
+      
+      if (allClients.length === 0) {
+        detailTable.innerHTML = '<tr><td colspan="8" class="text-center text-secondary">No hay datos</td></tr>';
+      } else {
+        detailTable.innerHTML = allClients.map(client => `
+          <tr>
+            <td>${client.code}</td>
+            <td>${client.name}</td>
+            <td><span class="badge ${client.type === 'company' ? 'bg-primary' : 'bg-info'}">${client.type === 'company' ? 'Empresa' : 'Persona'}</span></td>
+            <td>${client.projects}</td>
+            <td>$${client.revenue.toLocaleString('es-AR')}</td>
+            <td>${client.contacts}</td>
+            <td><span class="badge ${client.active ? 'bg-success' : 'bg-secondary'}">${client.active ? 'Activo' : 'Inactivo'}</span></td>
+            <td>
+              <a href="/clients/${client.id}" class="btn btn-sm btn-outline-primary">Ver</a>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // Actualizar métricas adicionales
+    function updateMetrics(metrics) {
+      document.getElementById('totalContacts').textContent = metrics.totalContacts || 0;
+      document.getElementById('avgContactsPerClient').textContent = (metrics.avgContactsPerClient || 0).toFixed(1);
+      document.getElementById('clientsWithoutContacts').textContent = metrics.clientsWithoutContacts || 0;
+      
+      // Satisfacción (simulada basada en métricas)
+      const satisfaction = metrics.satisfactionScore || 85;
+      document.getElementById('satisfactionScore').textContent = satisfaction;
+      document.getElementById('highSatisfaction').textContent = metrics.highSatisfaction || 0;
+      document.getElementById('mediumSatisfaction').textContent = metrics.mediumSatisfaction || 0;
+      document.getElementById('lowSatisfaction').textContent = metrics.lowSatisfaction || 0;
+    }
+
+    // Exportar reporte
+    function exportReport() {
+      alert('Funcionalidad de exportación en desarrollo');
+      // TODO: Implementar exportación a PDF o Excel
+    }

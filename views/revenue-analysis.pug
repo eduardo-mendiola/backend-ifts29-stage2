@@ -1,0 +1,550 @@
+extends layout.pug
+
+block content
+  .container-fluid
+
+    //- ENCABEZADO
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h1.mb-1 Análisis de Ingresos
+        p.text-secondary.mb-0 Análisis detallado de fuentes de ingresos y tendencias
+      div
+        .d-flex.gap-2
+          //- Selector de período
+          select#periodSelector.form-select(style="width: 200px;")
+            option(value="year") Año actual
+            option(value="quarter") Último trimestre
+            option(value="semester") Semestre
+            option(value="custom") Personalizado
+          //- Botón de exportar
+          button.btn.btn-success(onclick="exportReport()")
+            i.bi.bi-download.me-2
+            | Exportar
+
+    //- RESUMEN DE INGRESOS (4 cards)
+    .row.g-3.mb-4
+      //- Ingresos Totales
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-success.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Ingresos Totales
+                h3.mb-0.text-white#totalRevenue $0.00
+              .text-success
+                i.bi.bi-cash-coin.fs-2
+            small.text-success#revenueGrowth
+              i.bi.bi-arrow-up
+              |  +0% vs período anterior
+
+      //- Ingreso Promedio Mensual
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-info.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Promedio Mensual
+                h3.mb-0.text-white#avgMonthlyRevenue $0.00
+              .text-info
+                i.bi.bi-calendar-check.fs-2
+            small.text-secondary#monthlyInfo Calculado del período
+
+      //- Proyección Anual
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-warning.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Proyección Anual
+                h3.mb-0.text-white#projectedRevenue $0.00
+              .text-warning
+                i.bi.bi-graph-up.fs-2
+            small.text-secondary#projectionInfo Basado en tendencia actual
+
+      //- Tasa de Crecimiento
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-primary.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Tasa de Crecimiento
+                h3.mb-0.text-white#growthRate 0%
+              .text-primary
+                i.bi.bi-arrow-up-right.fs-2
+            small.text-secondary#growthInfo Promedio mensual
+
+    //- GRÁFICO PRINCIPAL
+    .row.g-3.mb-4
+      .col-12
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-graph-up-arrow.me-2
+              | Evolución de Ingresos Mensuales
+            p.text-secondary.small.mb-0 Con tendencia y proyección
+          .card-body
+            canvas#revenueEvolutionChart(style="height: 400px;")
+
+    //- GRÁFICOS SECUNDARIOS
+    .row.g-3.mb-4
+      //- Ingresos por Fuente
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-pie-chart.me-2
+              | Ingresos por Fuente
+          .card-body
+            canvas#revenueBySourceChart(style="height: 300px;")
+
+      //- Ingresos por Cliente
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-people.me-2
+              | Top 10 Clientes por Ingresos
+          .card-body
+            canvas#revenueByClientChart(style="height: 300px;")
+
+    //- ANÁLISIS COMPARATIVO
+    .row.g-3.mb-4
+      //- Comparación Año a Año
+      .col-12.col-lg-8
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-bar-chart.me-2
+              | Comparación Año a Año
+            p.text-secondary.small.mb-0 Por mes
+          .card-body
+            canvas#yearOverYearChart(style="height: 300px;")
+
+      //- Distribución Trimestral
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white Distribución Trimestral
+          .card-body
+            canvas#quarterlyDistributionChart(style="height: 300px;")
+
+    //- MÉTRICAS AVANZADAS
+    .row.g-3.mb-4
+      //- Ingresos Recurrentes vs No Recurrentes
+      .col-12.col-md-6.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white Tipo de Ingresos
+          .card-body
+            canvas#recurringVsNonRecurringChart(style="height: 250px;")
+
+      //- Ingresos por Tipo de Facturación
+      .col-12.col-md-6.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white Por Tipo de Facturación
+          .card-body
+            canvas#billingTypeRevenueChart(style="height: 250px;")
+
+      //- Concentración de Ingresos
+      .col-12.col-md-12.col-lg-4
+        .card.bg-dark.border-warning
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-exclamation-triangle.me-2
+              | Concentración de Ingresos
+          .card-body
+            .mb-3
+              p.text-secondary.small.mb-1 Top 3 Clientes representan:
+              h4.text-warning.mb-0#top3Concentration 0%
+            .mb-3
+              p.text-secondary.small.mb-1 Top 5 Clientes representan:
+              h4.text-info.mb-0#top5Concentration 0%
+            small.text-secondary.d-block.mt-2
+              i.bi.bi-info-circle.me-1
+              | Riesgo: 
+              span#riskLevel.text-success Bajo
+
+    //- TABLA DE DETALLE
+    .row.g-3.mb-4
+      .col-12
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-table.me-2
+              | Detalle Mensual de Ingresos
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.table-hover.mb-0
+                thead
+                  tr
+                    th Mes
+                    th Facturas
+                    th Ingresos
+                    th Crecimiento
+                    th Acumulado
+                tbody#monthlyRevenueTable
+                  tr
+                    td(colspan="5" class="text-center text-secondary") Cargando...
+
+  //- SCRIPTS
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js")
+  
+  script.
+    // ============================================
+    // ANÁLISIS DE INGRESOS - SCRIPTS
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      loadRevenueAnalysis();
+      
+      document.getElementById('periodSelector').addEventListener('change', (e) => {
+        loadRevenueAnalysis(e.target.value);
+      });
+    });
+
+    // Cargar análisis de ingresos
+    async function loadRevenueAnalysis(period = 'year') {
+      try {
+        const response = await fetch(`/api/revenue-analysis?period=${period}`);
+        const data = await response.json();
+        
+        updateSummaryCards(data.summary);
+        updateCharts(data.charts);
+        updateTable(data.monthlyDetail);
+        
+      } catch (error) {
+        console.error('Error al cargar análisis de ingresos:', error);
+      }
+    }
+
+    // Actualizar cards de resumen
+    function updateSummaryCards(summary) {
+      document.getElementById('totalRevenue').textContent = 
+        `$${(summary.totalRevenue || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+      
+      document.getElementById('avgMonthlyRevenue').textContent = 
+        `$${(summary.avgMonthlyRevenue || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+      
+      document.getElementById('projectedRevenue').textContent = 
+        `$${(summary.projectedAnnualRevenue || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+      
+      document.getElementById('growthRate').textContent = 
+        `${(summary.growthRate || 0).toFixed(1)}%`;
+      
+      // Growth indicator
+      const growth = summary.revenueGrowth || 0;
+      const growthEl = document.getElementById('revenueGrowth');
+      growthEl.innerHTML = growth >= 0 
+        ? `<i class="bi bi-arrow-up"></i> +${growth.toFixed(1)}% vs período anterior`
+        : `<i class="bi bi-arrow-down"></i> ${growth.toFixed(1)}% vs período anterior`;
+      growthEl.className = growth >= 0 ? 'text-success' : 'text-danger';
+      
+      // Concentración
+      document.getElementById('top3Concentration').textContent = 
+        `${(summary.top3Concentration || 0).toFixed(1)}%`;
+      document.getElementById('top5Concentration').textContent = 
+        `${(summary.top5Concentration || 0).toFixed(1)}%`;
+      
+      // Risk level
+      const riskEl = document.getElementById('riskLevel');
+      const top3 = summary.top3Concentration || 0;
+      if (top3 > 60) {
+        riskEl.textContent = 'Alto';
+        riskEl.className = 'text-danger';
+      } else if (top3 > 40) {
+        riskEl.textContent = 'Medio';
+        riskEl.className = 'text-warning';
+      } else {
+        riskEl.textContent = 'Bajo';
+        riskEl.className = 'text-success';
+      }
+    }
+
+    // Variables globales para gráficos
+    let revenueEvolutionChart, revenueBySourceChart, revenueByClientChart;
+    let yearOverYearChart, quarterlyChart, recurringChart, billingTypeChart;
+
+    // Actualizar gráficos
+    function updateCharts(charts) {
+      // Gráfico de Evolución con tendencia
+      const evolutionCtx = document.getElementById('revenueEvolutionChart').getContext('2d');
+      if (revenueEvolutionChart) revenueEvolutionChart.destroy();
+      
+      revenueEvolutionChart = new Chart(evolutionCtx, {
+        type: 'line',
+        data: {
+          labels: charts.evolution.labels || [],
+          datasets: [
+            {
+              label: 'Ingresos Reales',
+              data: charts.evolution.data || [],
+              borderColor: 'rgba(25, 135, 84, 1)',
+              backgroundColor: 'rgba(25, 135, 84, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 3
+            },
+            {
+              label: 'Tendencia',
+              data: charts.evolution.trend || [],
+              borderColor: 'rgba(255, 193, 7, 1)',
+              borderDash: [5, 5],
+              tension: 0.4,
+              fill: false,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { color: '#f0f0f0' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => '$' + value.toLocaleString()
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Ingresos por Fuente
+      const sourceCtx = document.getElementById('revenueBySourceChart').getContext('2d');
+      if (revenueBySourceChart) revenueBySourceChart.destroy();
+      
+      revenueBySourceChart = new Chart(sourceCtx, {
+        type: 'doughnut',
+        data: {
+          labels: charts.bySource.labels || [],
+          datasets: [{
+            data: charts.bySource.data || [],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)',
+              'rgba(108, 117, 125, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Top 10 Clientes
+      const clientCtx = document.getElementById('revenueByClientChart').getContext('2d');
+      if (revenueByClientChart) revenueByClientChart.destroy();
+      
+      revenueByClientChart = new Chart(clientCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.byClient.labels || [],
+          datasets: [{
+            label: 'Ingresos',
+            data: charts.byClient.data || [],
+            backgroundColor: 'rgba(13, 110, 253, 0.7)'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => '$' + value.toLocaleString()
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            y: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Comparación Año a Año
+      const yoyCtx = document.getElementById('yearOverYearChart').getContext('2d');
+      if (yearOverYearChart) yearOverYearChart.destroy();
+      
+      yearOverYearChart = new Chart(yoyCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.yearOverYear.labels || [],
+          datasets: charts.yearOverYear.datasets || []
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { color: '#f0f0f0' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => '$' + value.toLocaleString()
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Distribución Trimestral
+      const quarterlyCtx = document.getElementById('quarterlyDistributionChart').getContext('2d');
+      if (quarterlyChart) quarterlyChart.destroy();
+      
+      quarterlyChart = new Chart(quarterlyCtx, {
+        type: 'pie',
+        data: {
+          labels: charts.quarterly.labels || [],
+          datasets: [{
+            data: charts.quarterly.data || [],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Recurrentes vs No Recurrentes
+      const recurringCtx = document.getElementById('recurringVsNonRecurringChart').getContext('2d');
+      if (recurringChart) recurringChart.destroy();
+      
+      recurringChart = new Chart(recurringCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Recurrentes', 'No Recurrentes'],
+          datasets: [{
+            data: charts.recurring.data || [0, 0],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(108, 117, 125, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Ingresos por Tipo de Facturación
+      const billingCtx = document.getElementById('billingTypeRevenueChart').getContext('2d');
+      if (billingTypeChart) billingTypeChart.destroy();
+      
+      billingTypeChart = new Chart(billingCtx, {
+        type: 'pie',
+        data: {
+          labels: charts.billingType.labels || [],
+          datasets: [{
+            data: charts.billingType.data || [],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Actualizar tabla mensual
+    function updateTable(monthlyDetail) {
+      const table = document.getElementById('monthlyRevenueTable');
+      
+      if (!monthlyDetail || monthlyDetail.length === 0) {
+        table.innerHTML = '<tr><td colspan="5" class="text-center text-secondary">No hay datos</td></tr>';
+        return;
+      }
+
+      table.innerHTML = monthlyDetail.map(month => {
+        const growthClass = month.growth >= 0 ? 'text-success' : 'text-danger';
+        const growthIcon = month.growth >= 0 ? 'bi-arrow-up' : 'bi-arrow-down';
+        
+        return `
+          <tr>
+            <td>${month.month}</td>
+            <td>${month.invoices}</td>
+            <td>$${month.revenue.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+            <td class="${growthClass}">
+              <i class="bi ${growthIcon}"></i> ${month.growth.toFixed(1)}%
+            </td>
+            <td>$${month.accumulated.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Exportar reporte
+    function exportReport() {
+      alert('Funcionalidad de exportación en desarrollo');
+      // TODO: Implementar exportación a PDF o Excel
+    }

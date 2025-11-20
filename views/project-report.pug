@@ -1,0 +1,490 @@
+extends layout.pug
+
+block content
+  .container-fluid
+
+    //- ENCABEZADO
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h1.mb-1 Reporte de Proyectos
+        p.text-secondary.mb-0 Análisis de estado, rentabilidad y desempeño de proyectos
+      div
+        .d-flex.gap-2
+          //- Selector de período
+          select#periodSelector.form-select(style="width: 200px;")
+            option(value="all") Todos
+            option(value="active") Activos
+            option(value="completed") Completados
+            option(value="current") Mes actual
+            option(value="quarter") Último trimestre
+          //- Botón de exportar
+          button.btn.btn-success(onclick="exportReport()")
+            i.bi.bi-download.me-2
+            | Exportar
+
+    //- RESUMEN DE PROYECTOS (4 cards)
+    .row.g-3.mb-4
+      //- Total de Proyectos
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-primary.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Total de Proyectos
+                h3.mb-0.text-white#totalProjects 0
+              .text-primary
+                i.bi.bi-folder.fs-2
+            small.text-secondary#projectsBreakdown
+              span.text-success 0 activos
+              |  • 
+              span.text-warning 0 en pausa
+              |  • 
+              span.text-info 0 completados
+
+      //- Presupuesto Total
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-success.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Presupuesto Total
+                h3.mb-0.text-white#totalBudget $0.00
+              .text-success
+                i.bi.bi-cash-stack.fs-2
+            small.text-secondary#budgetInfo Suma de todos los proyectos
+
+      //- Horas Trabajadas
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-info.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Horas Trabajadas
+                h3.mb-0.text-white#totalHours 0h
+              .text-info
+                i.bi.bi-clock-history.fs-2
+            small.text-secondary#hoursInfo En todos los proyectos
+
+      //- Tareas Completadas
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-warning.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Tareas Completadas
+                h3.mb-0.text-white#completedTasks 0
+              .text-warning
+                i.bi.bi-check2-circle.fs-2
+            small.text-secondary#tasksProgress
+              span#tasksPending 0 pendientes
+              |  de 
+              span#tasksTotal 0 totales
+
+    //- GRÁFICOS PRINCIPALES
+    .row.g-3.mb-4
+      //- Estado de Proyectos
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-pie-chart.me-2
+              | Estado de Proyectos
+          .card-body
+            canvas#projectStatusChart(style="height: 300px;")
+
+      //- Proyectos por Cliente
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-people.me-2
+              | Top 5 Clientes
+            p.text-secondary.small.mb-0 Por cantidad de proyectos
+          .card-body
+            canvas#projectsByClientChart(style="height: 300px;")
+
+      //- Tipo de Facturación
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-receipt.me-2
+              | Tipos de Facturación
+          .card-body
+            canvas#billingTypeChart(style="height: 300px;")
+
+    //- GRÁFICOS SECUNDARIOS
+    .row.g-3.mb-4
+      //- Timeline de Proyectos
+      .col-12.col-lg-8
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-calendar3.me-2
+              | Timeline de Inicio de Proyectos
+            p.text-secondary.small.mb-0 Últimos 6 meses
+          .card-body
+            canvas#projectTimelineChart(style="height: 300px;")
+
+      //- Rentabilidad por Proyecto (Top 5)
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white Top 5 Proyectos Rentables
+          .card-body
+            ul#topProfitableProjects.list-unstyled.mb-0
+              li.text-secondary.small Cargando...
+
+    //- TABLAS DE DETALLE
+    .row.g-3.mb-4
+      //- Proyectos Activos
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header.d-flex.justify-content-between.align-items-center
+            h6.mb-0.text-white
+              i.bi.bi-play-circle.me-2
+              | Proyectos Activos
+            a.btn.btn-sm.btn-primary(href="/projects") Ver todos
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.table-hover.mb-0
+                thead
+                  tr
+                    th Código
+                    th Proyecto
+                    th Cliente
+                    th Presupuesto
+                    th Estado
+                tbody#activeProjectsTable
+                  tr
+                    td(colspan="5" class="text-center text-secondary") Cargando...
+
+      //- Proyectos Completados Recientemente
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header.d-flex.justify-content-between.align-items-center
+            h6.mb-0.text-white
+              i.bi.bi-check-circle.me-2
+              | Completados Recientemente
+            a.btn.btn-sm.btn-primary(href="/projects") Ver todos
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.table-hover.mb-0
+                thead
+                  tr
+                    th Código
+                    th Proyecto
+                    th Cliente
+                    th Duración
+                tbody#completedProjectsTable
+                  tr
+                    td(colspan="4" class="text-center text-secondary") Cargando...
+
+    //- PROYECTOS CON ALERTAS
+    .row.g-3.mb-4
+      .col-12
+        .card.bg-dark.border-danger
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-exclamation-triangle.me-2
+              | Proyectos que Requieren Atención
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.mb-0
+                thead
+                  tr
+                    th Proyecto
+                    th Cliente
+                    th Alerta
+                    th Presupuesto
+                    th Días Transcurridos
+                    th Acción
+                tbody#alertProjectsTable
+                  tr
+                    td(colspan="6" class="text-center text-secondary") No hay proyectos con alertas
+
+  //- SCRIPTS
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js")
+  
+  script.
+    // ============================================
+    // REPORTE DE PROYECTOS - SCRIPTS
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProjectReport();
+      
+      document.getElementById('periodSelector').addEventListener('change', (e) => {
+        loadProjectReport(e.target.value);
+      });
+    });
+
+    // Cargar reporte de proyectos
+    async function loadProjectReport(filter = 'all') {
+      try {
+        const response = await fetch(`/api/project-report?filter=${filter}`);
+        const data = await response.json();
+        
+        updateSummaryCards(data.summary);
+        updateCharts(data.charts);
+        updateTables(data.tables);
+        
+      } catch (error) {
+        console.error('Error al cargar reporte de proyectos:', error);
+      }
+    }
+
+    // Actualizar cards de resumen
+    function updateSummaryCards(summary) {
+      document.getElementById('totalProjects').textContent = summary.totalProjects || 0;
+      document.getElementById('totalBudget').textContent = `$${(summary.totalBudget || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+      document.getElementById('totalHours').textContent = `${(summary.totalHours || 0).toFixed(0)}h`;
+      document.getElementById('completedTasks').textContent = summary.completedTasks || 0;
+      
+      // Breakdown de proyectos
+      document.getElementById('projectsBreakdown').innerHTML = `
+        <span class="text-success">${summary.activeProjects || 0} activos</span>
+        •
+        <span class="text-warning">${summary.onHoldProjects || 0} en pausa</span>
+        •
+        <span class="text-info">${summary.completedProjects || 0} completados</span>
+      `;
+      
+      // Info de horas
+      const avgHours = summary.totalProjects > 0 ? (summary.totalHours / summary.totalProjects).toFixed(0) : 0;
+      document.getElementById('hoursInfo').textContent = `Promedio: ${avgHours}h por proyecto`;
+      
+      // Info de presupuesto
+      const avgBudget = summary.totalProjects > 0 ? (summary.totalBudget / summary.totalProjects).toFixed(0) : 0;
+      document.getElementById('budgetInfo').textContent = `Promedio: $${parseInt(avgBudget).toLocaleString('es-AR')} por proyecto`;
+      
+      // Progreso de tareas
+      const totalTasks = summary.totalTasks || 0;
+      const pendingTasks = totalTasks - (summary.completedTasks || 0);
+      document.getElementById('tasksPending').textContent = pendingTasks;
+      document.getElementById('tasksTotal').textContent = totalTasks;
+    }
+
+    // Variables globales para gráficos
+    let projectStatusChart, projectsByClientChart, billingTypeChart, projectTimelineChart;
+
+    // Actualizar gráficos
+    function updateCharts(charts) {
+      // Gráfico de Estado de Proyectos
+      const statusCtx = document.getElementById('projectStatusChart').getContext('2d');
+      if (projectStatusChart) projectStatusChart.destroy();
+      
+      projectStatusChart = new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+          labels: charts.projectStatus.labels || [],
+          datasets: [{
+            data: charts.projectStatus.data || [],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)',
+              'rgba(108, 117, 125, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Gráfico de Proyectos por Cliente
+      const clientCtx = document.getElementById('projectsByClientChart').getContext('2d');
+      if (projectsByClientChart) projectsByClientChart.destroy();
+      
+      projectsByClientChart = new Chart(clientCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.projectsByClient.labels || [],
+          datasets: [{
+            label: 'Proyectos',
+            data: charts.projectsByClient.data || [],
+            backgroundColor: 'rgba(13, 110, 253, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#f0f0f0', stepSize: 1 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0', maxRotation: 45, minRotation: 45 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Gráfico de Tipos de Facturación
+      const billingCtx = document.getElementById('billingTypeChart').getContext('2d');
+      if (billingTypeChart) billingTypeChart.destroy();
+      
+      billingTypeChart = new Chart(billingCtx, {
+        type: 'pie',
+        data: {
+          labels: charts.billingTypes.labels || [],
+          datasets: [{
+            data: charts.billingTypes.data || [],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Gráfico Timeline de Proyectos
+      const timelineCtx = document.getElementById('projectTimelineChart').getContext('2d');
+      if (projectTimelineChart) projectTimelineChart.destroy();
+      
+      projectTimelineChart = new Chart(timelineCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.timeline.labels || [],
+          datasets: [{
+            label: 'Proyectos Iniciados',
+            data: charts.timeline.data || [],
+            backgroundColor: 'rgba(25, 135, 84, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#f0f0f0', stepSize: 1 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Top 5 Proyectos Rentables
+      const topProjects = charts.topProfitable || [];
+      const topProjectsList = document.getElementById('topProfitableProjects');
+      
+      if (topProjects.length === 0) {
+        topProjectsList.innerHTML = '<li class="text-secondary small">No hay datos</li>';
+      } else {
+        topProjectsList.innerHTML = topProjects.map((project, index) => `
+          <li class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary">
+            <div class="small text-light">
+              <span class="badge bg-primary me-2">${index + 1}</span>
+              <strong>${project.name}</strong>
+              <br>
+              <small class="text-secondary">${project.client}</small>
+            </div>
+            <strong class="small text-success">$${project.profit.toFixed(0)}</strong>
+          </li>
+        `).join('');
+      }
+    }
+
+    // Actualizar tablas
+    function updateTables(tables) {
+      // Proyectos activos
+      const activeTable = document.getElementById('activeProjectsTable');
+      const activeProjects = tables.activeProjects || [];
+      
+      if (activeProjects.length === 0) {
+        activeTable.innerHTML = '<tr><td colspan="5" class="text-center text-secondary">No hay proyectos activos</td></tr>';
+      } else {
+        const statusClasses = {
+          planning: 'bg-secondary',
+          in_progress: 'bg-success',
+          on_hold: 'bg-warning',
+          completed: 'bg-info',
+          cancelled: 'bg-danger'
+        };
+        
+        activeTable.innerHTML = activeProjects.map(proj => `
+          <tr>
+            <td>${proj.code}</td>
+            <td>${proj.name}</td>
+            <td>${proj.client}</td>
+            <td>$${proj.budget.toLocaleString('es-AR')}</td>
+            <td><span class="badge ${statusClasses[proj.status] || 'bg-secondary'}">${proj.status}</span></td>
+          </tr>
+        `).join('');
+      }
+      
+      // Proyectos completados
+      const completedTable = document.getElementById('completedProjectsTable');
+      const completedProjects = tables.completedProjects || [];
+      
+      if (completedProjects.length === 0) {
+        completedTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay proyectos completados</td></tr>';
+      } else {
+        completedTable.innerHTML = completedProjects.map(proj => `
+          <tr>
+            <td>${proj.code}</td>
+            <td>${proj.name}</td>
+            <td>${proj.client}</td>
+            <td>${proj.duration} días</td>
+          </tr>
+        `).join('');
+      }
+      
+      // Proyectos con alertas
+      const alertTable = document.getElementById('alertProjectsTable');
+      const alertProjects = tables.alertProjects || [];
+      
+      if (alertProjects.length === 0) {
+        alertTable.innerHTML = '<tr><td colspan="6" class="text-center text-secondary">No hay proyectos con alertas</td></tr>';
+      } else {
+        alertTable.innerHTML = alertProjects.map(proj => `
+          <tr>
+            <td>${proj.name}</td>
+            <td>${proj.client}</td>
+            <td><span class="badge bg-danger">${proj.alert}</span></td>
+            <td>$${proj.budget.toLocaleString('es-AR')}</td>
+            <td>${proj.daysElapsed} días</td>
+            <td><a href="/projects/${proj.id}" class="btn btn-sm btn-outline-warning">Revisar</a></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // Exportar reporte
+    function exportReport() {
+      alert('Funcionalidad de exportación en desarrollo');
+      // TODO: Implementar exportación a PDF o Excel
+    }

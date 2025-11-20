@@ -97,7 +97,19 @@ export const allPermissions = [
   'create_team_roles',
   'view_team_roles',
   'edit_team_roles',
-  'delete_team_roles'
+  'delete_team_roles',
+
+  // Permisos ejecutivos y dashboards
+  'view_executive_dashboard',
+  'view_financial_reports',
+  'view_client_reports',
+  'view_project_reports',
+  'view_revenue_analysis',
+  'view_profitability_analysis',
+  'export_reports',
+  'view_all_invoices',
+  'view_all_payments',
+  'view_all_receipts'
 ];
 
 export const permissionLabels = {
@@ -199,5 +211,17 @@ export const permissionLabels = {
   create_team_roles: "Roles de Equipo: Crear",
   view_team_roles: "Roles de Equipo: Ver",
   edit_team_roles: "Roles de Equipo: Editar",
-  delete_team_roles: "Roles de Equipo: Eliminar"
+  delete_team_roles: "Roles de Equipo: Eliminar",
+
+  // Etiquetas para permisos ejecutivos
+  view_executive_dashboard: "Dashboard Ejecutivo: Ver",
+  view_financial_reports: "Reportes Financieros: Ver",
+  view_client_reports: "Reportes de Clientes: Ver",
+  view_project_reports: "Reportes de Proyectos: Ver",
+  view_revenue_analysis: "Análisis de Ingresos: Ver",
+  view_profitability_analysis: "Análisis de Rentabilidad: Ver",
+  export_reports: "Reportes: Exportar",
+  view_all_invoices: "Facturas: Ver Todas (Admin)",
+  view_all_payments: "Pagos: Ver Todos (Admin)",
+  view_all_receipts: "Cobros: Ver Todos (Admin)"
 };

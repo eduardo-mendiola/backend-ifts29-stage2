@@ -4,12 +4,13 @@ block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-4 Factura Código: #{item.code}
     div
-     a.btn.me-2(
-              class=item.status === 'draft' ? 'btn-success' : 'btn-success',
-              href=item.status === 'draft' 
-                ? `/invoices/${item.id}/preview`
-                : `/invoices/${item.id}/preview`
-            )= item.status === 'draft' ? 'Generar Factura' : 'Imprimir'
+      if hasPermission('edit_invoices')
+        a.btn.me-2(
+                  class=item.status === 'draft' ? 'btn-success' : 'btn-success',
+                  href=item.status === 'draft' 
+                    ? `/invoices/${item.id}/preview`
+                    : `/invoices/${item.id}/preview`
+                )= item.status === 'draft' ? 'Generar Factura' : 'Imprimir'
       a.btn.btn-gray(href="/invoices", tabindex="1") Volver
  
   table.table.table-dark
@@ -156,8 +157,8 @@ block content
                   : `/invoices/${item.id}/preview`
               )= item.status === 'draft' ? 'Editar' : 'Imprimir'
 
-      if item.status === 'draft'
-        a.btn.btn-success.me-2(href=`/invoices/${item.id}/preview`, tabindex="2") Generar Factura
+    if hasPermission('edit_invoices') && item.status === 'draft'
+      a.btn.btn-success.me-2(href=`/invoices/${item.id}/preview`, tabindex="2") Generar Factura
               
     //- form(action=`/api/users/${item.id}?_method=DELETE`, method="POST", style="display:inline;")
     //-   input(type="hidden", name="_method", value="DELETE")

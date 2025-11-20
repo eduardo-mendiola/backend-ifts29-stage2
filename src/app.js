@@ -56,6 +56,12 @@ import PaymentController from './controllers/PaymentController.js';
 import ExpenseCategoryController from './controllers/ExpenseCategoryController.js';
 import ReceiptController from './controllers/ReceiptController.js';
 import DocumentFileController from './controllers/DocumentFileController.js';
+import ExecutiveDashboardController from './controllers/ExecutiveDashboardController.js';
+import FinancialReportController from './controllers/FinancialReportController.js';
+import ProjectReportController from './controllers/ProjectReportController.js';
+import ClientReportController from './controllers/ClientReportController.js';
+import RevenueAnalysisController from './controllers/RevenueAnalysisController.js';
+import ProfitabilityAnalysisController from './controllers/ProfitabilityAnalysisController.js';
 
 
 // ||----------------------------------------------------------------------------------------------------------||
@@ -168,6 +174,96 @@ app.use('/', authRoutes);
 
 // GET dashboard (protegido por auth-routes.js)
 // app.get('/admin/dashboard', isAuthenticated, ...) - Ahora en auth-routes.js
+
+// ||--------------------------- Dashboard Ejecutivo -----------------------------------------||
+// Vista del Dashboard Ejecutivo
+app.get('/executive-dashboard', 
+  isAuthenticated, 
+  requirePermission('view_executive_dashboard'),
+  ExecutiveDashboardController.getView
+);
+
+// API del Dashboard Ejecutivo
+app.get('/api/executive-dashboard', 
+  isAuthenticated, 
+  requirePermission('view_executive_dashboard'),
+  ExecutiveDashboardController.getData
+);
+
+// ||--------------------------- Reporte Financiero -----------------------------------------||
+// Vista del Reporte Financiero
+app.get('/reports/financial', 
+  isAuthenticated, 
+  requirePermission('view_financial_reports'),
+  FinancialReportController.renderView
+);
+
+// API del Reporte Financiero
+app.get('/api/financial-report', 
+  isAuthenticated, 
+  requirePermission('view_financial_reports'),
+  FinancialReportController.getReportData
+);
+
+// ||--------------------------- Reporte de Proyectos -----------------------------------------||
+// Vista del Reporte de Proyectos
+app.get('/reports/projects', 
+  isAuthenticated, 
+  requirePermission('view_project_reports'),
+  ProjectReportController.renderView
+);
+
+// API del Reporte de Proyectos
+app.get('/api/project-report', 
+  isAuthenticated, 
+  requirePermission('view_project_reports'),
+  ProjectReportController.getReportData
+);
+
+// ||--------------------------- Reporte de Clientes -----------------------------------------||
+// Vista del Reporte de Clientes
+app.get('/reports/clients', 
+  isAuthenticated, 
+  requirePermission('view_client_reports'),
+  ClientReportController.index
+);
+
+// API del Reporte de Clientes
+app.get('/api/client-report', 
+  isAuthenticated, 
+  requirePermission('view_client_reports'),
+  ClientReportController.getData
+);
+
+// ||--------------------------- Análisis de Ingresos -----------------------------------------||
+// Vista del Análisis de Ingresos
+app.get('/analysis/revenue', 
+  isAuthenticated, 
+  requirePermission('view_revenue_analysis'),
+  RevenueAnalysisController.renderView
+);
+
+// API del Análisis de Ingresos
+app.get('/api/revenue-analysis', 
+  isAuthenticated, 
+  requirePermission('view_revenue_analysis'),
+  RevenueAnalysisController.getAnalysisData
+);
+
+// ||--------------------------- Análisis de Rentabilidad -----------------------------------------||
+// Vista del Análisis de Rentabilidad
+app.get('/analysis/profitability', 
+  isAuthenticated, 
+  requirePermission('view_profitability_analysis'),
+  ProfitabilityAnalysisController.renderView
+);
+
+// API del Análisis de Rentabilidad
+app.get('/api/profitability-analysis', 
+  isAuthenticated, 
+  requirePermission('view_profitability_analysis'),
+  ProfitabilityAnalysisController.getAnalysisData
+);
 
 // ||--------------------------- Rutas para las vistas del CRUD (HTML) - Pug -------------------------------||
 // TODAS LAS RUTAS DE VISTAS AHORA ESTÁN PROTEGIDAS CON isAuthenticated
