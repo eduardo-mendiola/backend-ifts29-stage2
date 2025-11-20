@@ -661,7 +661,16 @@ describe('POST /api/projects', () => {
 
 # 7. Documentación de Interfaces y Funcionalidades
 
-## 7.1 Menú y navegación entre módulos
+## 7.1 Inicio de sesión
+
+**Descripción:**
+La aplicación incorpora una pantalla de inicio de sesión diseñada para habilitar el acceso seguro de los usuarios registrados. La vista presenta un formulario simple, compuesto por los campos de email y contraseña, ambos validados desde el frontend y procesados posteriormente por los controladores de autenticación. La interfaz mantiene coherencia visual con el resto del sistema, utilizando la misma estructura, estilos y mensajes de retroalimentación, además de integrar los logotipos del sistema, de la empresa usuaria y de la empresa proveedora.
+
+Ante intentos fallidos de inicio de sesión, el sistema muestra mensajes claros que informan al usuario sobre credenciales incorrectas o errores de validación. Una vez autenticado correctamente, el usuario es redirigido automáticamente al panel principal. Esta pantalla constituye el punto de entrada al sistema para todas las funciones que requieren autenticación, integrándose tanto con el flujo basado en sesiones como con la API protegida mediante JSON Web Tokens.
+
+![Pantalla Login](assets/screenshots/login.webp)
+
+## 7.2 Menú y navegación entre módulos
 
 **Descripción:**  
 Esta sección muestra la estructura principal de la aplicación y cómo se accede a cada módulo. La navegación está centrada en una sidebar con menús desplegables, que agrupa las 19 entidades en 6 bloques principales:
@@ -936,22 +945,35 @@ getEditView = async (req, res) => {
 
 # 9. Bibliografía y Fuentes
 
-* IFTS Nro. 29, Tecnicatura Superior en Desarrollo de Software a Distancia, Desarrollo de Sistemas Web (Back End) - 2° (2025). [Link](https://aulasvirtuales.bue.edu.ar/course/view.php?id=22553)
-* The Net Ninja. (2022). MERN Stack Crash Course Tutorial [Playlist]. YouTube. [Link](https://youtube.com/playlist?list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&si=TEi7PZTW6xPRlSSk)
-* Martín Gesualdo. (2023). Emprendedor Full Stack | Aprende a desarrollar aplicaciones web [Playlist]. YouTube. [Link](https://youtube.com/playlist?list=PLAmcNbGd0fkNl-CleT_XxwGKDk1j00uUp&si=U8oSAdMzI47pPvVo)
-* Node.js Foundation. (s.f.). Node.js. Recuperado en septiembre de 2025, de [https://node.js.org/](https://node.js.org/)
+### Bibliografía y Fuentes
+
+#### Documentación oficial
+
+* Node.js Foundation. (s.f.). Node.js – Documentación oficial. Recuperado en septiembre de 2025, de [https://node.js.org/](https://node.js.org/)
 * npm, Inc. (s.f.). Documentación de npm. Recuperado en septiembre de 2025, de [https://docs.npmjs.com/](https://docs.npmjs.com/)
 * Express.js. (s.f.). Documentación oficial de Express.js. Recuperado en septiembre de 2025, de [https://expressjs.com/](https://expressjs.com/)
-* Pug (s.f.). Documentación oficial de plantillas Pug. Recuperado en septiembre de 2025, de [https://pugjs.org/api/getting-started.html](https://pugjs.org/api/getting-started.html)
-* Bootstrap (s.f.). Documentación oficial de Bootstrap v5.3. Recuperado en septiembre de 2025, de [https://getbootstrap.com/docs/5.3/getting-started/introduction/](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
-* MongoDB (s.f.). Documentación oficial de MongoDB. Recuperado en octubre de 2025, de [https://www.mongodb.com/docs/](https://www.mongodb.com/docs/)
-* Mongoose (s.f.). Documentación oficial de Mongoose 8.19.0. Recuperado en octubre de 2025, de [https://mongoosejs.com/docs/guide.html](https://mongoosejs.com/docs/guide.html)
-* Leonardo Jose Castillo Lacruz - FreeCodeCamp Español. (05/11/2024). Curso API CRUD - Node.js, Express, MongoDB y Autenticación. YouTube, [Link](https://www.youtube.com/watch?v=Oa5blAV7Fyg)
-* Dave Gray. (2022). MERN Stack Tutorials [Playlist]. YouTube. [Link](https://youtube.com/playlist?list=PL0Zuz27SZ-6P4dQUsoDatjEGpmBpcOW8V&si=YQyOf194iv0GNgUH)
-* Passport.js (s.f.). Documentación oficial de Passport.js. Recuperado en noviembre de 2025, de [http://www.passportjs.org/](http://www.passportjs.org/)
-* JWT.io (s.f.). JSON Web Tokens - Introduction. Recuperado en noviembre de 2025, de [https://jwt.io/introduction](https://jwt.io/introduction)
-* bcrypt (s.f.). bcrypt - npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/bcrypt](https://www.npmjs.com/package/bcrypt)
-* Jest (s.f.). Documentación oficial de Jest. Recuperado en noviembre de 2025, de [https://jestjs.io/docs/getting-started](https://jestjs.io/docs/getting-started)
-* Supertest (s.f.). Supertest - npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/supertest](https://www.npmjs.com/package/supertest)
-* MongoDB Memory Server (s.f.). mongodb-memory-server - npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/mongodb-memory-server](https://www.npmjs.com/package/mongodb-memory-server)
+* Pug. (s.f.). Documentación oficial de plantillas Pug. Recuperado en septiembre de 2025, de [https://pugjs.org/api/getting-started.html](https://pugjs.org/api/getting-started.html)
+* Bootstrap. (s.f.). Documentación oficial de Bootstrap v5.3. Recuperado en septiembre de 2025, de [https://getbootstrap.com/docs/5.3/getting-started/introduction/](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+* MongoDB. (s.f.). Documentación oficial de MongoDB. Recuperado en octubre de 2025, de [https://www.mongodb.com/docs/](https://www.mongodb.com/docs/)
+* Mongoose. (s.f.). Documentación oficial de Mongoose 8.19.0. Recuperado en octubre de 2025, de [https://mongoosejs.com/docs/guide.html](https://mongoosejs.com/docs/guide.html)
+* Passport.js. (s.f.). Documentación oficial de Passport.js. Recuperado en noviembre de 2025, de [http://www.passportjs.org/](http://www.passportjs.org/)
+* JWT.io. (s.f.). JSON Web Tokens – Introduction. Recuperado en noviembre de 2025, de [https://jwt.io/introduction](https://jwt.io/introduction)
+* bcrypt. (s.f.). bcrypt – npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/bcrypt](https://www.npmjs.com/package/bcrypt)
+* Jest. (s.f.). Documentación oficial de Jest. Recuperado en noviembre de 2025, de [https://jestjs.io/docs/getting-started](https://jestjs.io/docs/getting-started)
+* Supertest. (s.f.). Supertest – npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/supertest](https://www.npmjs.com/package/supertest)
+* MongoDB Memory Server. (s.f.). mongodb-memory-server – npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/mongodb-memory-server](https://www.npmjs.com/package/mongodb-memory-server)
+
+#### Guías y cursos en línea
+
+* IFTS Nro. 29, Tecnicatura Superior en Desarrollo de Software a Distancia, Desarrollo de Sistemas Web (Back End) – 2° (2025). Recuperado de [https://aulasvirtuales.bue.edu.ar/course/view.php?id=22553](https://aulasvirtuales.bue.edu.ar/course/view.php?id=22553)
+* The Net Ninja. (2022). MERN Stack Crash Course Tutorial [Lista de reproducción]. YouTube. Recuperado de [https://youtube.com/playlist?list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&si=TEi7PZTW6xPRlSSk](https://youtube.com/playlist?list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&si=TEi7PZTW6xPRlSSk)
+* Martín Gesualdo. (2023). Emprendedor Full Stack | Aprende a desarrollar aplicaciones web [Lista de reproducción]. YouTube. Recuperado de [https://youtube.com/playlist?list=PLAmcNbGd0fkNl-CleT_XxwGKDk1j00uUp&si=U8oSAdMzI47pPvVo](https://youtube.com/playlist?list=PLAmcNbGd0fkNl-CleT_XxwGKDk1j00uUp&si=U8oSAdMzI47pPvVo)
+* Leonardo Jose Castillo Lacruz – FreeCodeCamp Español. (05/11/2024). Curso API CRUD – Node.js, Express, MongoDB y Autenticación. YouTube. Recuperado de [https://www.youtube.com/watch?v=Oa5blAV7Fyg](https://www.youtube.com/watch?v=Oa5blAV7Fyg)
+* Dave Gray. (2022). MERN Stack Tutorials [Lista de reproducción]. YouTube. Recuperado de [https://youtube.com/playlist?list=PL0Zuz27SZ-6P4dQUsoDatjEGpmBpcOW8V&si=YQyOf194iv0GNgUH](https://youtube.com/playlist?list=PL0Zuz27SZ-6P4dQUsoDatjEGpmBpcOW8V&si=YQyOf194iv0GNgUH)
+
+
+
+
+
+
 
