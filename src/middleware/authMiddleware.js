@@ -52,7 +52,6 @@ export const redirectIfAuthenticated = (req, res, next) => {
 
 /**
  * Middleware para verificar permisos específicos
- * Asume que tienes una estructura de permisos en tu modelo
  */
 export const hasPermission = (permission) => {
   return (req, res, next) => {
