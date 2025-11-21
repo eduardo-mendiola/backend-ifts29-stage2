@@ -22,14 +22,28 @@
    1.4 [Arquitectura Técnica del Sistema](#14-arquitectura-técnica-del-sistema)  
        1.4.1 [Definiciones Técnicas y Tecnologías](#141-definiciones-técnicas-y-tecnologías)  
 
-2. [Rol y Responsabilidades](#2-rol-y-responsabilidades)  
-   2.1 [Configuración y Creación de la Base de Datos MongoDB](#21-configuración-y-creación-de-la-base-de-datos-mongodb)  
-   2.2 [Refactorización de Clases y Controladores](#22-refactorización-de-clases-y-controladores)  
-   2.3 [Módulos de Contabilidad, Cobranzas y Documentación](#23-módulos-de-contabilidad-cobranzas-y-documentación)  
-   2.4 [Ampliación del Dominio y Refactorización de Entidades](#24-ampliación-del-dominio-y-refactorización-de-entidades)  
-   2.5 [Refactorización y Ampliación de Vistas (Pug + Bootstrap)](#25-refactorización-y-ampliación-de-vistas-pug--bootstrap)  
-   2.6 [Mantenimiento de Repositorio y Documentación](#26-mantenimiento-de-repositorio-y-documentación)  
-   2.7 [Despliegue y Mantenimiento de Infraestructura en la Nube](#27-despliegue-y-mantenimiento-de-infraestructura-en-la-nube)  
+2. [Asignación de Roles y Responsabilidades Por Etapas](#2-asignación-de-roles-y-responsabilidades-por-etapas)  
+   2.1 [Primera Etapa del Proyecto: Fundamentos con JSON](#21-primera-etapa-del-proyecto-fundamentos-con-json)  
+       2.1.1 [Arquitectura Inicial con BaseController y BaseModel](#211-arquitectura-inicial-con-basecontroller-y-basemodel)  
+       2.1.2 [Sistema de Persistencia en JSON](#212-sistema-de-persistencia-en-json)  
+       2.1.3 [Entidades Principales del Dominio](#213-entidades-principales-del-dominio)  
+       2.1.4 [Rutas y Controladores por Entidad](#214-rutas-y-controladores-por-entidad)  
+       2.1.5 [Vistas Pug y Estilos Básicos](#215-vistas-pug-y-estilos-básicos)  
+       2.1.6 [Refactorización a ESM (Módulos ECMAScript)](#216-refactorización-a-esm-módulos-ecmascript)  
+       2.1.7 [Gestión del Repositorio en GitHub](#217-gestión-del-repositorio-en-github)  
+   2.2 [Segunda Etapa del Proyecto: Transición a MongoDB](#22-segunda-etapa-del-proyecto-transición-a-mongodb)  
+       2.2.1 [Migración a MongoDB con Mongoose](#221-migración-a-mongodb-con-mongoose)  
+       2.2.2 [Refactorización de Controladores](#222-refactorización-de-controladores)  
+       2.2.3 [Módulos de Facturación y Cobranza](#223-módulos-de-facturación-y-cobranza)  
+       2.2.4 [Ampliación del Dominio](#224-ampliación-del-dominio)  
+       2.2.5 [Refactorización y Ampliación de Vistas (Pug + Bootstrap)](#225-refactorización-y-ampliación-de-vistas-pug--bootstrap)  
+       2.2.6 [Despliegue en MongoDB Atlas y Render](#226-despliegue-en-mongodb-atlas-y-render)  
+   2.3 [Tercera Etapa del Proyecto: Autenticación, Autorización y Testing](#23-tercera-etapa-del-proyecto-autenticación-autorización-y-testing)  
+       2.3.1 [Implementación de Autenticación y Autorización](#231-implementación-de-autenticación-y-autorización)  
+       2.3.2 [Sistema de Permisos Granulares](#232-sistema-de-permisos-granulares)  
+       2.3.3 [Testing Integral con Jest](#233-testing-integral-con-jest)  
+       2.3.4 [Mejoras de Seguridad](#234-mejoras-de-seguridad)  
+       2.3.5 [Dashboards y Reportes con Chart.js](#235-dashboards-y-reportes-con-chartjs)  
 
 3. [Descripción Técnica del Sistema](#3-descripción-técnica-del-sistema)  
    3.1 [Introducción a la Arquitectura y Componentes Principales](#31-introducción-a-la-arquitectura-y-componentes-principales)  
@@ -83,6 +97,7 @@
        7.3.6 [Facturas (editar, eliminar y anular)](#736-facturas-editar-eliminar-y-anular)  
        7.3.7 [Facturas (carga de ítems extras)](#737-facturas-carga-de-ítems-extras)  
        7.3.8 [Facturas (generar e imprimir factura)](#738-facturas-generar-e-imprimir-factura)  
+   7.4 [Interfaces de Dashboards, Reportes y Análisis](#74-interfaces-de-dashboards-reportes-y-análisis)  
 
 8. [Uso de IAs](#8-uso-de-ias)  
    8.1 [Modelos](#81-modelos)  
@@ -145,45 +160,105 @@ El sistema fue desarrollado con un stack **JavaScript**: Node.js como entorno de
 ---
 
 
-## 2. Rol y Responsabilidades
+## 2. Asignación de Roles y Responsabilidades Por Etapas
 
 ### **Mendiola, Eduardo E.**
-**Rol:** Desarrollador de Aplicaciones Web: Backend con Node.js / Mongoose, Refactorización de Vistas (Pug) y Operaciones Cloud.
+**Rol:** Desarrollador Fullstack: Backend (Node.js / Mongoose), Frontend (Pug / Bootstrap) y Operaciones Cloud.
 
-**Responsabilidades y tareas:**
+---
 
-En esta etapa, el foco principal estuvo en la migración de la aplicación desde un sistema de persistencia basado en archivos JSON hacia una base de datos documental en **MongoDB**, utilizando **Mongoose** como ODM. Esto implicó tanto refactorización de clases y controladores como la adaptación de las vistas y plantillas para trabajar de forma coherente con la nueva lógica de persistencia.
+## 2.1 Primera Etapa del Proyecto: Fundamentos con JSON
 
-### Configuración y Creación de la Base de Datos MongoDB
+En esta primera fase, se sentaron las bases de la arquitectura del sistema, implementando un modelo CRUD básico con persistencia en archivos JSON. Este enfoque inicial permitió definir la estructura del dominio, establecer los patrones de diseño fundamentales y construir una base sólida para las etapas posteriores.
 
-## 2.1 Configuración y Creación de la Base de Datos MongoDB
+### 2.1.1 Arquitectura Inicial con BaseController y BaseModel
+
+Se diseñó una arquitectura genérica y reutilizable basada en dos clases fundamentales:
+
+- **BaseModel:**  
+  Clase abstracta responsable de gestionar la persistencia de datos en archivos JSON. Implementaba métodos genéricos para crear, leer, actualizar y eliminar registros (`create`, `findAll`, `findById`, `update`, `delete`), asegurando la manipulación consistente de entidades mediante operaciones de E/S sobre el sistema de archivos (`fs`).
+
+- **BaseController:**  
+  Controlador genérico que orquestaba las operaciones CRUD mediante el patrón MVC. Esta clase proporcionaba métodos estándar (`index`, `show`, `create`, `update`, `destroy`) que podían ser heredados y especializados por controladores específicos de cada entidad.
+
+### 2.1.2 Sistema de Persistencia en JSON
+
+La persistencia se implementó completamente sobre archivos JSON almacenados localmente en el directorio `data/`. Cada entidad disponía de su propio archivo JSON, actuando como un almacenamiento estructurado y portable. Este enfoque facilitó el desarrollo ágil y las pruebas iniciales sin dependencia de una base de datos externa.
+
+### 2.1.3 Entidades Principales del Dominio
+
+Se implementaron las siguientes entidades con sus respectivos modelos, controladores, rutas y vistas:
+
+- **User:** Usuarios del sistema.
+- **Employee:** Empleados de la organización.
+- **Client:** Clientes y empresas.
+- **Role:** Roles de usuario con permisos asociados.
+- **Area:** Áreas organizacionales.
+- **Task:** Tareas asociadas a proyectos.
+- **Project:** Proyectos gestionados en el sistema.
+
+Cada entidad seguía el patrón CRUD completo, permitiendo operaciones de listado, creación, edición y eliminación tanto desde la interfaz web como desde la API.
+
+### 2.1.4 Rutas y Controladores por Entidad
+
+Se estructuraron rutas independientes para cada módulo del sistema (`userRoutes`, `clientRoutes`, `projectRoutes`, etc.), todas siguiendo convenciones RESTful. Los controladores extendían `BaseController` e incorporaban lógica de negocio específica cuando era necesario, como validaciones personalizadas o transformaciones de datos.
+
+### 2.1.5 Vistas Pug y Estilos Básicos
+
+Se desarrollaron plantillas Pug para la presentación dinámica de datos en el servidor (SSR). Las vistas incluían:
+
+- **Plantillas de listado** (`index.pug`): Tablas con todos los registros de una entidad.
+- **Vistas de detalle** (`show.pug`): Presentación de un registro individual.
+- **Formularios de creación/edición** (`new.pug`, `edit.pug`): Interfaces para la captura de datos.
+
+Los estilos básicos se implementaron con Bootstrap para garantizar un diseño responsivo y una experiencia de usuario coherente.
+
+### 2.1.6 Refactorización a ESM (Módulos ECMAScript)
+
+Se migró todo el código de CommonJS (`require`/`module.exports`) a ESM (`import`/`export`), adoptando el estándar moderno de módulos de JavaScript. Este cambio implicó:
+
+- Actualización de todos los archivos de código fuente para utilizar sintaxis ESM.
+- Modificación del `package.json` para incluir `"type": "module"`.
+- Ajustes en la configuración de herramientas y dependencias para garantizar compatibilidad.
+
+### 2.1.7 Gestión del Repositorio en GitHub
+
+Se creó y configuró el repositorio en GitHub (`backend-ifts29-stage2`), estableciendo una estructura de versionado y commits organizados. Se documentó el proyecto con un README inicial y se gestionaron las actualizaciones mediante commits específicos para cada funcionalidad implementada.
+
+---
+
+## 2.2 Segunda Etapa del Proyecto: Transición a MongoDB
+
+En esta etapa se migró la arquitectura de persistencia desde JSON hacia MongoDB, utilizando Mongoose como ODM. Esta transición permitió aprovechar las capacidades de una base de datos NoSQL documental, incorporando validaciones robustas, relaciones entre entidades y operaciones eficientes de consulta.
+
+### 2.2.1 Migración a MongoDB con Mongoose
 
 **Instalación y Configuración de Mongoose:**  
-Integración de la librería mongoose mediante npm para gestionar la conexión y la definición de esquemas de datos, garantizando un mapeo consistente entre los documentos de MongoDB y las entidades de la aplicación.
+Integración de Mongoose mediante npm para gestionar la conexión y la definición de esquemas de datos, garantizando un mapeo consistente entre los documentos de MongoDB y las entidades de la aplicación.
 
 **Conexión a MongoDB:**  
-Desarrollo de un módulo de conexión centralizado, `db.js`, encargado de gestionar la conexión a MongoDB mediante variables de entorno (archivo `.env`), permitiendo mantener la configuración desacoplada y portable entre entornos locales y de producción.
+Desarrollo de un módulo de conexión centralizado (`db.js`) encargado de gestionar la conexión a MongoDB mediante variables de entorno (archivo `.env`), permitiendo mantener la configuración desacoplada y portable entre entornos locales y de producción.
 
 **Modelado de Esquemas con Mongoose:**
 
-- Definición de schemas para entidades principales como User, Employee, Client, Contact, Role, Area, Task, Invoice, Estimate, etc., estableciendo validaciones, índices y relaciones entre colecciones.
-- Inclusión de timestamps automáticos (`createdAt`, `updatedAt`) y campos únicos cuando correspondía (ejemplo: email en usuarios).
+- Definición de schemas para entidades principales como `User`, `Employee`, `Client`, `Contact`, `Role`, `Area`, `Task`, `Invoice`, `Estimate`, etc., estableciendo validaciones, índices y relaciones entre colecciones.
+- Inclusión de timestamps automáticos (`createdAt`, `updatedAt`) y campos únicos cuando correspondía (ejemplo: `email` en usuarios).
 - Implementación de validaciones integradas (`required`, `minLength`, `unique`, etc.) para asegurar la integridad de los datos.
 
-## 2.2 Refactorización de Clases y Controladores
+### 2.2.2 Refactorización de Controladores
 
 **Migración de BaseModel a Mongoose:**  
 Adaptación de la lógica CRUD genérica, reemplazando operaciones sobre archivos JSON por métodos nativos de Mongoose (`create`, `find`, `findById`, `findByIdAndUpdate`, `findByIdAndDelete`).
 
 **Refactorización de Controladores:**
 
-- Actualización de `UserController`, `ClientController` y `RoleController` para utilizar directamente los modelos de Mongoose en lugar de las clases previas basadas en JSON.
+- Actualización de `UserController`, `ClientController`, `RoleController` y otros controladores para utilizar directamente los modelos de Mongoose en lugar de las clases previas basadas en JSON.
 - Implementación de un sistema de manejo de errores estandarizado con `try/catch` y respuestas claras para errores de validación o conexión a base de datos.
 
 **Actualización de Middlewares:**  
 Adaptación del middleware de validación para trabajar en conjunto con los errores arrojados por Mongoose (ejemplo: duplicados o campos requeridos).
 
-## 2.3 Módulos de Contabilidad, Cobranzas y Documentación
+### 2.2.3 Módulos de Facturación y Cobranza
 
 **Módulo de Facturación (Invoices):**
 
@@ -213,7 +288,7 @@ Adaptación del middleware de validación para trabajar en conjunto con los erro
 **Document Files:**  
 Creación de la entidad Document Files con la implementación completa de su lógica CRUD (modelo, controlador, rutas y vistas).
 
-## 2.4 Ampliación del Dominio y Refactorización de Entidades
+### 2.2.4 Ampliación del Dominio
 
 **Estandarización de Campos:**
 
@@ -237,7 +312,7 @@ Creación de la entidad Document Files con la implementación completa de su ló
 - Inclusión de la entidad Contact con su lógica CRUD y vistas asociadas.
 - Actualización de las vistas y controladores de Client para mostrar los contactos asociados y otros detalles completos del cliente.
 
-## 2.5 Refactorización y Ampliación de Vistas (Pug + Bootstrap)
+### 2.2.5 Refactorización y Ampliación de Vistas (Pug + Bootstrap)
 
 **Refactorización de Navegación y Estilo:**
 
@@ -257,20 +332,7 @@ Creación de la entidad Document Files con la implementación completa de su ló
 
 - Adición de un middleware global para el manejo de errores 404 y 500, con sus respectivas vistas Pug actualizadas.
 
-## 2.6 Mantenimiento de Repositorio y Documentación
-
-**Owner y Maintainer del repositorio GitHub:**
-
-- Creación del Repositorio en GitHub: Gestión de la inicialización y configuración del repositorio de control de versiones en GitHub para el proyecto, facilitando el seguimiento de los cambios.
-- Seguimiento en GitHub: Administración de commits específicos para cada fase de la migración, manteniendo la trazabilidad de los cambios y asegurando la claridad en la evolución del proyecto.
-
-**Actualización del README:**  
-Documentación de los cambios realizados en la migración a MongoDB, incluyendo las instrucciones para configurar la conexión a la base de datos.
-
-**Capturas de Pantalla y Ejemplos:**  
-Inclusión de nuevas evidencias visuales de operaciones CRUD sobre MongoDB, tanto desde Postman como desde las vistas Pug.
-
-## 2.7 Despliegue y Mantenimiento de Infraestructura en la Nube
+### 2.2.6 Despliegue en MongoDB Atlas y Render
 
 **Migración a MongoDB Atlas:**  
 Configuración inicial de la base de datos en la plataforma cloud MongoDB Atlas para asegurar la escalabilidad, alta disponibilidad y accesibilidad del entorno de producción.
@@ -286,43 +348,204 @@ Configuración del proyecto para el despliegue automático en la plataforma Rend
 - **Monitoreo y Actualización de DB Atlas:** Tarea continua para monitorear el estado y rendimiento de la base de datos en MongoDB Atlas y garantizar la integridad de la información.
 - **Gestión del Deploy:** Mantenimiento del entorno de Render para asegurar que la aplicación esté siempre operativa y que las actualizaciones automáticas reflejen la última versión estable del código en el repositorio.
 
+**Actualización del README y Documentación:**  
+Documentación de los cambios realizados en la migración a MongoDB, incluyendo las instrucciones para configurar la conexión a la base de datos y capturas de pantalla de evidencias visuales de operaciones CRUD sobre MongoDB.
 
 ---
+
+## 2.3 Tercera Etapa del Proyecto: Autenticación, Autorización y Testing
+
+En esta etapa se consolidó la capa de seguridad del sistema mediante la implementación completa de autenticación y autorización, junto con un conjunto integral de pruebas automatizadas y el desarrollo de dashboards interactivos para la visualización de datos clave.
+
+### 2.3.1 Implementación de Autenticación y Autorización
+
+**Sistema de Autenticación Dual:**
+
+- **Autenticación Tradicional con Passport.js y Sesiones:**  
+  Implementación de Passport con estrategia Local para la autenticación de usuarios mediante formularios de login. Las sesiones se gestionan con `express-session` y se almacenan en MongoDB mediante `connect-mongo`, garantizando persistencia y escalabilidad.
+
+- **Autenticación API con JSON Web Tokens (JWT):**  
+  Desarrollo de un sistema de autenticación basado en JWT para proteger las rutas de la API. Los tokens tienen una expiración de 24 horas y se emiten tras la validación exitosa de credenciales mediante la ruta `/api/auth/login`.
+
+**Modelo de Usuario con Seguridad:**
+
+- Implementación del schema `UserModel` con hash de contraseñas mediante `bcrypt`.
+- Métodos de instancia para comparación de contraseñas (`comparePassword`).
+- Relación con el modelo `Role` mediante `populate` para cargar dinámicamente los permisos asociados.
+
+**Middlewares de Protección:**
+
+- `isAuthenticated`: Verifica que el usuario esté autenticado mediante sesión.
+- `verifyJWT`: Valida tokens JWT en las peticiones a la API.
+- `hasRole(role)`: Restringe el acceso a usuarios con un rol específico.
+- `hasPermission(permission)`: Controla el acceso basado en permisos granulares.
+
+**Controladores de Autenticación:**
+
+- `AuthController`: Gestiona el flujo de autenticación tradicional (login, logout, registro).
+- `ApiAuthController`: Maneja la autenticación API (emisión de JWT, validación de tokens).
+
+### 2.3.2 Sistema de Permisos Granulares
+
+Se implementó un sistema de autorización basado en roles y permisos con más de 28 permisos específicos, organizados por categoría:
+
+**Permisos de Gestión de Usuarios:**
+- `users:view`, `users:create`, `users:edit`, `users:delete`
+
+**Permisos de Gestión de Proyectos:**
+- `projects:view`, `projects:create`, `projects:edit`, `projects:delete`
+
+**Permisos de Facturación:**
+- `invoices:view`, `invoices:create`, `invoices:edit`, `invoices:delete`, `invoices:cancel`
+
+**Permisos de Reportes y Dashboards:**
+- `reports:view`, `dashboards:view`, `analytics:view`
+
+**Permisos Administrativos:**
+- `roles:manage`, `permissions:manage`, `system:admin`
+
+Estos permisos se asignan a roles (`admin`, `manager`, `developer`, `client`, `employee`, `executive`) mediante un esquema flexible que permite combinaciones personalizadas.
+
+### 2.3.3 Testing Integral con Jest
+
+**Stack de Testing:**
+
+- **Jest:** Framework de testing con soporte para TDD y BDD.
+- **Supertest:** Librería para testing de endpoints HTTP.
+- **MongoDB Memory Server:** Base de datos MongoDB en memoria para pruebas aisladas.
+
+**Tests Implementados:**
+
+- **Tests Unitarios:**
+  - Validación de helpers y utilidades (`dateHelpers.test.js`).
+  - Testing de controladores (`projectController.test.js`).
+
+- **Tests de Integración:**
+  - CRUD completo de proyectos (`projects-crud.test.js`).
+  - Flujos de autenticación y autorización.
+
+- **Tests de Humo (Smoke Tests):**
+  - Verificación básica de la disponibilidad del servidor y conexión a base de datos.
+
+**Configuración de Testing:**
+
+- `jest.config.js`: Configuración centralizada con timeout extendido (30 segundos).
+- `setupTests.js`: Inicialización de la conexión a MongoDB Memory Server antes de cada suite.
+- `globalSetup.js` / `globalTeardown.js`: Setup y teardown global del entorno de pruebas.
+
+**Helpers y Builders:**
+
+- `authHelper.js`: Funciones auxiliares para login y obtención de tokens JWT en tests.
+- `dataBuilders.js`: Builders para la creación de datos de prueba (proyectos, usuarios, roles).
+
+**Cobertura de Código:**
+
+- Generación de reportes de cobertura en formato HTML con `lcov-report`.
+- Objetivo: Mantener cobertura superior al 80% en módulos críticos.
+
+### 2.3.4 Mejoras de Seguridad
+
+**Protección de Rutas:**
+
+- Todas las rutas web (vistas Pug) protegidas con middleware `isAuthenticated`.
+- Todas las rutas de API protegidas con middleware `verifyJWT`.
+- Aplicación de middlewares `hasRole` y `hasPermission` en rutas administrativas y operaciones sensibles.
+
+**Control de Estado de Usuario:**
+
+- Verificación del campo `is_active` antes de permitir el acceso.
+- Mensajes de error específicos para cuentas desactivadas.
+
+**Validación de Datos:**
+
+- Validación de entrada en controladores y middlewares.
+- Sanitización de datos para prevenir inyección SQL y XSS.
+
+### 2.3.5 Dashboards y Reportes con Chart.js
+
+**Dashboards Implementados:**
+
+- **Dashboard Ejecutivo:**  
+  Visualización de KPIs clave: total de proyectos, clientes, facturación, estados de proyectos, distribución de clientes por tipo, evolución de facturación mensual.
+
+- **Dashboard Financiero:**  
+  Indicadores de facturación, ingresos por proyecto, comparativas de presupuesto vs. facturación real, gráficos de ingresos mensuales y anuales.
+
+- **Dashboard Operativo:**  
+  Estado de tareas, carga de trabajo por empleado, proyectos activos vs. completados, seguimiento de hitos y entregables.
+
+**Tecnologías de Visualización:**
+
+- **Chart.js:** Librería JavaScript para gráficos interactivos.
+- **Tipos de Gráficos:** Barras, líneas, tortas (pie), donas (doughnut).
+- **Integración:** Los datos se obtienen de la base de datos mediante controladores especializados (`DashboardController`, `ClientReportController`) y se renderizan dinámicamente en las vistas Pug.
+
+**Controladores de Reportes:**
+
+- `ClientReportController`: Generación de reportes de clientes con filtros por tipo, estado y rango de fechas.
+- `ProjectReportController`: Análisis de proyectos por estado, equipo, área y rentabilidad.
+- `FinancialReportController`: Consolidación de datos de facturación, pagos, gastos y presupuestos.
+
+---
+
 
 # 3. Descripción Técnica del Sistema
 
 **Resumen Ejecutivo:**  
-Este sistema fue concebido y desarrollado sobre un stack tecnológico basado en Node.js, con el objetivo de proporcionar una solución integral para la gestión de proyectos, clientes, facturación y recursos. La arquitectura se fundamenta en el patrón Model-View-Controller (MVC) dentro de un enfoque monolítico, una decisión estratégica que priorizó la velocidad de desarrollo y la entrega rápida de un producto funcional y cohesivo. A continuación, se detallan los componentes clave, la estructura de capas, los flujos de datos y la implementación de la lógica de negocio que definen el estado actual del sistema.
+Este sistema fue concebido y desarrollado sobre un stack tecnológico basado en Node.js, con el objetivo de proporcionar una solución integral para la gestión de proyectos, clientes, facturación y recursos. La arquitectura se fundamenta en el patrón Model-View-Controller (MVC) dentro de un enfoque monolítico, priorizando la velocidad de desarrollo y una entrega funcional consistente.
+
+A su estructura original se le incorporaron posteriormente mecanismos completos de autenticación, autorización y seguridad, incluyendo sesiones con Passport, protección mediante JSON Web Tokens (JWT) y un sistema de roles, lo que consolidó un entorno más robusto para el acceso, la administración de usuarios y la integridad del flujo operativo.
+
+Este capítulo describe los componentes clave, la estructura de capas, los flujos de datos, las entidades y la lógica de negocio que definen el estado actual del sistema.
 
 ## 3.1 Introducción a la Arquitectura y Componentes Principales
 
-La base del sistema se ha construido para ser robusta y fácil de entender, permitiendo una evolución controlada. A continuación se describen los elementos tecnológicos y estructurales que lo componen.
+La base del sistema se ha construido para ser robusta, comprensible y progresivamente ampliable. Los siguientes apartados describen los elementos tecnológicos y estructurales que conforman la plataforma en su estado actual.
 
 ### 3.1.1 Componentes Tecnológicos
 
-- **Entorno de Ejecución y Framework:** El sistema opera sobre Node.js utilizando el framework Express.js, que gestiona el enrutamiento, el middleware y el ciclo de vida de las peticiones HTTP. El punto de entrada es `server.js`, mientras que `app.js` centraliza la configuración global de la aplicación.
-- **Capa de Persistencia:** La interacción con la base de datos se gestiona a través de Mongoose, un ODM (Object Data Modeling) para MongoDB. Esta herramienta facilita la definición de esquemas de datos, validaciones y la gestión de relaciones entre las distintas entidades del dominio.
-- **Capa de Presentación:** Para el renderizado de vistas en el servidor (SSR), se utiliza el motor de plantillas Pug, que permite generar HTML dinámico de manera eficiente. La interfaz se apoya en Bootstrap para un diseño responsivo y consistente.
+El ecosistema tecnológico fue seleccionado para garantizar la eficiencia y la productividad durante el desarrollo:
+
+**Entorno de Ejecución y Framework:**  
+El sistema opera sobre Node.js utilizando el framework Express.js, que gestiona el enrutamiento, el middleware y el ciclo de vida de las peticiones HTTP. El punto de entrada es `server.js`, mientras que `app.js` centraliza la configuración global, la inicialización de middleware y la integración de sesiones y autenticación.
+
+**Capa de Persistencia:**  
+La interacción con la base de datos se gestiona a través de Mongoose, un ODM (Object Data Modeling) para MongoDB. Esta herramienta facilita la definición de esquemas de datos, índices únicos, relaciones y virtuals, validaciones y la gestión de relaciones entre las distintas entidades del dominio.
+
+**Capa de Seguridad y Autenticación:**  
+El sistema incorpora una capa completa de seguridad y autenticación que opera de manera integrada dentro del esquema MVC. La autenticación tradicional se gestiona mediante sesiones utilizando Passport con estrategia Local, mientras que el acceso a la API se asegura a través de tokens JWT. Además, un conjunto de middlewares se encarga de proteger las rutas y aplicar la autorización por roles, garantizando que cada usuario solo acceda a lo que le corresponde. Todo este mecanismo funciona como una capa transversal que refuerza la seguridad sin alterar la estructura principal del sistema.
+
+**Capa de Presentación:**  
+Para el renderizado de vistas en el servidor (SSR), se utiliza el motor de plantillas Pug, que permite generar HTML dinámico de manera eficiente. La interfaz se apoya en Bootstrap para un diseño responsivo y consistente. Se incorporan pantallas protegidas (dashboard, vistas CRUD) y la vista de login, coherente con el resto del sistema.
 
 ### 3.1.2 Estructura Arquitectónica: El Patrón MVC
 
-- **Modelos (Model):** Representan las entidades de negocio y la lógica de acceso a datos. Cada modelo de Mongoose (ProjectModel, ClientModel, etc.) encapsula el esquema de la base de datos, las validaciones y las relaciones.
-- **Vistas (View):** Componen la interfaz de usuario. Las plantillas Pug son responsables de presentar los datos al usuario final de una manera clara y estructurada.
-- **Controladores (Controller):** Actúan como el núcleo de la lógica de la aplicación, orquestando la interacción entre los Modelos y las Vistas. Reciben las peticiones del usuario, interactúan con la capa de persistencia para obtener o modificar datos y, finalmente, seleccionan la vista adecuada para responder.
+La arquitectura del sistema se adhiere estrictamente al patrón Model-View-Controller (MVC), que separa las responsabilidades en tres capas bien definidas:
+
+**Modelos (Model):**  
+Representan las entidades de negocio y la lógica de acceso a datos. Cada modelo de Mongoose (ProjectModel, ClientModel, etc.) encapsula el esquema de la base de datos, las validaciones, índices únicos (p. ej., email en User), timestamps automáticos y relaciones entre colecciones.
+
+**Vistas (View):**  
+Componen la interfaz de usuario. Las plantillas Pug son responsables de presentar los datos al usuario final de una manera clara y estructurada. Pug genera HTML dinámico compatible con las operaciones de gestión, autenticación y navegación. Se incluyen plantillas consistentes para login, presentaciones de datos, formularios y errores.
+
+**Controladores (Controller):**  
+Actúan como el núcleo de la lógica de la aplicación, orquestando la interacción entre los Modelos y las Vistas. Reciben las peticiones del usuario, interactúan con la capa de persistencia para obtener o modificar datos, coordinan la lógica de negocio, manipulan modelos, gestionan sesiones, emiten JWT, procesan formularios y preparan los datos para la vista.
 
 ## 3.2 Diseño Arquitectónico Detallado
 
-La elección de un enfoque monolítico y la implementación del patrón MVC han modelado la forma en que los componentes interactúan y cómo se estructura el flujo de trabajo interno.
-
 ### 3.2.1 El Enfoque MVC Monolítico
 
-Se optó por una arquitectura monolítica para consolidar toda la funcionalidad en una única base de código. Este enfoque simplifica el despliegue y las pruebas iniciales, y fomenta una alta cohesión entre los distintos módulos del dominio (proyectos, facturación, clientes). Dentro de esta estructura, los controladores han sido diseñados para ser el centro de la lógica de orquestación, asumiendo la responsabilidad de procesar las entradas del usuario, aplicar reglas de negocio y preparar los datos para la presentación.
+La arquitectura monolítica consolida toda la funcionalidad en una única base de código. Este enfoque simplifica el despliegue y las pruebas iniciales, la trazabilidad, la incorporación posterior del sistema de autenticación sin fragmentar el proyecto, y fomenta una alta cohesión entre los distintos módulos del dominio (proyectos, facturación, clientes). Dentro de esta estructura, los controladores han sido diseñados para ser el centro de la lógica de orquestación, asumiendo la responsabilidad de procesar las entradas del usuario, aplicar reglas de negocio, acceso a datos, validación de identidad y roles y preparar los datos para la presentación.
 
 ### 3.2.2 Estructura y Organización de Carpetas
 
-El sistema se organiza en la carpeta `src/`, que contiene subdirectorios para `controllers`, `models`, `routes`, `utils` y `config`. Esta estructura facilita la localización de los elementos funcionales y separa las responsabilidades de manera lógica, aunque la lógica de negocio está parcialmente combinada con la presentación y persistencia.
+Dentro del directorio principal `src/` se encuentran los módulos esenciales que dan estructura al sistema. En `controllers/` se aloja toda la lógica de negocio junto con los controladores responsables de los procesos de autenticación. El directorio `models/` contiene los modelos de Mongoose que representan el dominio completo de la aplicación, incluyendo el UserModel, la definición de roles, la estructura de permisos y cualquier otra entidad relevante.
 
-Las vistas se encuentran en el directorio `views/`, donde cada entidad tiene su propia sección de plantillas Pug, incluyendo layouts generales y específicos, así como plantillas para manejo de errores y formularios CRUD.
+En `routes/` se organizan tanto las rutas públicas como las protegidas, cada una vinculada a su respectivo middleware de autenticación. Justamente, esos middlewares residen en el directorio `middleware/`, donde se implementan funciones como `isAuthenticated`, `hasRole`, `hasPermission`, etc., además del módulo centralizado de manejo de errores.
+
+La configuración del sistema se concentra en `config/`, que reúne los archivos encargados de establecer la conexión con MongoDB e inicializar componentes clave como Passport y JWT. Por otro lado, todas las utilidades auxiliares se ubican en `utils/`, un espacio donde viven herramientas como CodeGenerator, filterManagers, invoiceNumberGenerator, etc., también funciones de formato y distintos validadores.
+
+Finalmente, el directorio `views/` contiene las plantillas Pug del sistema, como las interfaces CRUD, dashboard, sidebar con botones desplegables y la vista de login, integradas visualmente para mantener coherencia estética y funcional con toda la aplicación.
 
 ### 3.2.3 Entidades y Modelos del Sistema
 
@@ -352,28 +575,41 @@ A continuación se describen todas las entidades del sistema y su funcionalidad 
 
 ### 3.2.4 Interacción entre Capas
 
-El flujo de información entre las capas está definido:
+El flujo de información dentro del sistema sigue un recorrido claramente definido entre sus capas, combinando la lógica de negocio, el acceso a datos, la renderización de vistas y la seguridad. Cuando llega una petición HTTP, esta es recibida por el enrutador de Express, que la dirige al método correspondiente en un Controlador. El Controlador se encarga de procesar la petición, interactuando con uno o varios Modelos para realizar operaciones sobre la base de datos, ya sea lectura, escritura o actualización. Para optimizar la carga de datos relacionados y construir un grafo de objetos completo, se utiliza extensivamente Mongoose y su función populate.
 
-1. Una petición HTTP llega al enrutador de Express, que la dirige al método correspondiente en un Controlador.
-2. El Controlador procesa la petición, interactuando con uno o varios Modelos para realizar operaciones de base de datos (lectura, escritura, actualización). Mongoose, a través de su función populate, se utiliza de forma extensiva para cargar datos relacionados y construir un grafo de objetos completo.
-3. Una vez que los datos están listos, el Controlador los pasa a una Vista Pug.
-4. La Vista renderiza el HTML final y lo devuelve como respuesta al cliente.
-5. Por ejemplo, en el caso de `ProjectController.createView`, el controlador recibe los datos del formulario, los procesa para crear una nueva instancia de `ProjectModel`, invoca al CodeGenerator para asignar un identificador de negocio y, finalmente, redirige al usuario a la vista del proyecto recién creado.
+Una vez que los datos están preparados, el Controlador los pasa a una Vista Pug, la cual renderiza el HTML final y lo devuelve como respuesta al cliente. Por ejemplo, en el caso de `ProjectController.createView`, el controlador recibe los datos de un formulario, los procesa para crear una nueva instancia de ProjectModel, invoca al CodeGenerator para asignar un identificador de negocio único y, finalmente, redirige al usuario hacia la vista del proyecto recién creado.
+
+A esta interacción básica se le ha integrado una capa de seguridad y autenticación. Cuando un usuario intenta acceder a una ruta protegida, primero se ejecuta el middleware `hasPermission` o `isAuthenticated`, que valida la identidad del usuario. Luego, el middleware `hasRole` comprueba que el usuario cuente con los permisos necesarios para realizar la operación solicitada. Solo una vez completadas estas validaciones, el Controlador ejecuta la lógica correspondiente y obtiene los datos desde los Modelos. La Vista finalmente renderiza la respuesta, asegurando que únicamente los usuarios autenticados y autorizados puedan acceder a operaciones sensibles de lectura, escritura o modificación en el sistema.
+
+Este flujo garantiza no solo la correcta interacción entre capas Controlador, Modelos y Vistas, sino también la integridad y seguridad de las operaciones, integrando de manera transversal la autenticación y la autorización sin alterar la arquitectura MVC.
 
 ### 3.2.5 Integración de Componentes y Flujo de Dependencias
 
-La arquitectura presenta una integración directa entre sus componentes, diseñada para la eficiencia:
+La arquitectura del sistema presenta una integración directa y coherente entre todos sus componentes, diseñada para maximizar la eficiencia y mantener la claridad en el flujo de datos. Las vistas Pug están preparadas para consumir directamente los objetos de Mongoose, enriquecidos mediante populate, lo que permite renderizar información relacional compleja de manera inmediata, como por ejemplo mostrar el nombre del cliente asociado a un proyecto, sin necesidad de lógica adicional en la capa de presentación.
 
-- **Vistas y Modelos:** Las vistas Pug están diseñadas para consumir directamente los objetos de Mongoose enriquecidos por populate. Esto permite renderizar información relacional compleja (como el nombre del cliente de un proyecto) de forma directa, simplificando la lógica en la capa de presentación.
-- **Controladores e Infraestructura:** Los controladores dependen directamente de los modelos de Mongoose, lo que permite un acceso rápido y tipado a la capa de datos, acelerando el desarrollo de nuevas funcionalidades CRUD.
+Los controladores dependen de los modelos de Mongoose para acceder a la capa de datos de forma rápida y tipada, facilitando la implementación de nuevas funcionalidades CRUD. Además, esta dependencia se extiende a la capa de seguridad, de modo que cada controlador puede verificar la identidad y los permisos de los usuarios antes de ejecutar cualquier operación.
+
+Las rutas se encuentran protegidas por middlewares de autenticación, como `isAuthenticated` o `hasPermission`, y por control de roles mediante `hasRole`, asegurando que solo los usuarios autorizados puedan acceder a operaciones sensibles. Cuando corresponde, las vistas reciben información personalizada del usuario autenticado, integrando datos de manera contextual y segura.
+
+Los modelos, a su vez, interactúan entre sí mediante populate y validaciones de dominio, lo que garantiza consistencia en los datos y refuerza la integridad de la información dentro del sistema. Esta integración transversal entre vistas, controladores, modelos y capas de seguridad establece un flujo de dependencias claro y eficiente, donde cada componente cumple su función sin romper la cohesión general de la arquitectura MVC.
 
 ## 3.3 Modelo de Dominio y Persistencia
 
 El corazón del sistema es su modelo de dominio, que representa las entidades de negocio y sus interrelaciones.
 
-- **Entidad ProjectModel:** Es la entidad central del sistema. Representa un proyecto y mantiene relaciones con Client, Employee (como project_manager) y Team. Las vistas de detalle de un proyecto se construyen utilizando populate anidado para cargar toda la información relevante de una sola vez.
-- **Entidad EstimateModel:** Modela un presupuesto o estimación. Se vincula a un Project y contiene una lista de ítems con sus costos. Utiliza campos virtuales de Mongoose para exponer datos relacionados, como el nombre del cliente (`clientName`), de forma conveniente.
-- **Entidades de Facturación (InvoiceModel, ReceiptModel, ExpenseModel):** Forman el núcleo del subsistema de facturación. Un Invoice (factura) se genera a partir de un Estimate. Un Receipt (recibo) se asocia a una factura para registrar un pago. Los Expense (gastos) se asocian a proyectos para llevar un control de costos. Estas entidades utilizan populate de forma intensiva para trazar la relación completa desde el recibo hasta el cliente final.
+**Entidad ProjectModel:**  
+Es la entidad central del sistema. Representa un proyecto y mantiene relaciones con Client, Employee (como project_manager) y Team. Las vistas de detalle de un proyecto se construyen utilizando populate anidado para cargar toda la información relevante de una sola vez.
+
+**Entidad EstimateModel:**  
+Modela un presupuesto o estimación. Se vincula a un Project y contiene una lista de ítems con sus costos. Utiliza campos virtuales de Mongoose para exponer datos relacionados, como el nombre del cliente (`clientName`), de forma conveniente.
+
+**Entidades de Facturación (InvoiceModel, ReceiptModel, ExpenseModel):**  
+Forman el núcleo del subsistema de facturación. Un Invoice (factura) se genera a partir de un Estimate. Un Receipt (recibo) se asocia a una factura para registrar un pago. Los Expense (gastos) se asocian a proyectos para llevar un control de costos. Estas entidades utilizan populate de forma intensiva para trazar la relación completa desde el recibo hasta el cliente final.
+
+**Entidad UserModel:**  
+El modelo de Usuario constituye un elemento fundamental para el acceso y la gestión del sistema. Cada usuario se identifica mediante un email único y una contraseña protegida mediante hashing con bcrypt, asegurando la confidencialidad de las credenciales. Además, se almacena el `role_id`, que define los permisos y el nivel de acceso del usuario, así como el registro del último inicio de sesión y distintos flags de estado que permiten gestionar su actividad y vigencia dentro del sistema.
+
+El modelo también incorpora virtuals y utiliza populate para relacionar los roles con los usuarios, de manera que la información de permisos y responsabilidades se integre automáticamente al consultar la base de datos. Gracias a esta estructura, todas las operaciones vinculadas a proyectos, facturación y administración quedan asociadas a un usuario responsable y autenticado, garantizando trazabilidad, seguridad y control dentro de la plataforma.
 
 ## 3.4 Flujos de Datos Operacionales
 
@@ -395,23 +631,63 @@ Los flujos de datos describen cómo la información se mueve a través del siste
 4. Convierte los identificadores de texto a ObjectId de MongoDB, construye las estructuras de datos necesarias (como el array `teams`) y llama al método `this.model.update()`.
 5. Tras la actualización, redirige al usuario a la vista del proyecto actualizado.
 
+### 3.4.3 Flujo de Autenticación
+
+1. Usuario ingresa email y contraseña en la vista `login.pug`.
+2. Passport verifica credenciales contra UserModel.
+3. Si es correcto, crea una sesión persistente.
+4. Para la API, se genera un JWT firmado con el secreto del entorno.
+5. El usuario es redirigido al dashboard o recibe el token desde el endpoint API.
+
+### 3.4.4 Flujo de Autorización por Roles
+
+1. `verifyRole` evalúa los permisos.
+2. Solo perfiles autorizados pueden ver, editar o eliminar ciertas entidades.
+
 ## 3.5 Implementación de la Lógica de Negocio
 
 La lógica que gobierna las operaciones y reglas del sistema está implementada de manera pragmática para facilitar su desarrollo y mantenimiento inicial.
 
 ### 3.5.1 Ubicación de las Reglas de Negocio
 
-La mayor parte de la lógica de negocio reside en los Controladores. Esta decisión de diseño centraliza en un único lugar la validación de datos de entrada, la orquestación de llamadas a los modelos, la transformación de datos y la ejecución de reglas específicas, como la generación de códigos únicos tras la creación de una entidad. El `BaseController` abstrae la lógica CRUD más común, mientras que los controladores específicos la extienden con reglas particulares de cada entidad.
+La lógica de negocio se concentra en los Controladores, que centralizan la validación de datos de entrada, la orquestación de llamadas a los modelos, la transformación de información y la ejecución de reglas específicas, como la generación de códigos únicos tras la creación de una entidad. Los controladores integran la validación de credenciales, el cifrado y la comparación de contraseñas, la asignación de roles, el registro del último inicio de sesión (`last_login`) y la aplicación de reglas de acceso según el tipo de usuario. El BaseController abstrae la lógica CRUD más común, mientras que los controladores específicos extienden esa funcionalidad con reglas particulares de cada entidad, incorporando de manera coherente todos los mecanismos de seguridad y autorización necesarios para proteger las operaciones sensibles del sistema.
 
 ### 3.5.2 Reglas de Negocio Clave Implementadas
 
-- **Generación de Códigos Únicos:** Todas las entidades principales poseen un código único de negocio (`code`), generado por un servicio `CodeGenerator` después de la creación del registro en la base de datos.
-- **Asignación de Roles:** Se aplican reglas como la asignación obligatoria de un Project Manager a cada proyecto.
-- **Mapeo de Estados y Tipos:** El sistema gestiona un conjunto de estados y tipos a través de enumeraciones en los modelos Mongoose (p.ej., `status` en proyectos, `billing_type`, etc.), asegurando la consistencia de los datos.
+**Generación de Códigos Únicos:**  
+Todas las entidades principales poseen un código único de negocio (`code`), generado por un servicio CodeGenerator después de la creación del registro en la base de datos.
+
+**Asignación de Roles:**  
+Se aplican reglas como la asignación obligatoria de un Project Manager a cada proyecto.
+
+**Mapeo de Estados y Tipos:**  
+El sistema gestiona un conjunto de estados y tipos a través de enumeraciones en los modelos Mongoose (por ejemplo, `status` en proyectos, `billing_type`, etc.), asegurando la consistencia de los datos.
+
+**Validación de Autenticación:**  
+Se valida la autenticación antes de ejecutar cada operación crítica.
+
+**Generación y Validación de JWT:**  
+Los endpoints de la API utilizan JSON Web Tokens (JWT) para asegurar que solo usuarios autorizados puedan acceder.
+
+**Restricción de Vistas y Rutas según Rol:**  
+El acceso a vistas y rutas se controla de acuerdo con el rol asignado a cada usuario.
+
+**Control de Estado de Usuarios:**  
+Se gestiona el estado activo o inactivo de los usuarios para garantizar que únicamente las cuentas habilitadas puedan realizar acciones dentro del sistema.
+
+### 3.5.3 Lógica de Negocio para Dashboards, Reportes y Análisis
+
+La implementación de la lógica de negocio para los dashboards se diseñó con un enfoque orientado al análisis en tiempo real. A diferencia de las operaciones CRUD tradicionales, este módulo requiere combinar información de distintas entidades, aplicar cálculos intermedios y normalizar datos heterogéneos. Por este motivo, se establecieron controladores especializados que actúan como orquestadores de múltiples consultas.
+
+Cada reporte se construye siguiendo un flujo similar: primero se recopilan los datos brutos desde las colecciones relevantes, luego se aplican transformaciones específicas, como agrupamiento por período, acumulación de horas trabajadas o cálculo de márgenes financieros, y finalmente se prepara una estructura de datos optimizada para ser consumida por las vistas. Este proceso permite que las vistas se enfoquen exclusivamente en la presentación, delegando toda la lógica de negocio al backend.
+
+Además, la lógica incorpora mecanismos defensivos para garantizar consistencia en las métricas, gestionando valores nulos, conversiones de campos y diferencias entre tipos de cliente o tipos de proyectos. Parte fundamental de esta implementación fue resolver relaciones encadenadas que no existían explícitamente en los modelos; por ejemplo, vincular facturas con clientes o vincular proyectos con horas trabajadas a través de tareas. La solución consistió en consultas con populate anidado y búsquedas secundarias, permitiendo reconstruir el contexto completo de cada entidad para producir métricas confiables.
+
+El resultado es una capa de negocio capaz de generar indicadores ejecutivos, financieros y operativos a partir de datos dispersos, manteniendo la coherencia del modelo y el enfoque modular del sistema.
 
 ---
 
-## 3.6. Interacción entre Módulos (usando MongoDB y Mongoose)
+## 3.6 Interacción entre Módulos (usando MongoDB y Mongoose)
 
 - El archivo `server.js` arranca el servidor Express y asegura que la conexión a MongoDB esté establecida correctamente mediante Mongoose, además de cargar las variables de entorno.
 - Una petición HTTP (por ejemplo, `POST /api/clients`) llega al servidor Express configurado en `app.js` (iniciado por `server.js`).
@@ -423,8 +699,6 @@ La mayor parte de la lógica de negocio reside en los Controladores. Esta decisi
 - El resultado de la operación se devuelve desde el modelo al controlador.
 - Finalmente, el controlador construye una respuesta HTTP (con un código de estado y datos en formato JSON) y la envía de vuelta al cliente.
 
-
-Perfecto, Ezequiel. Entonces podemos reformularlo así, usando “desarrollo del sistema” y explicando el motivo del salto entre versiones mayores:
 
 ---
 
@@ -702,7 +976,10 @@ Además, la pantalla de inicio (**Dashboard**) proporciona accesos rápidos a lo
 Esta estructura asegura que los usuarios puedan localizar rápidamente cualquier módulo o entidad dentro del sistema, manteniendo la coherencia y eficiencia en la experiencia de uso.
 
 **Ejemplo visual de la navegación:**  
-![Menú y navegación](assets/screenshots/menu_navegacion.webp)
+**Rol Administrador**
+![Menú y navegación](assets/screenshots/menu_navegacion1.webp)
+**Rol Junior**
+![Menú y navegación](assets/screenshots/menu_navegacion2.webp)
 
 ---
 
@@ -753,7 +1030,8 @@ Demuestra la funcionalidad de filtros y búsqueda avanzada para seleccionar usua
 **Descripción:**  
 Muestra la gestión de roles y la configuración de permisos específicos para cada tipo de usuario.  
 
-![Roles](assets/screenshots/roles_permisos.webp)
+![Roles](assets/screenshots/roles_permisos1.webp)
+![Roles](assets/screenshots/roles_permisos2.webp)
 
 ---
 
@@ -824,7 +1102,31 @@ Este flujo garantiza que solo las facturas completas y validadas sean emitidas o
 
 ![Facturas Generar e Imprimir](assets/screenshots/facturas_generar_imprimir3.webp)
 
+---
 
+## 7.4 Interfaces de Dashboards, Reportes y Análisis
+
+Las interfaces desarrolladas para los dashboards y reportes introducen una nueva capa visual dentro del sistema, orientada a usuarios ejecutivos y gerenciales. Su diseño se centra en la claridad, la lectura rápida de métricas y la navegación directa hacia información crítica. Cada pantalla fue construida utilizando Pug como motor de plantillas, complementado con componentes visuales de Chart.js y estilos consistentes con Bootstrap 5.
+
+El **Dashboard Ejecutivo** presenta una composición simplificada centrada en tres indicadores clave, acompañados de un gráfico comparativo de desviación presupuestaria. La distribución del diseño se realizó para minimizar el ruido visual, priorizando información accionable por encima de detalles operativos.
+
+Las pantallas de **reportes financieros, de proyectos y de clientes** incorporan una combinación de visualizaciones y tablas detalladas. Los gráficos de líneas, barras y dona permiten identificar tendencias de ingresos, distribución de gastos, estados de facturas y rendimiento por proyecto o cliente. Las tablas, por su parte, funcionan como capas de exploración profunda, mostrando registros recientes, valores clave y advertencias que facilitan la toma de decisiones.
+
+El **análisis de ingresos y rentabilidad** cuenta con interfaces más técnicas, donde se presenta la evolución mensual, indicadores de crecimiento, métricas de margen y resultados de ROI. Se incorporaron colores consistentes con el resto del sistema, indicadores visuales de salud financiera y herramientas interactivas que permiten comparar períodos o analizar desviaciones específicas.
+
+![Dashboard Ejecutivo](assets/screenshots/dashboard_ejecutivo.webp)
+
+![Reporte Financiero](assets/screenshots/reporte_financiero.webp)
+
+![Reporte de Proyectos](assets/screenshots/reporte_proyectos.webp)
+
+![Reporte de Clientes](assets/screenshots/reporte_clientes.webp)
+
+![Análisis de Ingresos](assets/screenshots/analisis_ingresos.webp)
+
+![Análisis de Rentabilidad](assets/screenshots/analisis_rentabilidad.webp)
+
+---
 
 # 8. Uso de IAs
 

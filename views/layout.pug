@@ -180,6 +180,48 @@ html(lang="es")
                 a.nav-link.text-white(href="/admin/dashboard")
                   i.bi.bi-house-door.me-2
                   | Inicio
+
+            //- DASHBOARD EJECUTIVO
+            if hasPermission('view_executive_dashboard')
+              li.nav-item
+                a.nav-link.text-white(href="/executive-dashboard")
+                  i.bi.bi-speedometer2.me-2
+                  | Dashboard Ejecutivo
+
+            //- REPORTES EJECUTIVOS (desplegable)
+            if hasAny(['view_financial_reports', 'view_client_reports', 'view_project_reports'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuReportes" role="button")
+                  i.bi.bi-file-earmark-bar-graph.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Reportes 
+                  
+                ul.collapse#menuReportes.ms-3
+                  if hasPermission('view_financial_reports')
+                    li
+                      a.nav-link.text-white(href="/reports/financial") Reporte Financiero
+                  if hasPermission('view_client_reports')
+                    li
+                      a.nav-link.text-white(href="/reports/clients") Reporte de Clientes
+                  if hasPermission('view_project_reports')
+                    li
+                      a.nav-link.text-white(href="/reports/projects") Reporte de Proyectos
+
+            //- ANÁLISIS EJECUTIVO (desplegable)
+            if hasAny(['view_revenue_analysis', 'view_profitability_analysis'])
+              li
+                a.nav-link.text-white(data-bs-toggle="collapse" href="#menuAnalisis" role="button")
+                  i.bi.bi-graph-up-arrow.me-2
+                  i.bi.bi-caret-down-fill
+                  |  Análisis 
+                  
+                ul.collapse#menuAnalisis.ms-3
+                  if hasPermission('view_revenue_analysis')
+                    li
+                      a.nav-link.text-white(href="/analysis/revenue") Análisis de Ingresos
+                  if hasPermission('view_profitability_analysis')
+                    li
+                      a.nav-link.text-white(href="/analysis/profitability") Análisis de Rentabilidad
             
             if hasAny(['view_users', 'view_employees'])
               li

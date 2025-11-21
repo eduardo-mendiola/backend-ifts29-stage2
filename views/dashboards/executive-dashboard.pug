@@ -1,0 +1,240 @@
+extends ../layout.pug
+
+block content
+  .container-fluid
+
+    //- ENCABEZADO
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h1.mb-1 Dashboard Ejecutivo
+        p.text-secondary.mb-0 Indicadores clave de rendimiento
+      div
+        //- Selector de período
+        select#periodSelector.form-select(style="width: 200px;")
+          option(value="current") Mes actual
+          option(value="last") Mes anterior
+          option(value="quarter") Último trimestre
+          option(value="year") Año actual
+
+    //- TARJETAS DE MÉTRICAS PRINCIPALES (3 cards iguales)
+    .row.g-3.mb-4
+      //- Margen Promedio de Rentabilidad
+      .col-12.col-md-4
+        .card.bg-dark.border-primary.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-3
+              div
+                p.text-secondary.mb-1.small Margen Promedio de Rentabilidad
+                h2.mb-0.text-white#profitMargin 0.0%
+              .text-primary
+                i.bi.bi-graph-up-arrow.fs-2
+            hr.border-secondary
+            small.text-success#profitMarginChange
+              i.bi.bi-arrow-up
+              |  +0.0% vs mes pasado
+
+      //- Tasa de Utilización
+      .col-12.col-md-4
+        .card.bg-dark.border-info.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-3
+              div
+                p.text-secondary.mb-1.small Tasa de Utilización
+                h2.mb-0.text-white#utilizationRate 0.0%
+              .text-info
+                i.bi.bi-people.fs-2
+            hr.border-secondary
+            small.text-danger#utilizationChange
+              i.bi.bi-arrow-down
+              |  -0.0% vs mes pasado
+
+      //- Días Pendientes de Cobro (DSO)
+      .col-12.col-md-4
+        .card.bg-dark.border-warning.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-3
+              div
+                p.text-secondary.mb-1.small Días Pendientes de Cobro (DSO)
+                h2.mb-0.text-white#dsoValue 0
+                small.text-secondary Días
+              .text-warning
+                i.bi.bi-clock-history.fs-2
+            hr.border-secondary
+            small.text-warning#overdueInvoices
+              i.bi.bi-exclamation-triangle
+              |  Facturas atrasadas: 0 Facturas
+
+    //- GRÁFICO PRINCIPAL - Análisis de Proyectos
+    .row.mb-4
+      .col-12
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-bar-chart-fill.me-2
+              | Riesgo de Desviación de Proyectos
+            p.text-secondary.small.mb-0 Presupuesto vs Resultados Reales - Trimestre Actual
+          .card-body
+            canvas#projectDeviationChart(style="height: 400px;")
+
+  //- SCRIPTS
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js")
+  
+  script.
+    // ============================================
+    // DASHBOARD EJECUTIVO - SCRIPTS
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar datos iniciales
+      loadDashboardData();
+      
+      // Listener para cambio de período
+      document.getElementById('periodSelector').addEventListener('change', (e) => {
+        loadDashboardData(e.target.value);
+      });
+    });
+
+    // Función principal para cargar datos del dashboard
+    async function loadDashboardData(period = 'current') {
+      try {
+        const response = await fetch(`/api/executive-dashboard?period=${period}`);
+        const data = await response.json();
+        
+        // Actualizar métricas principales
+        updateMainMetrics(data.metrics);
+        
+        // Actualizar gráfico de proyectos
+        updateProjectChart(data.projectAnalysis);
+        
+      } catch (error) {
+        console.error('Error al cargar datos del dashboard:', error);
+      }
+    }
+
+    // Actualizar métricas principales
+    function updateMainMetrics(metrics) {
+      // Margen de rentabilidad
+      const profitMargin = metrics.profitMargin || 0;
+      document.getElementById('profitMargin').textContent = `${profitMargin.toFixed(1)}%`;
+      
+      const profitChange = metrics.profitMarginChange || 0;
+      const profitChangeEl = document.getElementById('profitMarginChange');
+      profitChangeEl.innerHTML = profitChange >= 0 
+        ? `<i class="bi bi-arrow-up"></i> +${profitChange.toFixed(1)}% vs mes pasado`
+        : `<i class="bi bi-arrow-down"></i> ${profitChange.toFixed(1)}% vs mes pasado`;
+      profitChangeEl.className = profitChange >= 0 ? 'text-success' : 'text-danger';
+      
+      // Tasa de utilización
+      const utilizationRate = metrics.utilizationRate || 0;
+      document.getElementById('utilizationRate').textContent = `${utilizationRate.toFixed(1)}%`;
+      
+      const utilizationChange = metrics.utilizationChange || 0;
+      const utilizationChangeEl = document.getElementById('utilizationChange');
+      utilizationChangeEl.innerHTML = utilizationChange >= 0 
+        ? `<i class="bi bi-arrow-up"></i> +${utilizationChange.toFixed(1)}% vs mes pasado`
+        : `<i class="bi bi-arrow-down"></i> ${utilizationChange.toFixed(1)}% vs mes pasado`;
+      utilizationChangeEl.className = utilizationChange >= 0 ? 'text-success' : 'text-danger';
+      
+      // DSO (Días pendientes de cobro)
+      const dso = metrics.dso || 0;
+      document.getElementById('dsoValue').textContent = dso;
+      
+      const overdueCount = metrics.overdueInvoices || 0;
+      const overdueEl = document.getElementById('overdueInvoices');
+      overdueEl.innerHTML = `<i class="bi bi-exclamation-triangle"></i> Facturas atrasadas: ${overdueCount} Facturas`;
+      overdueEl.className = overdueCount > 0 ? 'text-warning' : 'text-success';
+    }
+
+    // Variable global para el gráfico
+    let projectChart;
+
+    // Actualizar gráfico de proyectos
+    function updateProjectChart(projectAnalysis) {
+      const ctx = document.getElementById('projectDeviationChart').getContext('2d');
+      
+      if (projectChart) projectChart.destroy();
+      
+      const projects = projectAnalysis.projects || [];
+      const labels = projects.map(p => p.name);
+      const budgetData = projects.map(p => p.budget);
+      const actualData = projects.map(p => p.actual);
+      
+      projectChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Presupuesto',
+              data: budgetData,
+              backgroundColor: 'rgba(13, 110, 253, 0.7)',
+              borderColor: 'rgba(13, 110, 253, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Real',
+              data: actualData,
+              backgroundColor: 'rgba(45, 185, 110, 0.7)',
+              borderColor: 'rgba(45, 185, 110, 1)',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { 
+                color: '#f0f0f0',
+                font: { size: 12 }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': $';
+                  }
+                  label += context.parsed.y.toFixed(2);
+                  
+                  // Calcular desviación
+                  if (context.datasetIndex === 1) {
+                    const budget = budgetData[context.dataIndex];
+                    const actual = actualData[context.dataIndex];
+                    const deviation = ((actual - budget) / budget * 100).toFixed(1);
+                    label += ` (${deviation > 0 ? '+' : ''}${deviation}%)`;
+                  }
+                  
+                  return label;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: function(value) {
+                  return '$' + value.toLocaleString();
+                }
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { 
+                color: '#f0f0f0',
+                maxRotation: 45,
+                minRotation: 45
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+    }
+

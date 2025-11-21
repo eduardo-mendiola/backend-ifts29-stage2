@@ -3,7 +3,8 @@ extends ../layout.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-0 Lista de Facturas
-    a.btn.btn-primary(href="/invoices/new") Nueva Factura
+    if hasPermission('create_invoices')
+      a.btn.btn-primary(href="/invoices/new") Nueva Factura
     
   //- Incluir barra de búsqueda, modal y JS común
   include ../partials/common-table-scripts.pug
@@ -33,54 +34,56 @@ block content
           td= statusLabels[item.status] || 'N/A'
           td.text-end
             a.btn.btn-gray.btn-sm.me-2(href=`/invoices/${item.id}`) Ver
-            a.btn.btn-sm.me-2(
-              class=item.status === 'draft' ? 'btn-gray' : 'btn-success',
-              style="width: 65px; text-align:center;",
-              href=item.status === 'draft' 
-                ? `/invoices/${item.id}/edit`
-                : `/invoices/${item.id}/preview`
-            )= item.status === 'draft' ? 'Editar' : 'Imprimir'
+            if hasPermission('edit_invoices')
+              a.btn.btn-sm.me-2(
+                class=item.status === 'draft' ? 'btn-gray' : 'btn-success',
+                style="width: 65px; text-align:center;",
+                href=item.status === 'draft' 
+                  ? `/invoices/${item.id}/edit`
+                  : `/invoices/${item.id}/preview`
+              )= item.status === 'draft' ? 'Editar' : 'Imprimir'
 
             //- Lógica para el botón de eliminar/anular
-            if item.status === 'draft'
-              form(
-                action=`/api/expenses/${item.id}?_method=DELETE`,
-                method="POST",
-                style="display:inline;"
-              )
-                input(type="hidden", name="_method", value="DELETE")
-                button.btn.btn-danger-soft.btn-sm.delete-btn(
-                  type="submit",
-                  style="width:60px; text-align:center;"
-                ) Eliminar
+            if hasPermission('delete_invoices')
+              if item.status === 'draft'
+                form(
+                  action=`/api/expenses/${item.id}?_method=DELETE`,
+                  method="POST",
+                  style="display:inline;"
+                )
+                  input(type="hidden", name="_method", value="DELETE")
+                  button.btn.btn-danger-soft.btn-sm.delete-btn(
+                    type="submit",
+                    style="width:60px; text-align:center;"
+                  ) Eliminar
 
-            //- Si NO está en draft pero está cancelada → botón deshabilitado
-            else if item.status === 'cancelled'
-              button.btn.btn-danger-soft.btn-sm(
-                disabled,
-                style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
-              ) Anulada
-            //- Si NO está en draft pero está cancelada → botón deshabilitado
-            else if item.status === 'paid'
-              button.btn.btn-danger-soft.btn-sm(
-                disabled,
-                style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
-              ) Pagada
-
-            //- Si NO está en draft y NO está cancelada → permitir anular
-            else
-              form(
-                action=`/invoices/${item.id}/status?_method=PUT`,
-                method="POST",
-                style="display:inline;"
-              )
-                input(type="hidden", name="status", value="cancelled")
+              //- Si NO está en draft pero está cancelada → botón deshabilitado
+              else if item.status === 'cancelled'
                 button.btn.btn-danger-soft.btn-sm(
-                  type="button",
-                  style="width:60px; text-align:center;"
-                  data-bs-toggle="modal",
-                  data-bs-target=`#confirmCancelModal-${item.id}`
-                ) Anular
+                  disabled,
+                  style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
+                ) Anulada
+              //- Si NO está en draft pero está cancelada → botón deshabilitado
+              else if item.status === 'paid'
+                button.btn.btn-danger-soft.btn-sm(
+                  disabled,
+                  style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
+                ) Pagada
+
+              //- Si NO está en draft y NO está cancelada → permitir anular
+              else
+                form(
+                  action=`/invoices/${item.id}/status?_method=PUT`,
+                  method="POST",
+                  style="display:inline;"
+                )
+                  input(type="hidden", name="status", value="cancelled")
+                  button.btn.btn-danger-soft.btn-sm(
+                    type="button",
+                    style="width:60px; text-align:center;"
+                    data-bs-toggle="modal",
+                    data-bs-target=`#confirmCancelModal-${item.id}`
+                  ) Anular
   
             // Modal de confirmación
             div.modal.fade(id=`confirmCancelModal-${item.id}`, tabindex="-1", aria-labelledby=`confirmCancelModalLabel-${item.id}`, aria-hidden="true")

@@ -1,0 +1,637 @@
+extends ../layout.pug
+
+block content
+  .container-fluid
+
+    //- ENCABEZADO
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h1.mb-1 Análisis de Rentabilidad
+        p.text-secondary.mb-0 Análisis detallado de márgenes, costos y rentabilidad por proyecto
+      div
+        .d-flex.gap-2
+          //- Selector de período
+          select#periodSelector.form-select(style="width: 200px;")
+            option(value="year") Año actual
+            option(value="quarter") Último trimestre
+            option(value="semester") Semestre
+            option(value="all") Todos los tiempos
+          //- Botón de exportar
+          button.btn.btn-success(onclick="exportReport()")
+            i.bi.bi-download.me-2
+            | Exportar
+
+    //- RESUMEN DE RENTABILIDAD (4 cards)
+    .row.g-3.mb-4
+      //- Margen Bruto
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-success.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Margen Bruto
+                h3.mb-0.text-white#grossMargin 0%
+              .text-success
+                i.bi.bi-percent.fs-2
+            small.text-secondary#grossMarginAmount $0 de ganancia bruta
+
+      //- Margen Neto
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-info.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Margen Neto
+                h3.mb-0.text-white#netMargin 0%
+              .text-info
+                i.bi.bi-calculator.fs-2
+            small.text-secondary#netMarginAmount $0 de ganancia neta
+
+      //- ROI Promedio
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-warning.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small ROI Promedio
+                h3.mb-0.text-white#avgROI 0%
+              .text-warning
+                i.bi.bi-graph-up-arrow.fs-2
+            small.text-secondary#roiInfo Por proyecto completado
+
+      //- Costo por Hora
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-danger.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Costo Promedio/Hora
+                h3.mb-0.text-white#avgCostPerHour $0
+              .text-danger
+                i.bi.bi-clock.fs-2
+            small.text-secondary#costInfo Basado en gastos y horas
+
+    //- GRÁFICOS PRINCIPALES
+    .row.g-3.mb-4
+      //- Evolución de Rentabilidad
+      .col-12.col-lg-8
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-graph-up.me-2
+              | Evolución de Ingresos, Costos y Rentabilidad
+            p.text-secondary.small.mb-0 Últimos 12 meses
+          .card-body
+            canvas#profitabilityEvolutionChart(style="height: 350px;")
+
+      //- Distribución de Costos
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-pie-chart.me-2
+              | Distribución de Costos
+          .card-body
+            canvas#costDistributionChart(style="height: 350px;")
+
+    //- ANÁLISIS POR PROYECTO
+    .row.g-3.mb-4
+      //- Top 5 Proyectos Más Rentables
+      .col-12.col-lg-6
+        .card.bg-dark.border-success
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-trophy.me-2
+              | Top 5 Proyectos Más Rentables
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.mb-0
+                thead
+                  tr
+                    th Proyecto
+                    th Cliente
+                    th Margen
+                    th Ganancia
+                tbody#topProfitableTable
+                  tr
+                    td(colspan="4" class="text-center text-secondary") Cargando...
+
+      //- Top 5 Proyectos Menos Rentables
+      .col-12.col-lg-6
+        .card.bg-dark.border-danger
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-exclamation-triangle.me-2
+              | Top 5 Proyectos Menos Rentables
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.mb-0
+                thead
+                  tr
+                    th Proyecto
+                    th Cliente
+                    th Margen
+                    th Pérdida/Baja
+                tbody#lowProfitableTable
+                  tr
+                    td(colspan="4" class="text-center text-secondary") Cargando...
+
+    //- GRÁFICOS SECUNDARIOS
+    .row.g-3.mb-4
+      //- Rentabilidad por Cliente
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-people.me-2
+              | Rentabilidad por Cliente (Top 10)
+          .card-body
+            canvas#profitabilityByClientChart(style="height: 300px;")
+
+      //- Rentabilidad por Tipo de Facturación
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-receipt.me-2
+              | Rentabilidad por Tipo de Facturación
+          .card-body
+            canvas#profitabilityByBillingChart(style="height: 300px;")
+
+    //- MÉTRICAS AVANZADAS
+    .row.g-3.mb-4
+      //- Comparación Presupuesto vs Real
+      .col-12.col-lg-8
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-bar-chart-line.me-2
+              | Presupuesto vs Costos Reales (Últimos 10 Proyectos)
+          .card-body
+            canvas#budgetVsActualChart(style="height: 300px;")
+
+      //- Indicadores de Salud Financiera
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-heart-pulse.me-2
+              | Salud Financiera
+          .card-body
+            .mb-3
+              .d-flex.justify-content-between.align-items-center.mb-1
+                small.text-secondary Proyectos Rentables
+                strong#profitablePercentage.text-success 0%
+              .progress(style="height: 10px;")
+                .progress-bar.bg-success#profitableBar(role="progressbar" style="width: 0%")
+            
+            .mb-3
+              .d-flex.justify-content-between.align-items-center.mb-1
+                small.text-secondary Margen > 20%
+                strong#highMarginPercentage.text-info 0%
+              .progress(style="height: 10px;")
+                .progress-bar.bg-info#highMarginBar(role="progressbar" style="width: 0%")
+            
+            .mb-3
+              .d-flex.justify-content-between.align-items-center.mb-1
+                small.text-secondary Proyectos con Pérdidas
+                strong#lossPercentage.text-danger 0%
+              .progress(style="height: 10px;")
+                .progress-bar.bg-danger#lossBar(role="progressbar" style="width: 0%")
+            
+            hr.border-secondary
+            
+            .text-center.mt-3
+              p.text-secondary.small.mb-1 Calificación General
+              h3#overallRating.mb-0 A
+              small.text-success Excelente
+
+    //- TABLA DETALLADA
+    .row.g-3.mb-4
+      .col-12
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white
+              i.bi.bi-table.me-2
+              | Detalle de Rentabilidad por Proyecto
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.table-hover.mb-0
+                thead
+                  tr
+                    th Proyecto
+                    th Cliente
+                    th Presupuesto
+                    th Costos
+                    th Ganancia
+                    th Margen
+                    th Estado
+                tbody#profitabilityDetailTable
+                  tr
+                    td(colspan="7" class="text-center text-secondary") Cargando...
+
+  //- SCRIPTS
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js")
+  
+  script.
+    // ============================================
+    // ANÁLISIS DE RENTABILIDAD - SCRIPTS
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfitabilityAnalysis();
+      
+      document.getElementById('periodSelector').addEventListener('change', (e) => {
+        loadProfitabilityAnalysis(e.target.value);
+      });
+    });
+
+    // Cargar análisis de rentabilidad
+    async function loadProfitabilityAnalysis(period = 'year') {
+      try {
+        const response = await fetch(`/api/profitability-analysis?period=${period}`);
+        const data = await response.json();
+        
+        updateSummaryCards(data.summary);
+        updateCharts(data.charts);
+        updateTables(data.tables);
+        updateHealthIndicators(data.health);
+        
+      } catch (error) {
+        console.error('Error al cargar análisis de rentabilidad:', error);
+      }
+    }
+
+    // Actualizar cards de resumen
+    function updateSummaryCards(summary) {
+      document.getElementById('grossMargin').textContent = `${(summary.grossMargin || 0).toFixed(1)}%`;
+      document.getElementById('netMargin').textContent = `${(summary.netMargin || 0).toFixed(1)}%`;
+      document.getElementById('avgROI').textContent = `${(summary.avgROI || 0).toFixed(1)}%`;
+      document.getElementById('avgCostPerHour').textContent = 
+        `$${(summary.avgCostPerHour || 0).toFixed(2)}`;
+      
+      document.getElementById('grossMarginAmount').textContent = 
+        `$${(summary.grossProfit || 0).toLocaleString('es-AR')} de ganancia bruta`;
+      document.getElementById('netMarginAmount').textContent = 
+        `$${(summary.netProfit || 0).toLocaleString('es-AR')} de ganancia neta`;
+      document.getElementById('roiInfo').textContent = 
+        `En ${summary.completedProjects || 0} proyectos completados`;
+      document.getElementById('costInfo').textContent = 
+        `${(summary.totalHours || 0).toFixed(0)}h trabajadas`;
+    }
+
+    // Variables globales para gráficos
+    let profitabilityEvolutionChart, costDistributionChart, profitabilityByClientChart;
+    let profitabilityByBillingChart, budgetVsActualChart;
+
+    // Actualizar gráficos
+    function updateCharts(charts) {
+      // Evolución de Rentabilidad
+      const evolutionCtx = document.getElementById('profitabilityEvolutionChart').getContext('2d');
+      if (profitabilityEvolutionChart) profitabilityEvolutionChart.destroy();
+      
+      profitabilityEvolutionChart = new Chart(evolutionCtx, {
+        type: 'line',
+        data: {
+          labels: charts.evolution.labels || [],
+          datasets: [
+            {
+              label: 'Ingresos',
+              data: charts.evolution.revenue || [],
+              borderColor: 'rgba(25, 135, 84, 1)',
+              backgroundColor: 'rgba(25, 135, 84, 0.1)',
+              tension: 0.4,
+              fill: true,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Costos',
+              data: charts.evolution.costs || [],
+              borderColor: 'rgba(220, 53, 69, 1)',
+              backgroundColor: 'rgba(220, 53, 69, 0.1)',
+              tension: 0.4,
+              fill: true,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Margen %',
+              data: charts.evolution.margin || [],
+              borderColor: 'rgba(255, 193, 7, 1)',
+              tension: 0.4,
+              fill: false,
+              borderWidth: 3,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { color: '#f0f0f0' }
+            }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              position: 'left',
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => '$' + value.toLocaleString()
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              beginAtZero: true,
+              max: 100,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => value + '%'
+              },
+              grid: { display: false }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Distribución de Costos
+      const costCtx = document.getElementById('costDistributionChart').getContext('2d');
+      if (costDistributionChart) costDistributionChart.destroy();
+      
+      costDistributionChart = new Chart(costCtx, {
+        type: 'doughnut',
+        data: {
+          labels: charts.costDistribution.labels || [],
+          datasets: [{
+            data: charts.costDistribution.data || [],
+            backgroundColor: [
+              'rgba(220, 53, 69, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(108, 117, 125, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Rentabilidad por Cliente
+      const clientCtx = document.getElementById('profitabilityByClientChart').getContext('2d');
+      if (profitabilityByClientChart) profitabilityByClientChart.destroy();
+      
+      profitabilityByClientChart = new Chart(clientCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.byClient.labels || [],
+          datasets: [{
+            label: 'Margen %',
+            data: charts.byClient.data || [],
+            backgroundColor: charts.byClient.data.map(val => 
+              val >= 20 ? 'rgba(25, 135, 84, 0.7)' : 
+              val >= 10 ? 'rgba(255, 193, 7, 0.7)' : 
+              'rgba(220, 53, 69, 0.7)'
+            )
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => value + '%'
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0', maxRotation: 45, minRotation: 45 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Rentabilidad por Tipo de Facturación
+      const billingCtx = document.getElementById('profitabilityByBillingChart').getContext('2d');
+      if (profitabilityByBillingChart) profitabilityByBillingChart.destroy();
+      
+      profitabilityByBillingChart = new Chart(billingCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.byBilling.labels || [],
+          datasets: [{
+            label: 'Margen Promedio %',
+            data: charts.byBilling.data || [],
+            backgroundColor: 'rgba(13, 110, 253, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => value + '%'
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Presupuesto vs Real
+      const budgetCtx = document.getElementById('budgetVsActualChart').getContext('2d');
+      if (budgetVsActualChart) budgetVsActualChart.destroy();
+      
+      budgetVsActualChart = new Chart(budgetCtx, {
+        type: 'bar',
+        data: {
+          labels: charts.budgetVsActual.labels || [],
+          datasets: [
+            {
+              label: 'Presupuesto',
+              data: charts.budgetVsActual.budget || [],
+              backgroundColor: 'rgba(13, 110, 253, 0.7)'
+            },
+            {
+              label: 'Costo Real',
+              data: charts.budgetVsActual.actual || [],
+              backgroundColor: 'rgba(220, 53, 69, 0.7)'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { color: '#f0f0f0' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => '$' + value.toLocaleString()
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0', maxRotation: 45, minRotation: 45 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+    }
+
+    // Actualizar tablas
+    function updateTables(tables) {
+      // Top Rentables
+      const topTable = document.getElementById('topProfitableTable');
+      const topProjects = tables.topProfitable || [];
+      
+      if (topProjects.length === 0) {
+        topTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay datos</td></tr>';
+      } else {
+        topTable.innerHTML = topProjects.map(proj => `
+          <tr>
+            <td>${proj.name}</td>
+            <td>${proj.client}</td>
+            <td class="text-success">${proj.margin.toFixed(1)}%</td>
+            <td class="text-success">$${proj.profit.toLocaleString('es-AR')}</td>
+          </tr>
+        `).join('');
+      }
+      
+      // Menos Rentables
+      const lowTable = document.getElementById('lowProfitableTable');
+      const lowProjects = tables.lowProfitable || [];
+      
+      if (lowProjects.length === 0) {
+        lowTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay datos</td></tr>';
+      } else {
+        lowTable.innerHTML = lowProjects.map(proj => `
+          <tr>
+            <td>${proj.name}</td>
+            <td>${proj.client}</td>
+            <td class="${proj.margin < 0 ? 'text-danger' : 'text-warning'}">${proj.margin.toFixed(1)}%</td>
+            <td class="${proj.profit < 0 ? 'text-danger' : 'text-warning'}">$${proj.profit.toLocaleString('es-AR')}</td>
+          </tr>
+        `).join('');
+      }
+      
+      // Detalle completo
+      const detailTable = document.getElementById('profitabilityDetailTable');
+      const allProjects = tables.detail || [];
+      
+      if (allProjects.length === 0) {
+        detailTable.innerHTML = '<tr><td colspan="7" class="text-center text-secondary">No hay datos</td></tr>';
+      } else {
+        const statusClasses = {
+          planning: 'bg-secondary',
+          in_progress: 'bg-primary',
+          on_hold: 'bg-warning',
+          completed: 'bg-success',
+          cancelled: 'bg-danger'
+        };
+        
+        detailTable.innerHTML = allProjects.map(proj => {
+          const marginClass = proj.margin >= 20 ? 'text-success' : proj.margin >= 10 ? 'text-warning' : 'text-danger';
+          return `
+            <tr>
+              <td>${proj.name}</td>
+              <td>${proj.client}</td>
+              <td>$${proj.budget.toLocaleString('es-AR')}</td>
+              <td>$${proj.costs.toLocaleString('es-AR')}</td>
+              <td class="${proj.profit >= 0 ? 'text-success' : 'text-danger'}">$${proj.profit.toLocaleString('es-AR')}</td>
+              <td class="${marginClass}">${proj.margin.toFixed(1)}%</td>
+              <td><span class="badge ${statusClasses[proj.status] || 'bg-secondary'}">${proj.status}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    // Actualizar indicadores de salud
+    function updateHealthIndicators(health) {
+      const profitable = health.profitablePercentage || 0;
+      const highMargin = health.highMarginPercentage || 0;
+      const loss = health.lossPercentage || 0;
+      
+      document.getElementById('profitablePercentage').textContent = `${profitable.toFixed(0)}%`;
+      document.getElementById('profitableBar').style.width = `${profitable}%`;
+      
+      document.getElementById('highMarginPercentage').textContent = `${highMargin.toFixed(0)}%`;
+      document.getElementById('highMarginBar').style.width = `${highMargin}%`;
+      
+      document.getElementById('lossPercentage').textContent = `${loss.toFixed(0)}%`;
+      document.getElementById('lossBar').style.width = `${loss}%`;
+      
+      // Calificación general
+      const ratingEl = document.getElementById('overallRating');
+      const ratingText = ratingEl.nextElementSibling;
+      
+      if (profitable >= 80 && loss < 10) {
+        ratingEl.textContent = 'A';
+        ratingEl.className = 'text-success mb-0';
+        ratingText.textContent = 'Excelente';
+        ratingText.className = 'text-success';
+      } else if (profitable >= 60 && loss < 20) {
+        ratingEl.textContent = 'B';
+        ratingEl.className = 'text-info mb-0';
+        ratingText.textContent = 'Bueno';
+        ratingText.className = 'text-info';
+      } else if (profitable >= 40 && loss < 30) {
+        ratingEl.textContent = 'C';
+        ratingEl.className = 'text-warning mb-0';
+        ratingText.textContent = 'Regular';
+        ratingText.className = 'text-warning';
+      } else {
+        ratingEl.textContent = 'D';
+        ratingEl.className = 'text-danger mb-0';
+        ratingText.textContent = 'Necesita atención';
+        ratingText.className = 'text-danger';
+      }
+    }
+
+    // Exportar reporte
+    function exportReport() {
+      alert('Funcionalidad de exportación en desarrollo');
+      // TODO: Implementar exportación a PDF o Excel
+    }

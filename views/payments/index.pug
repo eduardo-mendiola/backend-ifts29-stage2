@@ -3,7 +3,8 @@ extends ../layout.pug
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
     h1.mb-0 Lista de Pagos
-    a.btn.btn-primary(href="/payments/new") Nueva Pago
+    if hasPermission('create_payments')
+      a.btn.btn-primary(href="/payments/new") Nueva Pago
     
   //- Incluir barra de búsqueda, modal y JS común
   include ../partials/common-table-scripts.pug
@@ -31,26 +32,27 @@ block content
             a.btn.btn-gray.btn-sm.me-2(href=`/payments/${item.id}`) Ver
             
             //- Lógica para el botón de anular cobro
-            if item.status === 'success'
-              form(
-                action=`/payments/${item.id}/status?_method=PUT`,
-                method="POST",
-                style="display:inline;"
-              )
-                input(type="hidden", name="status", value="cancelled")
-                button.btn.btn-danger-soft.btn-sm(
-                  type="button",
-                  style="width:60px; text-align:center;"
-                  data-bs-toggle="modal",
-                  data-bs-target=`#confirmCancelModal-${item.id}`
-                ) Anular
+            if hasPermission('delete_payments')
+              if item.status === 'success'
+                form(
+                  action=`/payments/${item.id}/status?_method=PUT`,
+                  method="POST",
+                  style="display:inline;"
+                )
+                  input(type="hidden", name="status", value="cancelled")
+                  button.btn.btn-danger-soft.btn-sm(
+                    type="button",
+                    style="width:60px; text-align:center;"
+                    data-bs-toggle="modal",
+                    data-bs-target=`#confirmCancelModal-${item.id}`
+                  ) Anular
 
-            //- Si está cancelado → botón deshabilitado
-            else if item.status === 'cancelled'
-              button.btn.btn-danger-soft.btn-sm(
-                disabled,
-                style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
-              ) Anulado
+              //- Si está cancelado → botón deshabilitado
+              else if item.status === 'cancelled'
+                button.btn.btn-danger-soft.btn-sm(
+                  disabled,
+                  style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
+                ) Anulado
 
       
             // Modal de confirmación

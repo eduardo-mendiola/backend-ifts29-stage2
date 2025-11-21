@@ -1,0 +1,461 @@
+extends ../layout.pug
+
+block content
+  .container-fluid
+
+    //- ENCABEZADO
+    .d-flex.justify-content-between.align-items-center.mb-4
+      div
+        h1.mb-1 Reporte Financiero
+        p.text-secondary.mb-0 Análisis detallado de ingresos, gastos y flujo de caja
+      div
+        .d-flex.gap-2
+          //- Selector de período
+          select#periodSelector.form-select(style="width: 200px;")
+            option(value="current") Mes actual
+            option(value="last") Mes anterior
+            option(value="quarter") Último trimestre
+            option(value="year") Año actual
+          //- Botón de exportar
+          button.btn.btn-success(onclick="exportReport()")
+            i.bi.bi-download.me-2
+            | Exportar
+
+    //- RESUMEN FINANCIERO (4 cards)
+    .row.g-3.mb-4
+      //- Ingresos Totales
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-success.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Ingresos Totales
+                h3.mb-0.text-white#totalIncome $0.00
+              .text-success
+                i.bi.bi-arrow-down-circle.fs-2
+            small.text-success#incomeChange
+              i.bi.bi-arrow-up
+              |  +0% vs período anterior
+
+      //- Gastos Totales
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-danger.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Gastos Totales
+                h3.mb-0.text-white#totalExpenses $0.00
+              .text-danger
+                i.bi.bi-arrow-up-circle.fs-2
+            small.text-danger#expensesChange
+              i.bi.bi-arrow-up
+              |  +0% vs período anterior
+
+      //- Balance Neto
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-primary.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Balance Neto
+                h3.mb-0.text-white#netBalance $0.00
+              .text-primary
+                i.bi.bi-calculator.fs-2
+            small#balanceChange.text-success
+              i.bi.bi-arrow-up
+              |  +0% vs período anterior
+
+      //- Cuentas por Cobrar
+      .col-12.col-sm-6.col-lg-3
+        .card.bg-dark.border-warning.h-100
+          .card-body
+            .d-flex.justify-content-between.align-items-start.mb-2
+              div
+                p.text-secondary.mb-1.small Cuentas por Cobrar
+                h3.mb-0.text-white#accountsReceivable $0.00
+              .text-warning
+                i.bi.bi-hourglass-split.fs-2
+            small.text-secondary#receivableCount 0 facturas pendientes
+
+    //- GRÁFICOS PRINCIPALES
+    .row.g-3.mb-4
+      //- Evolución de Ingresos y Gastos
+      .col-12.col-lg-8
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-graph-up.me-2
+              | Evolución de Ingresos y Gastos
+            p.text-secondary.small.mb-0 Últimos 6 meses
+          .card-body
+            canvas#incomeExpensesChart(style="height: 300px;")
+
+      //- Distribución de Gastos
+      .col-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h5.mb-0.text-white
+              i.bi.bi-pie-chart.me-2
+              | Distribución de Gastos
+          .card-body
+            canvas#expensesDistributionChart(style="height: 300px;")
+
+    //- GRÁFICOS SECUNDARIOS
+    .row.g-3.mb-4
+      //- Estado de Facturas
+      .col-12.col-md-6.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white Estado de Facturas
+          .card-body
+            canvas#invoiceStatusChart(style="height: 250px;")
+
+      //- Métodos de Pago
+      .col-12.col-md-6.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white Métodos de Pago
+          .card-body
+            canvas#paymentMethodsChart(style="height: 250px;")
+
+      //- Top 5 Clientes por Facturación
+      .col-12.col-md-12.col-lg-4
+        .card.bg-dark
+          .card-header
+            h6.mb-0.text-white Top 5 Clientes
+          .card-body
+            ul#topClientsList.list-unstyled.mb-0
+              li.text-secondary.small Cargando...
+
+    //- TABLAS DE DETALLE
+    .row.g-3.mb-4
+      //- Facturas Recientes
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header.d-flex.justify-content-between.align-items-center
+            h6.mb-0.text-white
+              i.bi.bi-receipt.me-2
+              | Últimas Facturas
+            a.btn.btn-sm.btn-primary(href="/invoices") Ver todas
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.table-hover.mb-0
+                thead
+                  tr
+                    th Número
+                    th Cliente
+                    th Monto
+                    th Estado
+                tbody#recentInvoicesTable
+                  tr
+                    td(colspan="4" class="text-center text-secondary") Cargando...
+
+      //- Gastos Recientes
+      .col-12.col-lg-6
+        .card.bg-dark
+          .card-header.d-flex.justify-content-between.align-items-center
+            h6.mb-0.text-white
+              i.bi.bi-wallet2.me-2
+              | Últimos Gastos
+            a.btn.btn-sm.btn-primary(href="/expenses") Ver todos
+          .card-body
+            .table-responsive
+              table.table.table-dark.table-sm.table-hover.mb-0
+                thead
+                  tr
+                    th Descripción
+                    th Categoría
+                    th Monto
+                    th Fecha
+                tbody#recentExpensesTable
+                  tr
+                    td(colspan="4" class="text-center text-secondary") Cargando...
+
+  //- SCRIPTS
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js")
+  
+  script.
+    // ============================================
+    // REPORTE FINANCIERO - SCRIPTS
+    // ============================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFinancialReport();
+      
+      document.getElementById('periodSelector').addEventListener('change', (e) => {
+        loadFinancialReport(e.target.value);
+      });
+    });
+
+    // Cargar reporte financiero
+    async function loadFinancialReport(period = 'current') {
+      try {
+        const response = await fetch(`/api/financial-report?period=${period}`);
+        const data = await response.json();
+        
+        updateSummaryCards(data.summary);
+        updateCharts(data.charts);
+        updateTables(data.tables);
+        
+      } catch (error) {
+        console.error('Error al cargar reporte financiero:', error);
+      }
+    }
+
+    // Actualizar cards de resumen
+    function updateSummaryCards(summary) {
+      document.getElementById('totalIncome').textContent = `$${summary.totalIncome.toFixed(2)}`;
+      document.getElementById('totalExpenses').textContent = `$${summary.totalExpenses.toFixed(2)}`;
+      document.getElementById('netBalance').textContent = `$${summary.netBalance.toFixed(2)}`;
+      document.getElementById('accountsReceivable').textContent = `$${summary.accountsReceivable.toFixed(2)}`;
+      
+      // Cambios vs período anterior
+      const incomeChange = summary.incomeChange || 0;
+      const incomeChangeEl = document.getElementById('incomeChange');
+      incomeChangeEl.innerHTML = incomeChange >= 0 
+        ? `<i class="bi bi-arrow-up"></i> +${incomeChange.toFixed(1)}% vs período anterior`
+        : `<i class="bi bi-arrow-down"></i> ${incomeChange.toFixed(1)}% vs período anterior`;
+      incomeChangeEl.className = incomeChange >= 0 ? 'text-success' : 'text-danger';
+      
+      const expensesChange = summary.expensesChange || 0;
+      const expensesChangeEl = document.getElementById('expensesChange');
+      expensesChangeEl.innerHTML = expensesChange >= 0 
+        ? `<i class="bi bi-arrow-up"></i> +${expensesChange.toFixed(1)}% vs período anterior`
+        : `<i class="bi bi-arrow-down"></i> ${expensesChange.toFixed(1)}% vs período anterior`;
+      expensesChangeEl.className = 'text-danger';
+      
+      const balanceChange = summary.balanceChange || 0;
+      const balanceChangeEl = document.getElementById('balanceChange');
+      balanceChangeEl.innerHTML = balanceChange >= 0 
+        ? `<i class="bi bi-arrow-up"></i> +${balanceChange.toFixed(1)}% vs período anterior`
+        : `<i class="bi bi-arrow-down"></i> ${balanceChange.toFixed(1)}% vs período anterior`;
+      balanceChangeEl.className = balanceChange >= 0 ? 'text-success' : 'text-danger';
+      
+      document.getElementById('receivableCount').textContent = 
+        `${summary.receivableCount || 0} facturas pendientes`;
+    }
+
+    // Variables globales para gráficos
+    let incomeExpensesChart, expensesDistChart, invoiceStatusChart, paymentMethodsChart;
+
+    // Actualizar gráficos
+    function updateCharts(charts) {
+      // Gráfico de Ingresos vs Gastos
+      const incomeExpensesCtx = document.getElementById('incomeExpensesChart').getContext('2d');
+      if (incomeExpensesChart) incomeExpensesChart.destroy();
+      
+      incomeExpensesChart = new Chart(incomeExpensesCtx, {
+        type: 'line',
+        data: {
+          labels: charts.monthly.labels || [],
+          datasets: [
+            {
+              label: 'Ingresos',
+              data: charts.monthly.income || [],
+              borderColor: 'rgba(25, 135, 84, 1)',
+              backgroundColor: 'rgba(25, 135, 84, 0.1)',
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Gastos',
+              data: charts.monthly.expenses || [],
+              borderColor: 'rgba(220, 53, 69, 1)',
+              backgroundColor: 'rgba(220, 53, 69, 0.1)',
+              tension: 0.4,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { color: '#f0f0f0' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { 
+                color: '#f0f0f0',
+                callback: (value) => '$' + value.toLocaleString()
+              },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Gráfico de Distribución de Gastos
+      const expensesDistCtx = document.getElementById('expensesDistributionChart').getContext('2d');
+      if (expensesDistChart) expensesDistChart.destroy();
+      
+      expensesDistChart = new Chart(expensesDistCtx, {
+        type: 'doughnut',
+        data: {
+          labels: charts.expensesByCategory.labels || [],
+          datasets: [{
+            data: charts.expensesByCategory.data || [],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Gráfico de Estado de Facturas
+      const invoiceStatusCtx = document.getElementById('invoiceStatusChart').getContext('2d');
+      if (invoiceStatusChart) invoiceStatusChart.destroy();
+      
+      invoiceStatusChart = new Chart(invoiceStatusCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Pagadas', 'Pendientes', 'Atrasadas'],
+          datasets: [{
+            label: 'Facturas',
+            data: charts.invoiceStatus.data || [0, 0, 0],
+            backgroundColor: [
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#f0f0f0', stepSize: 1 },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: '#f0f0f0' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      // Gráfico de Métodos de Pago
+      const paymentMethodsCtx = document.getElementById('paymentMethodsChart').getContext('2d');
+      if (paymentMethodsChart) paymentMethodsChart.destroy();
+      
+      paymentMethodsChart = new Chart(paymentMethodsCtx, {
+        type: 'pie',
+        data: {
+          labels: charts.paymentMethods.labels || [],
+          datasets: [{
+            data: charts.paymentMethods.data || [],
+            backgroundColor: [
+              'rgba(13, 110, 253, 0.7)',
+              'rgba(25, 135, 84, 0.7)',
+              'rgba(255, 193, 7, 0.7)',
+              'rgba(220, 53, 69, 0.7)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f0f0f0', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Top 5 Clientes
+      const topClients = charts.topClients || [];
+      const topClientsList = document.getElementById('topClientsList');
+      
+      if (topClients.length === 0) {
+        topClientsList.innerHTML = '<li class="text-secondary small">No hay datos</li>';
+      } else {
+        topClientsList.innerHTML = topClients.map((client, index) => `
+          <li class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary">
+            <span class="small text-light">
+              <span class="badge bg-primary me-2">${index + 1}</span>
+              ${client.name}
+            </span>
+            <strong class="small text-white">$${client.total.toFixed(0)}</strong>
+          </li>
+        `).join('');
+      }
+    }
+
+    // Actualizar tablas
+    function updateTables(tables) {
+      // Facturas recientes
+      const invoicesTable = document.getElementById('recentInvoicesTable');
+      const invoices = tables.recentInvoices || [];
+      
+      if (invoices.length === 0) {
+        invoicesTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay facturas</td></tr>';
+      } else {
+        const statusClasses = {
+          draft: 'bg-secondary',
+          generated: 'bg-info',
+          paid: 'bg-success',
+          cancelled: 'bg-danger'
+        };
+        
+        invoicesTable.innerHTML = invoices.map(inv => `
+          <tr>
+            <td>${inv.invoice_number || inv.code}</td>
+            <td>${inv.client_name}</td>
+            <td>$${inv.total_amount.toFixed(2)}</td>
+            <td><span class="badge ${statusClasses[inv.status] || 'bg-secondary'}">${inv.status}</span></td>
+          </tr>
+        `).join('');
+      }
+      
+      // Gastos recientes
+      const expensesTable = document.getElementById('recentExpensesTable');
+      const expenses = tables.recentExpenses || [];
+      
+      if (expenses.length === 0) {
+        expensesTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay gastos</td></tr>';
+      } else {
+        expensesTable.innerHTML = expenses.map(exp => `
+          <tr>
+            <td>${exp.description}</td>
+            <td>${exp.category}</td>
+            <td>$${exp.amount.toFixed(2)}</td>
+            <td>${new Date(exp.date).toLocaleDateString('es-AR')}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // Exportar reporte
+    function exportReport() {
+      alert('Funcionalidad de exportación en desarrollo');
+      // TODO: Implementar exportación a PDF o Excel
+    }
