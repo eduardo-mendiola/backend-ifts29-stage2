@@ -1879,9 +1879,13 @@ block content
 # 9. Conclusión Final
 
 Este cuatrimestre fue una experiencia muy enriquecedora que me permitió entender en profundidad qué significa desarrollar un backend completo. Empecé con una idea bastante abstracta de Node.js y Express, y terminé con una visión mucho más clara de cómo se construyen sistemas reales: cómo se organizan, cómo escalan y cómo se conectan con las necesidades del negocio.
+
 Uno de los aprendizajes más valiosos fue comprender la importancia de las arquitecturas y de separar correctamente las responsabilidades. Patrones como MVC dejaron de ser teoría para convertirse en herramientas concretas que facilitan mantener el código limpio y ordenado. También descubrí lo desafiante, y a la vez interezante, que es trabajar con autenticación y autorización. Entender la diferencia entre una sesión, un token JWT, y cómo proteger rutas o definir roles y permisos me abrió los ojos a lo crucial que es la seguridad en cualquier proyecto.
+
 Por supuesto, hubo muchas dificultades. Migrar datos, manejar errores de Mongoose, resolver flujos de autenticación o entender por qué un test fallaba fueron desafíos constantes. La clave estuvo en documentar, aislar problemas, probar distintos enfoques y aprender a leer los errores con paciencia. 
+
 De todo el proceso, lo que más disfruté fue estructurar el sistema completo. Me resultó muy interesante entender cómo la información se mueve entre las distintas capas, cómo cada parte cumple un rol específico y cómo las decisiones de arquitectura influyen en todo el funcionamiento. Ver cómo las reglas de negocio se aplican de manera coherente según las necesidades del cliente fue lo que más me atrapó del desarrollo backend, porque ahí es donde realmente se combina la técnica con la lógica del mundo real.
+
 Todavía tengo áreas por reforzar: profundizar en testing avanzado, entender mejor arquitecturas distribuidas y seguir fortaleciendo mi manejo de bases de datos y buenas prácticas de seguridad. Pero siento que este cuatrimestre me dio una base sólida para seguir construyendo.
 Fue un período de aprendizaje intenso, con desafíos reales y muchos avances. Termino con una visión más madura del backend y con ganas de seguir mejorando y explorando nuevas herramientas.
 
