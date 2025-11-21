@@ -15,13 +15,16 @@
 ## Índice
 
 1. [Introducción del Caso](#1-introducción-del-caso)  
-   1.1 [Propósito del Sistema](#11-propósito-del-sistema)  
-   1.2 [Contexto Empresarial](#12-contexto-empresarial)  
-       1.2.1 [Descripción General de ClickWave](#121-descripción-general-de-clickwave)  
-       1.2.2 [Problemáticas Detectadas (Etapa 1)](#122-problemáticas-detectadas-etapa-1)  
-   1.3 [Objetivos del Sistema](#13-objetivos-del-sistema)  
-   1.4 [Arquitectura Técnica del Sistema](#14-arquitectura-técnica-del-sistema)  
-       1.4.1 [Definiciones Técnicas y Tecnologías](#141-definiciones-técnicas-y-tecnologías)  
+   1.1 [Contexto Empresarial](#11-contexto-empresarial)  
+       1.1.1 [Descripción General de ClickWave](#111-descripción-general-de-clickwave)  
+       1.1.2 [Los Costos del Crecimiento Informal en Agencias de Servicios](#112-los-costos-del-crecimiento-informal-en-agencias-de-servicios)  
+       1.1.3 [Problemáticas Específicas Detectadas en ClickWave (Etapa 1)](#113-problemáticas-específicas-detectadas-en-clickwave-etapa-1)  
+   1.2 [Objetivos del Sistema](#12-objetivos-del-sistema)  
+       1.2.1 [Combatir la Fragmentación Operacional](#121-combatir-la-fragmentación-operacional)  
+       1.2.2 [Prevenir la Fuga de Ingresos y Controlar el Scope Creep](#122-prevenir-la-fuga-de-ingresos-y-controlar-el-scope-creep)  
+       1.2.3 [Eliminar la Latencia Financiera y Habilitar Decisiones Estratégicas](#123-eliminar-la-latencia-financiera-y-habilitar-decisiones-estratégicas)  
+       1.2.4 [Garantizar Seguridad, Escalabilidad y Accesibilidad](#124-garantizar-seguridad-escalabilidad-y-accesibilidad)  
+   1.3 [Arquitectura Técnica del Sistema](#13-arquitectura-técnica-del-sistema)  
 
 2. [Asignación de Roles y Responsabilidades Por Etapas](#2-asignación-de-roles-y-responsabilidades-por-etapas)  
    2.1 [Primera Etapa del Proyecto: Fundamentos con JSON](#21-primera-etapa-del-proyecto-fundamentos-con-json)  
@@ -50,6 +53,8 @@
    3.1 [Introducción a la Arquitectura y Componentes Principales](#31-introducción-a-la-arquitectura-y-componentes-principales)  
        3.1.1 [Componentes Tecnológicos](#311-componentes-tecnológicos)  
        3.1.2 [Estructura Arquitectónica: El Patrón MVC](#312-estructura-arquitectónica-el-patrón-mvc)  
+       3.1.3 [Arquitectura de Seguridad Multicapa](#313-arquitectura-de-seguridad-multicapa)  
+       3.1.4 [Arquitectura de Testing y Aseguramiento de Calidad](#314-arquitectura-de-testing-y-aseguramiento-de-calidad)  
    3.2 [Diseño Arquitectónico Detallado](#32-diseño-arquitectónico-detallado)  
        3.2.1 [El Enfoque MVC Monolítico](#321-el-enfoque-mvc-monolítico)  
        3.2.2 [Estructura y Organización de Carpetas](#322-estructura-y-organización-de-carpetas)  
@@ -60,9 +65,12 @@
    3.4 [Flujos de Datos Operacionales](#34-flujos-de-datos-operacionales)  
        3.4.1 [Flujo de Lectura (De la Base de Datos a la Vista)](#341-flujo-de-lectura-de-la-base-de-datos-a-la-vista)  
        3.4.2 [Flujo de Escritura (De la Interfaz a la Base de Datos)](#342-flujo-de-escritura-de-la-interfaz-a-la-base-de-datos)  
+       3.4.3 [Flujo de Autenticación](#343-flujo-de-autenticación)  
+       3.4.4 [Flujo de Autorización por Roles](#344-flujo-de-autorización-por-roles)  
    3.5 [Implementación de la Lógica de Negocio](#35-implementación-de-la-lógica-de-negocio)  
        3.5.1 [Ubicación de las Reglas de Negocio](#351-ubicación-de-las-reglas-de-negocio)  
        3.5.2 [Reglas de Negocio Clave Implementadas](#352-reglas-de-negocio-clave-implementadas)  
+       3.5.3 [Lógica de Negocio para Dashboards, Reportes y Análisis](#353-lógica-de-negocio-para-dashboards-reportes-y-análisis)  
    3.6 [Interacción entre Módulos (usando MongoDB y Mongoose)](#36-interacción-entre-módulos-usando-mongodb-y-mongoose)  
    3.7 [Versionado](#37-versionado)  
 
@@ -104,59 +112,155 @@
    8.1 [Modelos](#81-modelos)  
    8.2 [Prompts](#82-prompts)  
 
-9. [Bibliografía y Fuentes](#9-bibliografía-y-fuentes)
+9. [Conclusión Final](#9-conclusión-final)
+
+10. [Bibliografía y Fuentes](#10-bibliografía-y-fuentes)
+
  
 
 ---
 
 ## 1. Introducción del Caso
 
-El sistema **NexusFlow** desarrollado para la empresa **ClickWave** es una aplicación de gestión interna diseñada para optimizar la administración de Usuarios (User), Clientes (Client), y la estructura interna de la compañía (definición de Roles y Áreas).
+El sistema **NexusFlow v3.0** desarrollado para la empresa **ClickWave** es una plataforma integral de gestión empresarial que centraliza la administración de proyectos, clientes, recursos humanos, facturación, control de tiempos y reportes ejecutivos. Esta solución combina las capacidades de tres tipos de sistemas tradicionalmente separados: **PSA (Professional Services Automation)**, **ERP (Enterprise Resource Planning)** y **CRM (Customer Relationship Management)**, proporcionando una experiencia unificada donde la operación, las finanzas y la relación con los clientes convergen en un único entorno integrado.
 
-La primera etapa se enfocó en la construcción de una API RESTful con persistencia basada en archivos JSON.
+**Evolución del Sistema en Tres Etapas:**
 
-Esta segunda etapa se centra en la refactorización profunda del backend, reemplazando la persistencia por una base de datos documental **MongoDB**, mejorando la robustez y escalabilidad, y actualizando la interfaz administrativa con vistas **Pug**.
+La construcción de NexusFlow siguió un proceso evolutivo de tres etapas de desarrollo, cada una representando un salto arquitectónico y funcional significativo.
 
-### 1.1 Propósito del Sistema
+El desarrollo comenzó con la **primera etapa**, donde se establecieron los fundamentos del sistema mediante una API RESTful con persistencia basada en archivos JSON. Esta fase permitió definir el modelo de dominio completo, implementar el patrón MVC y crear las interfaces básicas para la gestión de entidades principales como usuarios, clientes, proyectos, áreas y roles.
 
-El presente documento describe el Sistema de Gestión de Proyectos desarrollado para ClickWave, una consultora de marketing digital, con el objetivo de optimizar la gestión interna de proyectos y mejorar la eficiencia operativa. La propuesta tecnológica busca transformar procesos informales en flujos de trabajo estandarizados, medibles y trazables, facilitando la centralización de información y la toma de decisiones basada en datos confiables.
+La **segunda etapa** representó una transformación profunda de la arquitectura de persistencia, migrando desde archivos JSON hacia una base de datos documental **MongoDB** gestionada con **Mongoose**. Durante esta fase se amplió significativamente el dominio del sistema, incorporando módulos completos de facturación, cobranza, gestión de equipos, control de gastos y estimaciones. Además, se refactorizaron todas las vistas con **Pug** y **Bootstrap 5**, se optimizó la navegación mediante un sidebar colapsable y se desplegó la aplicación en la nube utilizando **MongoDB Atlas** y **Render**.
 
-### 1.2 Contexto Empresarial
+La **tercera etapa**, que representa la versión final del sistema, consolidó la seguridad mediante la implementación completa de **autenticación y autorización**. Se integró **Passport.js** con estrategia Local para autenticación tradicional basada en sesiones, junto con **JSON Web Tokens (JWT)** para protección de la API. Se desarrolló un sistema granular de permisos con más de 28 permisos específicos distribuidos entre roles diferenciados (admin, manager, developer, client, employee, executive). Esta etapa también incorporó un **sistema integral de testing** con **Jest** y **Supertest**, alcanzando más de 56 tests automatizados, y finalmente se desarrollaron **dashboards interactivos** con **Chart.js** para visualización de métricas ejecutivas, financieras y operativas.
 
-#### 1.2.1 Descripción General de ClickWave
+El resultado es una plataforma completa, robusta y escalable que transforma procesos informales en flujos de trabajo estructurados, medibles y trazables, proporcionando a ClickWave las herramientas necesarias para optimizar su gestión interna y tomar decisiones basadas en datos confiables.
+
+### 1.1 Contexto Empresarial
+
+#### 1.1.1 Descripción General de ClickWave
 
 ClickWave fue fundada en 2020 con el propósito de brindar servicios de marketing digital a pequeñas y medianas empresas (PyMEs). Comenzó como un proyecto remoto de un equipo reducido y actualmente cuenta con 12 empleados organizados en distintas áreas: gestión de campañas publicitarias, diseño gráfico, análisis de datos y desarrollo de contenidos digitales.  
-Su modalidad de trabajo es híbrida, combinando presencia en oficina y trabajo remoto, lo que permite atender clientes locales e internacionales, aunque mantiene desafíos internos asociados a la informalidad de procesos y la ausencia de roles claramente definidos.
 
-#### 1.2.2 Problemáticas Detectadas (Etapa 1)
+Su modalidad de trabajo es híbrida, combinando presencia en oficina y trabajo remoto, lo que permite atender clientes locales e internacionales. Sin embargo, como muchas agencias de servicios profesionales que experimentaron un crecimiento acelerado después de 2020, ClickWave enfrentó desafíos estructurales asociados a lo que se conoce como **el crecimiento informal**: cuando la expansión ocurre más rápido que la profesionalización de procesos.
 
-- **Falta de control formal de tiempos:** dificulta la justificación de costos y el cálculo de rentabilidad de los proyectos.  
-- **Roles y responsabilidades poco definidos:** provoca desorganización, sobrecarga de trabajo y seguimiento ineficiente.  
-- **Limitaciones en evaluación de desempeño y análisis financiero:** impide una evaluación objetiva del rendimiento y retrasa informes financieros precisos.
+#### 1.1.2 Los Costos del Crecimiento Informal en Agencias de Servicios
 
-### 1.3 Objetivos del Sistema
+El crecimiento explosivo post-pandemia llevó a muchas agencias de servicios a pasar de equipos de 3-4 personas a estructuras de más de una docena en pocos años. Este crecimiento acelerado trajo un nuevo tipo de desafío que hoy afecta directamente la rentabilidad del sector. No se trata de falta de talento, sino de falta de estructura.
 
-- Formalizar la gestión de proyectos y tareas, centralizando la información y garantizando trazabilidad.  
-- Registrar y controlar el tiempo dedicado a cada proyecto para analizar rentabilidad y justificar costos.  
-- Generar reportes detallados y paneles de control gerenciales.  
-- Integrar la gestión de proyectos con contabilidad y facturación, optimizando procesos financieros.
+Cuando el crecimiento ocurre más rápido que la profesionalización, aparecen tres síntomas críticos que conforman **la triple amenaza al crecimiento sostenible**:
 
-### 1.4 Arquitectura Técnica del Sistema
-El sistema fue desarrollado con un stack **JavaScript**: Node.js como entorno de ejecución y Express.js como framework web. La arquitectura sigue el patrón **MVC** (**Modelo-Vista-Controlador**), permitiendo:
-- Separación clara de responsabilidades entre presentación, lógica de negocio y acceso a datos.  
-- Facilitar mantenibilidad, escalabilidad y comprensión del código.  
-- Garantizar un flujo de información seguro y centralizado entre usuarios, proyectos y tareas.
-- Cuenta con una capa de persistencia implementada sobre una base de datos documental (**MongoDB**), utilizando **Mongoose** para la definición de esquemas, validación de datos y gestión eficiente de las operaciones CRUD.
+**1. Fragmentación Operacional (Tool Sprawl):**
 
-#### 1.4.1 Definiciones Técnicas y Tecnologías
+El uso excesivo de herramientas dispersas provoca que los equipos pierdan hasta el **23% de su semana laboral** alternando entre plataformas o duplicando información. Esto representa un día completo perdido por persona cada semana. Las tareas se fragmentan entre múltiples sistemas (Trello para proyectos, Google Sheets para finanzas, email para comunicación, etc.), generando inconsistencias, errores de sincronización y pérdida de visibilidad operativa.
 
-| Componente   | Tecnología            | Descripción                                |
-| ------------ | --------------------- | ------------------------------------------ |
-| Backend      | Node.js, Express      | API RESTful y gestión de rutas             |
-| Persistencia | MongoDB Atlas / Local | Base de datos NoSQL documental             |
-| ODM          | Mongoose              | Definición de esquemas y CRUD estructurado |
-| Vistas       | Pug                   | Motor de plantillas dinámicas              |
-| Estilos      | Bootstrap             | Framework CSS responsive                   |
+**2. Fuga de Ingresos y Scope Creep:**
+
+La falta de control en el registro de horas y la expansión no controlada del alcance de los proyectos (scope creep) genera pérdidas invisibles pero significativas. En promedio, las agencias dejan de facturar el **6.8% de sus ingresos anualmente** debido a:
+- Horas trabajadas no registradas correctamente
+- Proyectos que crecen más allá de lo acordado sin ajustes en tiempos ni costos
+- Falta de seguimiento preciso entre lo presupuestado y lo ejecutado
+- Ausencia de alertas tempranas sobre desvíos presupuestarios
+
+Este fenómeno erosiona los márgenes de rentabilidad y genera desgaste operativo en los equipos.
+
+**3. Latencia Financiera o Ceguera Estratégica:**
+
+Las decisiones clave siguen basándose en datos atrasados o incompletos. En muchas agencias, los reportes financieros consolidados llegan con hasta **7 meses de retraso**, lo que impide:
+- Reaccionar ante desvíos en tiempo real
+- Detectar proyectos con baja rentabilidad a tiempo
+- Ajustar estrategias comerciales basándose en datos actuales
+- Identificar clientes o tipos de proyecto más rentables
+
+Esta latencia convierte la gestión en reactiva en lugar de proactiva, limitando la capacidad de tomar decisiones estratégicas informadas.
+
+**El Impacto de las Soluciones Integradas:**
+
+Las organizaciones que adoptan soluciones de gestión integradas —como plataformas PSA (Professional Services Automation), ERP (Enterprise Resource Planning) o CRM (Customer Relationship Management)— logran resultados tangibles:
+
+- **Reducción de tiempos improductivos** por fragmentación de herramientas
+- **Mejor control de scope creep** mediante seguimiento preciso de horas y presupuestos
+- **Visibilidad financiera en tiempo real** que mejora significativamente la toma de decisiones
+
+En promedio, estas organizaciones recuperan entre un **13% y un 18% de su capacidad productiva anual**, simplemente por tener procesos más conectados y datos disponibles en tiempo real.
+
+**NexusFlow fue diseñado desde este punto de partida**: aprovechar las ventajas de los sistemas integrados, pero adaptadas específicamente al ritmo y las necesidades de las agencias de servicios como ClickWave.
+
+### 1.2 Objetivos del Sistema
+
+NexusFlow v3.0 fue diseñado con objetivos estratégicos específicos que abordan directamente las problemáticas identificadas en el contexto de crecimiento informal de las agencias de servicios. Los objetivos se organizan en tres ejes fundamentales que responden a la triple amenaza al crecimiento sostenible:
+
+#### 1.2.1 Combatir la Fragmentación Operacional
+
+**Centralización y Unificación:**
+- Consolidar en una única plataforma la gestión de proyectos, clientes, recursos humanos, finanzas y reportes, eliminando la necesidad de alternar entre múltiples herramientas dispersas.
+- Proporcionar una experiencia de usuario coherente que integre las capacidades de PSA, ERP y CRM en flujos de trabajo continuos.
+- Garantizar que cada dato ingresado esté disponible instantáneamente para todos los módulos que lo requieran, evitando duplicación de información.
+
+**Trazabilidad Completa:**
+- Implementar un sistema de auditoría que registre todas las operaciones críticas, asignando responsables y timestamps a cada acción.
+- Establecer relaciones claras entre entidades (proyecto → cliente → contactos → facturas → pagos) que permitan rastrear el ciclo completo de cada iniciativa comercial.
+
+#### 1.2.2 Prevenir la Fuga de Ingresos y Controlar el Scope Creep
+
+**Control Preciso de Tiempos y Rentabilidad:**
+- Registrar y categorizar el tiempo dedicado por cada empleado a cada tarea y proyecto, diferenciando entre horas facturables y no facturables.
+- Calcular automáticamente la rentabilidad de cada proyecto comparando presupuestos estimados vs. horas reales trabajadas y costos asociados.
+- Generar alertas tempranas cuando un proyecto supere umbrales definidos de consumo de horas o presupuesto.
+
+**Gestión Integral de Facturación:**
+- Vincular presupuestos (Estimates) con proyectos, facturas y pagos, manteniendo coherencia entre lo cotizado, lo ejecutado y lo facturado.
+- Automatizar la generación de números secuenciales de factura, cálculo de impuestos y descuentos, y seguimiento de estados de pago.
+- Facilitar la emisión de recibos y el registro de pagos parciales o totales, actualizando automáticamente el estado de las facturas.
+
+**Control de Alcance de Proyectos:**
+- Proporcionar visibilidad clara sobre el estado de cada proyecto (horas consumidas vs. presupuestadas, tareas completadas vs. pendientes).
+- Permitir ajustes controlados de presupuestos y alcances, registrando las razones y responsables de cada modificación.
+
+#### 1.2.3 Eliminar la Latencia Financiera y Habilitar Decisiones Estratégicas
+
+**Reportes y Dashboards en Tiempo Real:**
+- Ofrecer dashboards ejecutivos, financieros y operativos con métricas clave actualizadas en tiempo real mediante Chart.js.
+- Permitir análisis de rentabilidad por cliente, por proyecto, por tipo de servicio y por período temporal.
+- Visualizar tendencias de ingresos, distribución de gastos, estados de facturas y desempeño de equipos mediante gráficos interactivos.
+
+**Soporte a la Toma de Decisiones:**
+- Proporcionar información confiable y oportuna que permita identificar rápidamente proyectos o clientes con baja rentabilidad.
+- Facilitar la planificación de recursos mediante la visualización de carga de trabajo por empleado y disponibilidad de equipos.
+- Generar reportes detallados y exportables que respalden decisiones estratégicas basadas en datos.
+
+#### 1.2.4 Garantizar Seguridad, Escalabilidad y Accesibilidad
+
+**Autenticación y Autorización Robustas:**
+- Implementar autenticación dual (sesiones con Passport.js para la interfaz web y JWT para la API) con contraseñas protegidas mediante bcrypt.
+- Establecer un sistema granular de permisos (28+ permisos específicos) distribuidos en roles diferenciados que controlen el acceso a operaciones sensibles.
+- Garantizar que solo usuarios autorizados puedan consultar, crear, modificar o eliminar información crítica del sistema.
+
+**Calidad y Confiabilidad del Software:**
+- Mantener una suite integral de tests automatizados (56+ tests con Jest y Supertest) que valide la funcionalidad CRUD, autenticación, autorización y lógica de negocio.
+- Asegurar la integridad de los datos mediante validaciones en múltiples capas (frontend, backend, base de datos).
+
+**Despliegue Cloud y Accesibilidad:**
+- Aprovechar la infraestructura en la nube (MongoDB Atlas para base de datos, Render para hosting) que garantice alta disponibilidad, escalabilidad y acceso desde cualquier ubicación.
+- Facilitar el trabajo híbrido y remoto mediante una arquitectura web accesible desde cualquier dispositivo con navegador.
+
+---
+
+Estos objetivos convergen en una meta final: **transformar procesos informales en flujos de trabajo estructurados, medibles y trazables**, devolviendo a las agencias como ClickWave entre un 13% y un 18% de capacidad productiva mediante la eliminación de ineficiencias operativas, la prevención de fugas de ingresos y la habilitación de decisiones estratégicas basadas en datos en tiempo real.
+
+### 1.3 Arquitectura Técnica del Sistema
+
+NexusFlow v3.0 fue construido sobre una **arquitectura moderna, escalable y segura** que combina:
+
+- **Patrón MVC (Model-View-Controller)** con separación estricta de responsabilidades
+- **Stack JavaScript full-stack:** Node.js + Express.js + MongoDB + Mongoose
+- **Autenticación dual:** Sesiones (Passport.js) para web + JWT para API
+- **Sistema granular de permisos:** 28+ permisos distribuidos en 6 roles
+- **Suite de testing automatizado:** 56+ tests con Jest, Supertest y MongoDB Memory Server
+- **Infraestructura cloud:** MongoDB Atlas (base de datos) + Render (hosting)
+- **Visualización de datos:** Dashboards interactivos con Chart.js
+
+La descripción técnica completa del sistema, incluyendo componentes tecnológicos, arquitectura de capas, modelo de dominio, flujos de datos, seguridad multicapa y lógica de negocio se detalla exhaustivamente en el **Capítulo 3 - Descripción Técnica del Sistema**.
 
 ---
 
@@ -505,7 +609,62 @@ La base del sistema se ha construido para ser robusta, comprensible y progresiva
 
 ### 3.1.1 Componentes Tecnológicos
 
-El ecosistema tecnológico fue seleccionado para garantizar la eficiencia y la productividad durante el desarrollo:
+El ecosistema tecnológico fue seleccionado para garantizar la eficiencia, seguridad y escalabilidad durante el desarrollo y despliegue del sistema.
+
+#### Stack Tecnológico Completo
+
+**Backend y API:**
+
+| Componente | Tecnología | Versión | Propósito |
+|------------|------------|---------|-----------|
+| Entorno de ejecución | Node.js | 22.18.0 | Plataforma JavaScript del lado del servidor |
+| Framework web | Express.js | 5.1 | Gestión de rutas, middleware, peticiones HTTP |
+| Módulos ECMAScript | ESM | ES6+ | Sistema moderno de módulos (`import`/`export`) |
+
+**Persistencia y Datos:**
+
+| Componente | Tecnología | Versión | Propósito |
+|------------|------------|---------|-----------|
+| Base de datos | MongoDB | 8.2 | Base de datos NoSQL documental |
+| ODM | Mongoose | 8.18.2 | Modelado de datos, validaciones, relaciones |
+| Hosting BD | MongoDB Atlas | Cloud | Base de datos en la nube con alta disponibilidad |
+
+**Autenticación y Seguridad:**
+
+| Componente | Tecnología | Versión | Propósito |
+|------------|------------|---------|-----------|
+| Autenticación tradicional | Passport.js | 0.7.0 | Estrategia Local para login con sesiones |
+| Gestión de sesiones | express-session | 1.18.2 | Manejo de sesiones del lado del servidor |
+| Almacenamiento de sesiones | connect-mongo | 5.1.0 | Persistencia de sesiones en MongoDB |
+| Autenticación API | JSON Web Tokens (JWT) | 9.0.2 | Tokens para protección de endpoints REST |
+| Hash de contraseñas | bcrypt | 6.0.0 | Cifrado seguro de contraseñas |
+
+**Presentación y Frontend:**
+
+| Componente | Tecnología | Versión | Propósito |
+|------------|------------|---------|-----------|
+| Motor de plantillas | Pug | 3.0.3 | Generación de HTML dinámico (SSR) |
+| Framework CSS | Bootstrap | 5.3 | Diseño responsivo y componentes UI |
+| Visualización de datos | Chart.js | 4.4.0 | Gráficos interactivos para dashboards |
+| Tema visual | Dark Theme | Custom | Paleta de colores personalizada |
+
+**Testing y Calidad:**
+
+| Componente | Tecnología | Versión | Propósito |
+|------------|------------|---------|-----------|
+| Framework de testing | Jest | 29.7.0 | Suite completa de pruebas unitarias e integración |
+| Testing HTTP | Supertest | 7.0.0 | Testing de endpoints y APIs |
+| Base de datos de prueba | MongoDB Memory Server | 10.1.2 | MongoDB en memoria para tests aislados |
+
+**Infraestructura y Deployment:**
+
+| Componente | Tecnología | Propósito |
+|------------|------------|-----------|
+| Hosting de aplicación | Render | Despliegue continuo desde GitHub |
+| Base de datos cloud | MongoDB Atlas | Alta disponibilidad y escalabilidad |
+| Control de versiones | Git/GitHub | Repositorio: backend-ifts29-stage2 |
+
+#### Descripción de Componentes Principales
 
 **Entorno de Ejecución y Framework:**  
 El sistema opera sobre Node.js utilizando el framework Express.js, que gestiona el enrutamiento, el middleware y el ciclo de vida de las peticiones HTTP. El punto de entrada es `server.js`, mientras que `app.js` centraliza la configuración global, la inicialización de middleware y la integración de sesiones y autenticación.
@@ -531,6 +690,108 @@ Componen la interfaz de usuario. Las plantillas Pug son responsables de presenta
 
 **Controladores (Controller):**  
 Actúan como el núcleo de la lógica de la aplicación, orquestando la interacción entre los Modelos y las Vistas. Reciben las peticiones del usuario, interactúan con la capa de persistencia para obtener o modificar datos, coordinan la lógica de negocio, manipulan modelos, gestionan sesiones, emiten JWT, procesan formularios y preparan los datos para la vista.
+
+### 3.1.3 Arquitectura de Seguridad Multicapa
+
+NexusFlow implementa una arquitectura de seguridad defensiva en profundidad con múltiples capas de protección que operan de manera integrada:
+
+**Capa 1: Autenticación Dual**
+
+El sistema proporciona dos mecanismos complementarios de autenticación:
+
+- **Autenticación tradicional (Sesiones):** Utiliza Passport.js con estrategia Local para usuarios que acceden mediante la interfaz web. Las sesiones se almacenan persistentemente en MongoDB mediante connect-mongo, garantizando escalabilidad y permitiendo que las sesiones sobrevivan a reinicios del servidor.
+
+- **Autenticación API (JWT):** Los endpoints REST están protegidos mediante JSON Web Tokens con expiración de 24 horas. Los tokens se firman con secretos seguros almacenados en variables de entorno (`JWT_SECRET`), y se validan en cada petición mediante el middleware `verifyJWT`.
+
+**Capa 2: Autorización Basada en Roles y Permisos**
+
+El sistema implementa un modelo granular de autorización con:
+
+- **28+ permisos específicos** organizados por categorías funcionales:
+  - **Gestión de usuarios:** `view_users`, `create_users`, `edit_users`, `delete_users`
+  - **Proyectos:** `view_projects`, `create_projects`, `edit_projects`, `delete_projects`
+  - **Facturación:** `view_invoices`, `create_invoices`, `edit_invoices`, `delete_invoices`
+  - **Reportes:** `view_reports`, `view_dashboards`, `export_data`
+  - **Administración:** `manage_roles`, `manage_permissions`, `system_config`
+
+- **6 roles predefinidos** con diferentes niveles de acceso:
+  - **admin:** Acceso completo al sistema
+  - **manager:** Gestión de proyectos, clientes y reportes
+  - **developer:** Acceso a tareas, proyectos y registro de tiempo
+  - **client:** Visualización limitada de sus propios proyectos
+  - **employee:** Registro de tiempo y consulta de tareas asignadas
+  - **executive:** Acceso exclusivo a dashboards y reportes de alto nivel
+
+- **Middlewares de protección:** `hasRole(role)` y `hasPermission(permission)` que validan autorizaciones antes de ejecutar operaciones sensibles.
+
+**Capa 3: Protección de Datos y Validación**
+
+- **Cifrado de contraseñas:** Todas las contraseñas se almacenan hasheadas mediante bcrypt con salt automático, garantizando que incluso con acceso directo a la base de datos las credenciales permanezcan seguras.
+
+- **Validaciones en múltiples niveles:**
+  - Frontend: Validaciones HTML5 en formularios
+  - Backend: Validación en controladores antes de procesar datos
+  - Base de datos: Schemas de Mongoose con validaciones, índices únicos y constraints
+
+- **Control de estado de usuarios:** Campo `is_active` que permite desactivar cuentas sin eliminar datos históricos, preservando la trazabilidad.
+
+**Capa 4: Trazabilidad y Auditoría**
+
+- **Timestamps automáticos:** Mongoose agrega `createdAt` y `updatedAt` a todas las entidades
+- **Registro de actividad:** Campo `last_login` en usuarios que registra el último acceso exitoso
+- **Campos de responsabilidad:** `uploaded_by`, `approved_by`, `project_manager`, `created_by` en entidades críticas para mantener trazabilidad de operaciones
+
+Esta arquitectura multinivel garantiza que solo usuarios autenticados y autorizados puedan acceder a recursos específicos, manteniendo la integridad, confidencialidad y trazabilidad de toda la información del sistema.
+
+### 3.1.4 Arquitectura de Testing y Aseguramiento de Calidad
+
+El sistema incorpora una estrategia integral de testing que garantiza confiabilidad, facilita el desarrollo ágil y previene regresiones en funcionalidades críticas.
+
+**Suite de Tests Automatizados (56+ tests):**
+
+El conjunto de pruebas está organizado en tres categorías complementarias:
+
+- **Smoke tests (7 tests):** Verificación básica del entorno de testing, configuración de MongoDB Memory Server, carga de variables de entorno y conectividad general del sistema.
+
+- **Tests unitarios (18+ tests):** Validación de funciones puras, helpers y utilidades aisladas sin dependencias externas. Ejemplos: `dateHelpers.test.js` (formateo de fechas, conversiones), validadores, generadores de códigos, transformadores de datos.
+
+- **Tests de integración (29+ tests):** Verificación completa de endpoints CRUD, flujos de autenticación y autorización, y lógica de negocio que involucra múltiples capas del sistema. Incluyen:
+  - CRUD completo de proyectos (`projects.test.js`, `projects-crud.test.js`)
+  - Flujos de autenticación (login, logout, validación de JWT)
+  - Autorización por roles y permisos
+  - Operaciones con populate y relaciones entre entidades
+
+**Infraestructura de Testing:**
+
+- **MongoDB Memory Server:** Base de datos MongoDB completamente en memoria que permite ejecutar tests rápidos, aislados y sin dependencias de servicios externos. Se inicializa una vez antes de todos los tests (`globalSetup.js`) y se detiene al finalizar (`globalTeardown.js`).
+
+- **Patrón Builder:** Generación programática y reutilizable de datos de prueba mediante builders especializados (`dataBuilders.js`). Permite crear entidades completas con datos válidos de manera declarativa y consistente.
+
+- **Helpers y fixtures:** 
+  - `testHelpers.js`: Funciones compartidas como `connectDB`, `clearDatabase`, `closeDatabase`
+  - `authHelper.js`: Utilidades para login, obtención de tokens JWT y creación de usuarios de prueba
+  - `testData.js`: Datos estáticos y constantes compartidas entre tests (IDs, mensajes de error, objetos válidos)
+
+**Cobertura y Reportes:**
+
+- **Generación automática de reportes:** Cobertura de código en formato HTML visualizable en `coverage/lcov-report/index.html`
+
+- **Métricas de cobertura:** El sistema genera reportes detallados por archivo mostrando:
+  - Statements (líneas ejecutadas)
+  - Branches (ramificaciones condicionales)
+  - Functions (funciones invocadas)
+  - Lines (líneas totales vs cubiertas)
+
+- **Objetivo de calidad:** Mantener cobertura superior al 80% en módulos críticos (controladores, middleware de autenticación, lógica de negocio)
+
+- **Integración continua:** Scripts npm disponibles:
+  - `npm test`: Ejecuta todos los tests
+  - `npm run test:watch`: Modo watch para desarrollo
+  - `npm run test:coverage`: Genera reporte completo de cobertura
+
+**Estrategia de Testing:**
+
+El enfoque combina TDD (Test-Driven Development) para nuevas funcionalidades críticas con testing de regresión para características existentes. Los tests de integración utilizan Supertest para simular peticiones HTTP completas, validando tanto el comportamiento individual de endpoints como la integración entre capas (rutas → middleware → controladores → modelos → base de datos).
 
 ## 3.2 Diseño Arquitectónico Detallado
 
@@ -680,9 +941,72 @@ Se gestiona el estado activo o inactivo de los usuarios para garantizar que úni
 
 La implementación de la lógica de negocio para los dashboards se diseñó con un enfoque orientado al análisis en tiempo real. A diferencia de las operaciones CRUD tradicionales, este módulo requiere combinar información de distintas entidades, aplicar cálculos intermedios y normalizar datos heterogéneos. Por este motivo, se establecieron controladores especializados que actúan como orquestadores de múltiples consultas.
 
-Cada reporte se construye siguiendo un flujo similar: primero se recopilan los datos brutos desde las colecciones relevantes, luego se aplican transformaciones específicas, como agrupamiento por período, acumulación de horas trabajadas o cálculo de márgenes financieros, y finalmente se prepara una estructura de datos optimizada para ser consumida por las vistas. Este proceso permite que las vistas se enfoquen exclusivamente en la presentación, delegando toda la lógica de negocio al backend.
+**Controladores Especializados:**
 
-Además, la lógica incorpora mecanismos defensivos para garantizar consistencia en las métricas, gestionando valores nulos, conversiones de campos y diferencias entre tipos de cliente o tipos de proyectos. Parte fundamental de esta implementación fue resolver relaciones encadenadas que no existían explícitamente en los modelos; por ejemplo, vincular facturas con clientes o vincular proyectos con horas trabajadas a través de tareas. La solución consistió en consultas con populate anidado y búsquedas secundarias, permitiendo reconstruir el contexto completo de cada entidad para producir métricas confiables.
+El sistema implementa cuatro controladores dedicados exclusivamente a la generación de reportes y métricas:
+
+- **DashboardController:** Genera métricas ejecutivas agregadas y vista panorámica del sistema (total de proyectos activos, ingresos del período, horas trabajadas, desviación presupuestaria global).
+
+- **ClientReportController:** Análisis de rentabilidad por cliente con filtros temporales. Permite identificar clientes más rentables, proyectos de mayor envergadura, histórico de facturación y distribución de servicios contratados.
+
+- **ProjectReportController:** Seguimiento detallado de proyectos por estado (activos, completados, en pausa), por equipo asignado, por área de negocio y por desviación presupuestaria. Incluye métricas de desempeño de project managers.
+
+- **FinancialReportController:** Consolidación integral de facturación, pagos recibidos, gastos registrados y presupuestos pendientes. Calcula márgenes, rentabilidad, evolución mensual de ingresos y estados de cuentas por cobrar.
+
+**Arquitectura de Procesamiento de Datos:**
+
+Cada reporte se construye siguiendo un flujo similar: 
+
+1. **Recopilación de datos brutos:** Consultas a múltiples colecciones con filtros específicos (rango de fechas, cliente, estado, etc.)
+
+2. **Transformaciones y cálculos:** Aplicación de lógica de negocio compleja:
+   - Agrupamiento por período temporal (día, mes, año)
+   - Acumulación de horas trabajadas facturables vs. no facturables
+   - Cálculo de márgenes financieros (ingresos - costos)
+   - Desviación presupuestaria (presupuestado vs. real)
+   - ROI (Return on Investment) por proyecto/cliente
+
+3. **Normalización y estructuración:** Preparación de estructuras de datos optimizadas para consumo de vistas:
+   ```javascript
+   {
+     labels: ['Enero', 'Febrero', 'Marzo'],
+     datasets: [{
+       label: 'Ingresos',
+       data: [12000, 15000, 18000],
+       backgroundColor: 'rgba(75, 192, 192, 0.2)'
+     }]
+   }
+   ```
+
+Este proceso permite que las vistas se enfoquen exclusivamente en la presentación mediante Chart.js, delegando toda la lógica de negocio al backend.
+
+**Resolución de Relaciones Complejas:**
+
+Parte fundamental de esta implementación fue resolver relaciones encadenadas que no existían explícitamente en los modelos. Ejemplos:
+
+- **Factura → Cliente:** `Invoice` → `Estimate` (populate) → `Project` (populate) → `Client` (populate anidado)
+- **Horas trabajadas → Proyecto:** `TimeEntry` → `Task` (populate) → `Project` (populate)
+- **Gastos → Cliente:** `Expense` → `Project` (populate) → `Client` (populate)
+
+La solución consistió en consultas con `populate` anidado multinivel y búsquedas secundarias para reconstruir el contexto completo, garantizando métricas confiables incluso con datos dispersos.
+
+**Mecanismos de Consistencia:**
+
+La lógica incorpora validaciones defensivas para garantizar métricas correctas:
+
+- Manejo de valores nulos y campos opcionales
+- Conversión de tipos (string → number para cálculos)
+- Normalización de monedas (conversión a moneda base)
+- Validación de integridad referencial antes de agregar datos
+- Gestión de divisiones por cero en cálculos de ratios
+
+**Renderizado e Interactividad:**
+
+La integración con Chart.js en vistas Pug permite visualizaciones dinámicas:
+
+- **Tipos de gráficos:** Barras (comparaciones), líneas (evolución temporal), tortas/donas (distribución porcentual)
+- **Interactividad:** Tooltips con detalles adicionales, leyendas clicables, filtros temporales
+- **Responsividad:** Gráficos que se adaptan automáticamente a diferentes resoluciones mediante configuración de aspect ratio
 
 El resultado es una capa de negocio capaz de generar indicadores ejecutivos, financieros y operativos a partir de datos dispersos, manteniendo la coherencia del modelo y el enfoque modular del sistema.
 
@@ -1260,9 +1584,310 @@ getEditView = async (req, res) => {
 };
 ```
 
+**Adaptación realizada:**  
+El código generado por la IA fue revisado y adaptado para eliminar logs innecesarios en producción. Se conservaron únicamente los puntos críticos de debugging y se agregó documentación adicional sobre el propósito de cada console.log.
+
 ---
 
-# 9. Bibliografía y Fuentes
+### AI: Claude AI  
+**Modelo:** Claude Opus 4.1  
+
+**Prompt ejemplo 3:**  
+Necesito implementar un middleware de autorización basado en permisos granulares para mi sistema de gestión de proyectos. El middleware debe:
+
+1. Verificar que el usuario esté autenticado
+2. Obtener los permisos del rol del usuario desde la base de datos
+3. Comparar el permiso requerido con los permisos del usuario
+4. Retornar 403 si no tiene el permiso
+5. Continuar con next() si tiene el permiso
+
+El sistema usa Mongoose para la base de datos y el usuario autenticado está disponible en `req.user`.
+
+**Respuesta de IA (adaptada):**
+
+```javascript
+// Middleware original generado por Claude AI
+export const hasPermission = (requiredPermission) => {
+  return async (req, res, next) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'No autenticado' });
+      }
+
+      const user = await User.findById(req.user._id).populate('role_id');
+      
+      if (!user || !user.role_id) {
+        return res.status(403).json({ message: 'Sin rol asignado' });
+      }
+
+      const hasPermission = user.role_id.permissions.includes(requiredPermission);
+      
+      if (!hasPermission) {
+        return res.status(403).json({ message: 'Permiso denegado' });
+      }
+
+      next();
+    } catch (error) {
+      console.error('Error en hasPermission:', error);
+      res.status(500).json({ message: 'Error del servidor' });
+    }
+  };
+};
+```
+
+**Adaptación realizada:**  
+El código generado fue revisado y mejorado de las siguientes maneras:
+- Se agregó renderizado de vistas de error personalizadas (`error403.pug`) en lugar de solo respuestas JSON
+- Se optimizó la consulta a la base de datos para evitar múltiples llamadas en la misma petición mediante caché
+- Se añadió logging estructurado para auditoría de accesos denegados
+- Se implementó una versión adicional `hasRole()` para validaciones más simples por rol
+
+---
+
+### AI: ChatGPT  
+**Modelo:** GPT-5 Mini  
+
+**Prompt ejemplo 4:**  
+Genera un esquema de Mongoose para la entidad Invoice (Factura) que incluya:
+
+- Relación con Client y Estimate
+- Campos para tipo de factura (A, B, C, E)
+- Número de factura autogenerado
+- Array de items con descripción y monto
+- Cálculo automático de subtotal, descuentos, impuestos y total
+- Estados (draft, generated, paid, cancelled)
+- Timestamps automáticos
+- Virtual para obtener el nombre del proyecto relacionado
+
+**Respuesta de IA (generada y luego adaptada):**
+
+```javascript
+// Esquema base generado por ChatGPT
+import mongoose from 'mongoose';
+
+const invoiceSchema = new mongoose.Schema({
+  client_id: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Client', 
+    required: true 
+  },
+  estimate_id: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Estimate' 
+  },
+  invoice_type: { 
+    type: String, 
+    enum: ['A', 'B', 'C', 'E'], 
+    required: true 
+  },
+  invoice_number: { 
+    type: String, 
+    unique: true 
+  },
+  items: [{
+    description: String,
+    quantity: Number,
+    unit_price: Number,
+    amount: Number
+  }],
+  subtotal: { type: Number, default: 0 },
+  discount: { type: Number, default: 0 },
+  tax: { type: Number, default: 0 },
+  total: { type: Number, default: 0 },
+  status: { 
+    type: String, 
+    enum: ['draft', 'generated', 'paid', 'cancelled'], 
+    default: 'draft' 
+  }
+}, { timestamps: true });
+
+invoiceSchema.virtual('project_name').get(function() {
+  return this.populate('estimate_id').then(estimate => 
+    estimate.populate('project_id').project_name
+  );
+});
+
+export default mongoose.model('Invoice', invoiceSchema);
+```
+
+**Adaptaciones realizadas:**  
+- Se corrigió el virtual `project_name` para usar populate síncrono correctamente
+- Se agregaron validaciones personalizadas para garantizar que `invoice_number` solo se asigne cuando el estado cambia a 'generated'
+- Se implementaron métodos de instancia adicionales: `calculateTotals()`, `canBeEdited()`, `canBeCancelled()`
+- Se añadieron índices compuestos para optimizar consultas por cliente y fecha
+- Se agregó campo `payment_due_date` calculado automáticamente
+- Se implementó hook `pre('save')` para generar automáticamente el número de factura usando un Counter
+- Se añadió validación para evitar modificar facturas en estado 'paid' o 'cancelled'
+
+---
+
+### AI: Claude AI  
+**Modelo:** Claude Opus 4.1  
+
+**Prompt ejemplo 5:**  
+Ayúdame a escribir tests de integración con Jest y Supertest para el endpoint POST /api/projects que:
+
+1. Valide la creación exitosa de un proyecto con datos válidos
+2. Verifique que se requiere autenticación (token JWT)
+3. Valide que se rechacen datos incompletos
+4. Confirme que el código del proyecto se genera automáticamente
+5. Verifique populate de relaciones (client, project_manager)
+
+**Respuesta de IA (adaptada):**
+
+```javascript
+// Test base generado por Claude AI
+import request from 'supertest';
+import app from '../src/app.js';
+import { getAuthToken } from './helpers/authHelper.js';
+
+describe('POST /api/projects', () => {
+  let authToken;
+
+  beforeAll(async () => {
+    authToken = await getAuthToken();
+  });
+
+  it('should create a project with valid data', async () => {
+    const projectData = {
+      name: 'Test Project',
+      client_id: '507f1f77bcf86cd799439011',
+      project_manager: '507f1f77bcf86cd799439012',
+      start_date: '2025-01-01',
+      budget: 50000
+    };
+
+    const response = await request(app)
+      .post('/api/projects')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send(projectData)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('_id');
+    expect(response.body.name).toBe('Test Project');
+    expect(response.body).toHaveProperty('code');
+  });
+
+  it('should reject request without authentication', async () => {
+    const response = await request(app)
+      .post('/api/projects')
+      .send({ name: 'Test' })
+      .expect(401);
+  });
+});
+```
+
+**Adaptaciones realizadas:**  
+El código de tests fue expandido significativamente:
+- Se agregaron 15+ casos de prueba adicionales cubriendo edge cases
+- Se implementó el patrón Builder para generar datos de prueba consistentes
+- Se añadieron tests para validaciones específicas de negocio (fechas, presupuestos, equipos)
+- Se incorporaron tests de populate anidado verificando que las relaciones se resuelven correctamente
+- Se agregó limpieza de base de datos entre tests con `clearDatabase()`
+- Se implementaron tests para permisos (solo managers pueden crear proyectos)
+- Se añadió validación de estructura completa de respuesta con snapshots
+
+---
+
+### AI: ChatGPT  
+**Modelo:** GPT-5 Mini  
+
+**Prompt ejemplo 6:**  
+Genera una plantilla Pug para un dashboard ejecutivo que muestre:
+
+- Tres tarjetas con métricas principales (proyectos activos, ingresos del mes, horas trabajadas)
+- Un gráfico de barras comparando presupuesto vs. real por proyecto
+- Una tabla con los últimos 5 proyectos creados
+- Diseño responsivo con Bootstrap 5
+- Tema dark
+
+**Respuesta de IA (generada y adaptada):**
+
+```pug
+//- Plantilla base generada por ChatGPT
+extends ../layout
+
+block content
+  .container-fluid.py-4
+    h1.mb-4 Dashboard Ejecutivo
+    
+    .row.g-4.mb-4
+      .col-md-4
+        .card.bg-dark.text-white
+          .card-body
+            h5.card-title Proyectos Activos
+            p.card-text.display-4= metrics.activeProjects
+      
+      .col-md-4
+        .card.bg-dark.text-white
+          .card-body
+            h5.card-title Ingresos del Mes
+            p.card-text.display-4= `$${metrics.monthlyRevenue}`
+      
+      .col-md-4
+        .card.bg-dark.text-white
+          .card-body
+            h5.card-title Horas Trabajadas
+            p.card-text.display-4= metrics.totalHours
+    
+    .row
+      .col-12
+        canvas#budgetChart
+```
+
+**Adaptaciones realizadas:**  
+- Se refactorizó completamente el diseño para mejorar la jerarquía visual
+- Se agregaron iconos de Font Awesome para cada métrica
+- Se implementó código JavaScript para inicializar Chart.js con datos del backend
+- Se añadieron indicadores de tendencia (↑↓) calculados en el controlador
+- Se incorporaron tooltips informativos explicando cada métrica
+- Se agregó la tabla de proyectos recientes con estados coloreados
+- Se implementó diseño de tarjetas con gradientes y efectos hover
+- Se añadió lógica condicional para mostrar alertas cuando las métricas están fuera de rango
+- Se optimizó para impresión con media queries específicas
+
+---
+
+## 8.3 Revisión y Adaptación del Contenido Generado por IA
+
+**Importante:** Todo el contenido generado por herramientas de IA fue exhaustivamente revisado, probado y adaptado antes de ser incorporado al proyecto. Las adaptaciones realizadas incluyeron:
+
+**Código:**
+- Verificación de sintaxis y compatibilidad con las versiones específicas de las dependencias del proyecto
+- Pruebas exhaustivas en entorno de desarrollo y testing
+- Optimización de consultas a base de datos
+- Implementación de manejo de errores robusto
+- Adición de validaciones de seguridad
+- Documentación mediante comentarios explicativos
+
+**Documentación:**
+- Revisión de terminología técnica para coherencia con el resto del proyecto
+- Adaptación del tono y estilo de escritura
+- Verificación de precisión técnica
+- Corrección de ejemplos para reflejar la arquitectura real del sistema
+- Expansión de explicaciones cuando eran insuficientes
+
+**Tests:**
+- Validación de que los tests realmente prueben el comportamiento correcto
+- Adaptación a la estructura de directorios del proyecto
+- Incorporación de helpers y fixtures propios del sistema
+- Expansión de casos de prueba para mayor cobertura
+
+
+---
+
+# 9. Conclusión Final
+
+Este cuatrimestre fue una experiencia muy enriquecedora que me permitió entender en profundidad qué significa desarrollar un backend completo. Empecé con una idea bastante abstracta de Node.js y Express, y terminé con una visión mucho más clara de cómo se construyen sistemas reales: cómo se organizan, cómo escalan y cómo se conectan con las necesidades del negocio.
+Uno de los aprendizajes más valiosos fue comprender la importancia de las arquitecturas y de separar correctamente las responsabilidades. Patrones como MVC dejaron de ser teoría para convertirse en herramientas concretas que facilitan mantener el código limpio y ordenado. También descubrí lo desafiante, y a la vez interezante, que es trabajar con autenticación y autorización. Entender la diferencia entre una sesión, un token JWT, y cómo proteger rutas o definir roles y permisos me abrió los ojos a lo crucial que es la seguridad en cualquier proyecto.
+Por supuesto, hubo muchas dificultades. Migrar datos, manejar errores de Mongoose, resolver flujos de autenticación o entender por qué un test fallaba fueron desafíos constantes. La clave estuvo en documentar, aislar problemas, probar distintos enfoques y aprender a leer los errores con paciencia. 
+De todo el proceso, lo que más disfruté fue estructurar el sistema completo. Me resultó muy interesante entender cómo la información se mueve entre las distintas capas, cómo cada parte cumple un rol específico y cómo las decisiones de arquitectura influyen en todo el funcionamiento. Ver cómo las reglas de negocio se aplican de manera coherente según las necesidades del cliente fue lo que más me atrapó del desarrollo backend, porque ahí es donde realmente se combina la técnica con la lógica del mundo real.
+Todavía tengo áreas por reforzar: profundizar en testing avanzado, entender mejor arquitecturas distribuidas y seguir fortaleciendo mi manejo de bases de datos y buenas prácticas de seguridad. Pero siento que este cuatrimestre me dio una base sólida para seguir construyendo.
+Fue un período de aprendizaje intenso, con desafíos reales y muchos avances. Termino con una visión más madura del backend y con ganas de seguir mejorando y explorando nuevas herramientas.
+
+---
+
+# 10. Bibliografía y Fuentes
 
 ### Bibliografía y Fuentes
 
@@ -1293,7 +1918,12 @@ getEditView = async (req, res) => {
 
 #### Otros recursos
 
-* Apuntes de la materia Desarrollo de Sistemas Web (Back End) – 2° (2025), IFTS Nro. 29, Tecnicatura Superior en Desarrollo de Software a Distancia. [https://aulasvirtuales.bue.edu.ar/
+* Apuntes de la materia Desarrollo de Sistemas Web (Back End) – 2° (2025), IFTS Nro. 29, Tecnicatura Superior en Desarrollo de Software a Distancia. [https://aulasvirtuales.bue.edu.ar/](https://aulasvirtuales.bue.edu.ar/)
+
+---
+
+
+
 
 
 
