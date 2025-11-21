@@ -14,7 +14,7 @@ class ProjectReportController {
    */
   static async renderView(req, res, next) {
     try {
-      res.render('project-report', {
+      res.render('dashboards/project-report', {
         title: 'Reporte de Proyectos',
         user: req.user
       });

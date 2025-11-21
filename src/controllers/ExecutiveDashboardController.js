@@ -6,7 +6,7 @@ import PermissionAwareController from './PermissionAwareController.js';
 
 class ExecutiveDashboardController extends PermissionAwareController {
   constructor() {
-    super(null, null, 'executive-dashboard');
+    super(null, null, 'dashboards/executive-dashboard');
   }
 
   /**
@@ -14,7 +14,7 @@ class ExecutiveDashboardController extends PermissionAwareController {
    */
   getView = async (req, res) => {
     try {
-      res.render('executive-dashboard', {
+      res.render('dashboards/executive-dashboard', {
         title: 'Dashboard Ejecutivo - NexusFlow'
       });
     } catch (error) {

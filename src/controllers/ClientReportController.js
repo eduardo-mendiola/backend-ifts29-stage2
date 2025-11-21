@@ -8,7 +8,7 @@ class ClientReportController {
   // GET /reports/clients - Vista principal
   static async index(req, res) {
     try {
-      res.render('client-report', {
+      res.render('dashboards/client-report', {
         title: 'Reporte de Clientes',
         user: req.user
       });

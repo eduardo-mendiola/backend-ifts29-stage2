@@ -14,7 +14,7 @@ class RevenueAnalysisController {
    */
   static async renderView(req, res, next) {
     try {
-      res.render('revenue-analysis', {
+      res.render('dashboards/revenue-analysis', {
         title: 'Análisis de Ingresos',
         user: req.user
       });

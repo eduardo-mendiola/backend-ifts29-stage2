@@ -15,7 +15,7 @@ class FinancialReportController {
    */
   static async renderView(req, res, next) {
     try {
-      res.render('financial-report', {
+      res.render('dashboards/financial-report', {
         title: 'Reporte Financiero',
         user: req.user
       });

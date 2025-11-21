@@ -18,7 +18,7 @@ class ProfitabilityAnalysisController {
    */
   static async renderView(req, res, next) {
     try {
-      res.render('profitability-analysis', {
+      res.render('dashboards/profitability-analysis', {
         title: 'Análisis de Rentabilidad',
         user: req.user
       });
