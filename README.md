@@ -4,6 +4,7 @@
 
 **Materia:** Desarrollo de Sistemas Web (Back End)  
 **Profesor:** Emir Eliezer Garcia Ontiveros  
+**Grupo:** 2
 **Comisión:** A  
 **Alumno:** Mendiola, Eduardo E.  
 **Fecha de la Entrega:** 19-11-2025  
@@ -1280,17 +1281,19 @@ getEditView = async (req, res) => {
 * Jest. (s.f.). Documentación oficial de Jest. Recuperado en noviembre de 2025, de [https://jestjs.io/docs/getting-started](https://jestjs.io/docs/getting-started)
 * Supertest. (s.f.). Supertest – npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/supertest](https://www.npmjs.com/package/supertest)
 * MongoDB Memory Server. (s.f.). mongodb-memory-server – npm package. Recuperado en noviembre de 2025, de [https://www.npmjs.com/package/mongodb-memory-server](https://www.npmjs.com/package/mongodb-memory-server)
+* Chart.js. (s.f.). Documentación oficial de Chart.js. Recuperado en noviembre de 2025, de [https://www.chartjs.org/docs/latest/](https://www.chartjs.org/docs/latest/)
 
 #### Guías y cursos en línea
 
-* IFTS Nro. 29, Tecnicatura Superior en Desarrollo de Software a Distancia, Desarrollo de Sistemas Web (Back End) – 2° (2025). Recuperado de [https://aulasvirtuales.bue.edu.ar/course/view.php?id=22553](https://aulasvirtuales.bue.edu.ar/course/view.php?id=22553)
 * The Net Ninja. (2022). MERN Stack Crash Course Tutorial [Lista de reproducción]. YouTube. Recuperado de [https://youtube.com/playlist?list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&si=TEi7PZTW6xPRlSSk](https://youtube.com/playlist?list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&si=TEi7PZTW6xPRlSSk)
 * Martín Gesualdo. (2023). Emprendedor Full Stack | Aprende a desarrollar aplicaciones web [Lista de reproducción]. YouTube. Recuperado de [https://youtube.com/playlist?list=PLAmcNbGd0fkNl-CleT_XxwGKDk1j00uUp&si=U8oSAdMzI47pPvVo](https://youtube.com/playlist?list=PLAmcNbGd0fkNl-CleT_XxwGKDk1j00uUp&si=U8oSAdMzI47pPvVo)
 * Leonardo Jose Castillo Lacruz – FreeCodeCamp Español. (05/11/2024). Curso API CRUD – Node.js, Express, MongoDB y Autenticación. YouTube. Recuperado de [https://www.youtube.com/watch?v=Oa5blAV7Fyg](https://www.youtube.com/watch?v=Oa5blAV7Fyg)
 * Dave Gray. (2022). MERN Stack Tutorials [Lista de reproducción]. YouTube. Recuperado de [https://youtube.com/playlist?list=PL0Zuz27SZ-6P4dQUsoDatjEGpmBpcOW8V&si=YQyOf194iv0GNgUH](https://youtube.com/playlist?list=PL0Zuz27SZ-6P4dQUsoDatjEGpmBpcOW8V&si=YQyOf194iv0GNgUH)
 
 
+#### Otros recursos
 
+* Apuntes de la materia Desarrollo de Sistemas Web (Back End) – 2° (2025), IFTS Nro. 29, Tecnicatura Superior en Desarrollo de Software a Distancia. [https://aulasvirtuales.bue.edu.ar/
 
 
 
