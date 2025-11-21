@@ -7,30 +7,461 @@ block content
         h1.mb-0 Editar Rol
         a.btn.btn-gray(href="/roles", tabindex="5") Volver a la lista
 
-      // Contenedor de 1 columna
+      // Contenedor de 1 columnas
       .row.g-3
         .col-md-6
           .mb-3
             label.form-label(for="name") Nombre
-            input#name.form-control(type="text", name="name", value=item.name || "", required, tabindex="1")
+            input#name.form-control(type="text", name="name", value=item.name, required, tabindex="1")
           .mb-3
             label.form-label(for="description") Descripción
             textarea#description.form-control(name="description", required, tabindex="2")= item.description
-          .mb-3
-            label.form-label Permisos
-            .d-flex.flex-column
-              each perm in allPermissions
-                .form-check
-                  input.form-check-input(
-                    type="checkbox",
-                    name="permissions",
-                    value=perm,
-                    checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString()))
-                  )
-                  label.form-check-label #{permissionLabels[perm]}
-
-
-
+      
+      // Sección de Permisos a Ancho Completo
+      .row.mt-4
+        .col-12
+          .d-flex.justify-content-between.align-items-center.mb-3
+            h4.mb-0.text-white
+              i.bi.bi-shield-lock.me-2
+              | Permisos
+            .d-flex.gap-2
+              button.btn.btn-sm.btn-outline-secondary(type="button" onclick="toggleAllAccordions(this)") 
+                i.bi.bi-arrows-expand.me-1
+                | Desplegar Todos
+              button.btn.btn-sm.btn-outline-primary(type="button" onclick="toggleAllPermissions(this)") 
+                i.bi.bi-check-all.me-1
+                | Seleccionar Todo
+          
+          .accordion#permissionsAccordion(style="background-color: #495057;")
+            //- Accordion Item: Dashboards
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0d6efd;")
+              h2.accordion-header#headingDashboards
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-speedometer2.me-2
+                      | Dashboards
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'dashboards')" data-group="dashboards" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseDashboards.accordion-collapse.collapse(aria-labelledby="headingDashboards" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('dashboard') || perm.includes('report') || perm.includes('analysis')
+                      .form-check.mb-2
+                        if perm === 'view_dashboard'
+                          input(type="hidden" name="permissions" value="view_dashboard")
+                          input.form-check-input.perm-checkbox(type="checkbox" value=perm data-group="dashboards" checked disabled)
+                          label.form-check-label.text-white.small #{permissionLabels[perm]} 
+                            span.badge.bg-success.ms-2 Requerido
+                        else
+                          input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="dashboards" checked=(item.permissions && item.permissions.includes(perm)))
+                          label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Proyectos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #198754;")
+              h2.accordion-header#headingProjects
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseProjects" aria-expanded="false" aria-controls="collapseProjects" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-kanban.me-2
+                      | Proyectos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'projects')" data-group="projects" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseProjects.accordion-collapse.collapse(aria-labelledby="headingProjects" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('project') && !perm.includes('report') && !perm.includes('analysis')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="projects" checked=(item.permissions && item.permissions.includes(perm)))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Tareas
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0dcaf0;")
+              h2.accordion-header#headingTasks
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseTasks" aria-expanded="false" aria-controls="collapseTasks" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-list-check.me-2
+                      | Tareas
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'tasks')" data-group="tasks" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseTasks.accordion-collapse.collapse(aria-labelledby="headingTasks" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('task')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="tasks" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Empleados
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #ffc107;")
+              h2.accordion-header#headingEmployees
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmployees" aria-expanded="false" aria-controls="collapseEmployees" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-people-fill.me-2
+                      | Empleados
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'employees')" data-group="employees" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseEmployees.accordion-collapse.collapse(aria-labelledby="headingEmployees" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('employee')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="employees" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Clientes
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0d6efd;")
+              h2.accordion-header#headingClients
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseClients" aria-expanded="false" aria-controls="collapseClients" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-building.me-2
+                      | Clientes
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'clients')" data-group="clients" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseClients.accordion-collapse.collapse(aria-labelledby="headingClients" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('client') && !perm.includes('report') && !perm.includes('analysis')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="clients" checked=(item.permissions && item.permissions.includes(perm)))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Contactos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #198754;")
+              h2.accordion-header#headingContacts
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseContacts" aria-expanded="false" aria-controls="collapseContacts" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-person-lines-fill.me-2
+                      | Contactos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'contacts')" data-group="contacts" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseContacts.accordion-collapse.collapse(aria-labelledby="headingContacts" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('contact')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="contacts" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Presupuestos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0dcaf0;")
+              h2.accordion-header#headingEstimates
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseEstimates" aria-expanded="false" aria-controls="collapseEstimates" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-file-earmark-text.me-2
+                      | Presupuestos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'estimates')" data-group="estimates" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseEstimates.accordion-collapse.collapse(aria-labelledby="headingEstimates" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('estimate')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="estimates" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Facturas
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #ffc107;")
+              h2.accordion-header#headingInvoices
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseInvoices" aria-expanded="false" aria-controls="collapseInvoices" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-receipt.me-2
+                      | Facturas
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'invoices')" data-group="invoices" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseInvoices.accordion-collapse.collapse(aria-labelledby="headingInvoices" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('invoice')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="invoices" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Pagos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0d6efd;")
+              h2.accordion-header#headingPayments
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapsePayments" aria-expanded="false" aria-controls="collapsePayments" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-credit-card.me-2
+                      | Pagos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'payments')" data-group="payments" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapsePayments.accordion-collapse.collapse(aria-labelledby="headingPayments" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('payment')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="payments" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Cobros
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #198754;")
+              h2.accordion-header#headingReceipts
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseReceipts" aria-expanded="false" aria-controls="collapseReceipts" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-cash-coin.me-2
+                      | Cobros
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'receipts')" data-group="receipts" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseReceipts.accordion-collapse.collapse(aria-labelledby="headingReceipts" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('receipt')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="receipts" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Gastos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0dcaf0;")
+              h2.accordion-header#headingExpenses
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseExpenses" aria-expanded="false" aria-controls="collapseExpenses" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-wallet2.me-2
+                      | Gastos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'expenses')" data-group="expenses" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseExpenses.accordion-collapse.collapse(aria-labelledby="headingExpenses" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('expense')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="expenses" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Horas/Tiempos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #ffc107;")
+              h2.accordion-header#headingTimeEntries
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseTimeEntries" aria-expanded="false" aria-controls="collapseTimeEntries" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-clock-history.me-2
+                      | Horas/Tiempos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'timeentries')" data-group="timeentries" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseTimeEntries.accordion-collapse.collapse(aria-labelledby="headingTimeEntries" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('time') || perm.includes('hour')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="timeentries" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Usuarios
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0d6efd;")
+              h2.accordion-header#headingUsers
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-person-circle.me-2
+                      | Usuarios
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'users')" data-group="users" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseUsers.accordion-collapse.collapse(aria-labelledby="headingUsers" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('user')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="users" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Roles
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #198754;")
+              h2.accordion-header#headingRoles
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseRoles" aria-expanded="false" aria-controls="collapseRoles" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-shield-check.me-2
+                      | Roles
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'roles')" data-group="roles" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseRoles.accordion-collapse.collapse(aria-labelledby="headingRoles" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('role')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="roles" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Áreas
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0dcaf0;")
+              h2.accordion-header#headingAreas
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseAreas" aria-expanded="false" aria-controls="collapseAreas" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-diagram-3.me-2
+                      | Áreas
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'areas')" data-group="areas" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseAreas.accordion-collapse.collapse(aria-labelledby="headingAreas" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('area')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="areas" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Equipos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #ffc107;")
+              h2.accordion-header#headingTeams
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseTeams" aria-expanded="false" aria-controls="collapseTeams" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-people.me-2
+                      | Equipos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'teams')" data-group="teams" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseTeams.accordion-collapse.collapse(aria-labelledby="headingTeams" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('team')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="teams" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Puestos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0d6efd;")
+              h2.accordion-header#headingPositions
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapsePositions" aria-expanded="false" aria-controls="collapsePositions" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-briefcase.me-2
+                      | Puestos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'positions')" data-group="positions" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapsePositions.accordion-collapse.collapse(aria-labelledby="headingPositions" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('position')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="positions" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Documentos
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #198754;")
+              h2.accordion-header#headingDocuments
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocuments" aria-expanded="false" aria-controls="collapseDocuments" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-file-earmark-arrow-up.me-2
+                      | Documentos
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'documents')" data-group="documents" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseDocuments.accordion-collapse.collapse(aria-labelledby="headingDocuments" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if perm.includes('document')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="documents" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
+            
+            //- Accordion Item: Otros
+            .accordion-item.mb-2(style="background-color: #495057; border: 1px solid #0dcaf0;")
+              h2.accordion-header#headingOthers
+                .d-flex.align-items-stretch(style="background-color: #343a40;")
+                  button.accordion-button.collapsed.flex-grow-1(type="button" data-bs-toggle="collapse" data-bs-target="#collapseOthers" aria-expanded="false" aria-controls="collapseOthers" style="background-color: #343a40; color: white; border: none;")
+                    span
+                      i.bi.bi-gear.me-2
+                      | Otros
+                  .d-flex.align-items-center.justify-content-center(style="background-color: #4a5057; min-width: 50px;")
+                    input.form-check-input.group-checkbox(type="checkbox" onchange="toggleGroup(this, 'others')" data-group="others" style="cursor: pointer; margin: 0; width: 1.1em; height: 1.1em;")
+              #collapseOthers.accordion-collapse.collapse(aria-labelledby="headingOthers" data-bs-parent="#permissionsAccordion")
+                .accordion-body(style="background-color: #495057;")
+                  each perm in allPermissions
+                    if !perm.includes('dashboard') && !perm.includes('report') && !perm.includes('analysis') && !perm.includes('project') && !perm.includes('task') && !perm.includes('employee') && !perm.includes('client') && !perm.includes('contact') && !perm.includes('estimate') && !perm.includes('invoice') && !perm.includes('payment') && !perm.includes('receipt') && !perm.includes('expense') && !perm.includes('time') && !perm.includes('hour') && !perm.includes('user') && !perm.includes('role') && !perm.includes('area') && !perm.includes('team') && !perm.includes('position') && !perm.includes('document')
+                      .form-check.mb-2
+                        input.form-check-input.perm-checkbox(type="checkbox" name="permissions" value=perm data-group="others" checked=(item.permissions && item.permissions.map(p => p.toString()).includes(perm.toString())))
+                        label.form-check-label.text-white.small #{permissionLabels[perm]}
 
       button.btn.btn-success.mt-3(type="submit", tabindex="3") Actualizar Rol
       a.btn.btn-danger-soft.mt-3.ms-3(href="/roles", tabindex="4") Cancelar
+  
+  script.
+    // Inicializar los checkboxes de grupo al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeGroupCheckboxes();
+      
+      // Agregar listeners a todos los checkboxes de permisos individuales
+      const permCheckboxes = document.querySelectorAll('.perm-checkbox');
+      permCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          updateGroupCheckbox(this.getAttribute('data-group'));
+        });
+      });
+    });
+    
+    function updateGroupCheckbox(group) {
+      const groupCheckbox = document.querySelector(`.group-checkbox[data-group="${group}"]`);
+      if (!groupCheckbox) return;
+      
+      const groupPerms = document.querySelectorAll(`input.perm-checkbox[data-group="${group}"]`);
+      if (groupPerms.length > 0) {
+        const allChecked = Array.from(groupPerms).every(cb => cb.checked);
+        groupCheckbox.checked = allChecked;
+      }
+    }
+    
+    function initializeGroupCheckboxes() {
+      // Para cada checkbox de grupo, verificar si todos los permisos están seleccionados
+      document.querySelectorAll('.group-checkbox').forEach(groupCheckbox => {
+        const group = groupCheckbox.getAttribute('data-group');
+        updateGroupCheckbox(group);
+      });
+    }
+    
+    function toggleAllPermissions(button) {
+      const checkboxes = document.querySelectorAll('.perm-checkbox:not([disabled])');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      checkboxes.forEach(cb => {
+        if (cb.value !== 'view_dashboard') {
+          cb.checked = !allChecked;
+        }
+      });
+      
+      // También actualizar los checkboxes de grupo
+      document.querySelectorAll('.group-checkbox').forEach(gcb => {
+        const group = gcb.getAttribute('data-group');
+        updateGroupCheckbox(group);
+      });
+      
+      button.innerHTML = allChecked 
+        ? '<i class="bi bi-check-all me-1"></i>Seleccionar Todo'
+        : '<i class="bi bi-x-square me-1"></i>Deseleccionar Todo';
+    }
+    
+    function toggleGroup(checkbox, group) {
+      const checkboxes = document.querySelectorAll(`input.perm-checkbox[data-group="${group}"]`);
+      const isChecked = checkbox.checked;
+      checkboxes.forEach(cb => {
+        if (cb.value !== 'view_dashboard') {
+          cb.checked = isChecked;
+        }
+      });
+    }
+    
+    function toggleAllAccordions(button) {
+      const accordionItems = document.querySelectorAll('#permissionsAccordion .accordion-collapse');
+      const allExpanded = Array.from(accordionItems).every(item => item.classList.contains('show'));
+      
+      accordionItems.forEach(item => {
+        if (allExpanded) {
+          const bsCollapse = new bootstrap.Collapse(item, { toggle: false });
+          bsCollapse.hide();
+        } else {
+          const bsCollapse = new bootstrap.Collapse(item, { toggle: false });
+          bsCollapse.show();
+        }
+      });
+      
+      button.innerHTML = allExpanded 
+        ? '<i class="bi bi-arrows-expand me-1"></i>Desplegar Todos'
+        : '<i class="bi bi-arrows-collapse me-1"></i>Plegar Todos';
+    }
