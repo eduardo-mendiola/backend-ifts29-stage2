@@ -15,6 +15,18 @@ const userSchema = new mongoose.Schema({
     match: [/^\S+@\S+\.\S+$/, 'Email inválido']
   },
   role_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Role', required: true },
+  
+  // Campos para roles temporales
+  is_temporary_role: { type: Boolean, default: false },
+  role_expiration_date: { type: Date },
+  role_duration_value: { type: Number }, // valor numérico (ej: 15, 30, 2)
+  role_duration_unit: { 
+    type: String, 
+    enum: ['seconds', 'minutes', 'hours', 'days', 'months'],
+    default: 'days'
+  },
+  fallback_role_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
+  
   last_login: { type: Date },
   is_active: { type: Boolean, default: true },
 }, {
@@ -119,6 +131,60 @@ class UserModel extends BaseModel {
       new: true, 
       runValidators: true 
     });
+  }
+
+  // Método para calcular la fecha de expiración del rol
+  calculateRoleExpiration(durationType, durationValue) {
+    const now = new Date();
+    const expiration = new Date(now);
+    
+    switch(durationType) {
+      case 'seconds':
+        expiration.setSeconds(expiration.getSeconds() + durationValue);
+        break;
+      case 'minutes':
+        expiration.setMinutes(expiration.getMinutes() + durationValue);
+        break;
+      case 'hours':
+        expiration.setHours(expiration.getHours() + durationValue);
+        break;
+      case 'days':
+        expiration.setDate(expiration.getDate() + durationValue);
+        break;
+      case 'months':
+        expiration.setMonth(expiration.getMonth() + durationValue);
+        break;
+      default:
+        throw new Error(`Tipo de duración inválido: ${durationType}`);
+    }
+    
+    return expiration;
+  }
+
+  // Método para buscar usuarios con roles expirados
+  async findUsersWithExpiredRoles() {
+    return this.model.find({
+      is_temporary_role: true,
+      role_expiration_date: { $lte: new Date() },
+      fallback_role_id: { $ne: null }
+    }).populate(['role_id', 'fallback_role_id']);
+  }
+
+  // Método para revertir un usuario a su rol de fallback
+  async revertToFallbackRole(userId) {
+    const user = await this.model.findById(userId);
+    if (!user || !user.is_temporary_role || !user.fallback_role_id) {
+      return null;
+    }
+
+    user.role_id = user.fallback_role_id;
+    user.is_temporary_role = false;
+    user.role_expiration_date = null;
+    user.role_duration_value = null;
+    user.role_duration_unit = null;
+    user.fallback_role_id = null;
+
+    return user.save();
   }
 }
 

@@ -59,12 +59,95 @@ block content
             select#is_active.form-select(name="is_active", required, tabindex="4")
               option(value="true" selected=(item.is_active === true)) Activo
               option(value="false" selected=(item.is_active === false)) Inactivo
+
+      //- Sección de Rol Temporal
+      .row.mt-4
+        .col-12
+          .card.bg-secondary.border-info
+            .card-header.bg-info.text-white
+              h5.mb-0
+                i.bi.bi-clock-history.me-2
+                | Configuración de Rol Temporal
+            .card-body
+              if item.is_temporary_role
+                .alert.alert-warning.d-flex.align-items-center
+                  i.bi.bi-exclamation-triangle-fill.me-2
+                  div
+                    strong Este usuario tiene un rol temporal activo
+                    br
+                    | Expira: #{item.role_expiration_date ? new Date(item.role_expiration_date).toLocaleString('es-AR') : 'N/A'}
+                    br
+                    | Rol de fallback: 
+                    if item.fallback_role_id
+                      | #{item.fallback_role_id.name || 'No configurado'}
+                    else
+                      | No configurado
+              
+              .form-check.mb-3
+                input#is_temporary_role.form-check-input(
+                  type="checkbox" 
+                  name="is_temporary_role"
+                  checked=(item.is_temporary_role === true)
+                  onchange="toggleTemporaryRoleFields(this)"
+                )
+                label.form-check-label.text-white(for="is_temporary_role")
+                  | Asignar rol temporal con expiración automática
+              
+              #temporaryRoleFields(style=item.is_temporary_role ? "display: block;" : "display: none;")
+                .row.g-3
+                  .col-md-4
+                    label.form-label.text-white(for="role_duration_value") Duración
+                    input#role_duration_value.form-control(
+                      type="number" 
+                      name="role_duration_value"
+                      min="1"
+                      value=item.role_duration_value || ""
+                      placeholder="Ej: 15"
+                    )
+                    .form-text.text-light Cantidad de tiempo
+                  
+                  .col-md-4
+                    label.form-label.text-white(for="role_duration_unit") Unidad de tiempo
+                    select#role_duration_unit.form-select(name="role_duration_unit")
+                      option(value="seconds" selected=(item.role_duration_unit === 'seconds')) Segundos
+                      option(value="minutes" selected=(item.role_duration_unit === 'minutes')) Minutos
+                      option(value="hours" selected=(item.role_duration_unit === 'hours')) Horas
+                      option(value="days" selected=(item.role_duration_unit === 'days' || !item.role_duration_unit)) Días
+                      option(value="months" selected=(item.role_duration_unit === 'months')) Meses
+                  
+                  .col-md-4
+                    label.form-label.text-white(for="fallback_role_id") Rol después de expirar
+                    select#fallback_role_id.form-select(name="fallback_role_id")
+                      option(value="") -- Seleccionar rol --
+                      each role in roles
+                        option(
+                          value=role._id
+                          selected=(item.fallback_role_id && role._id.toString() === item.fallback_role_id._id.toString())
+                        ) #{role.name}
+                    .form-text.text-light El usuario pasará a este rol automáticamente
           
          
       button.btn.btn-success.mt-3(type="submit", tabindex="5") Actualizar Usuario
       a.btn.btn-danger-soft.mt-3.ms-3(href="/users", tabindex="6") Cancelar
 
   script.
+    // Mostrar/ocultar campos de rol temporal
+    function toggleTemporaryRoleFields(checkbox) {
+      const fields = document.getElementById('temporaryRoleFields');
+      const durationValue = document.getElementById('role_duration_value');
+      const fallbackRole = document.getElementById('fallback_role_id');
+      
+      if (checkbox.checked) {
+        fields.style.display = 'block';
+        durationValue.required = true;
+        fallbackRole.required = true;
+      } else {
+        fields.style.display = 'none';
+        durationValue.required = false;
+        fallbackRole.required = false;
+      }
+    }
+    
     // Validación de Bootstrap en tiempo real
     (function() {
       'use strict';

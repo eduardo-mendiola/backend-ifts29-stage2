@@ -14,6 +14,7 @@ import apiAuthRoutes from './routes/api-auth-routes.js';
 // Importar middleware de autenticación
 import { isAuthenticated, noCacheHeaders } from './middleware/authMiddleware.js';
 import { injectPermissionHelpers, requirePermission } from './middleware/permissionMiddleware.js';
+import checkRoleExpiration from './middleware/checkRoleExpiration.js';
 
 // Importar rutas de cada entidad
 import clientRoutes from './routes/client-routes.js';
@@ -117,6 +118,9 @@ app.use(flash());
 // Inicializar Passport y sesiones
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Middleware para verificar expiración de roles (debe ir después de passport)
+app.use(checkRoleExpiration);
 
 // Middleware para prevenir cacheo del navegador en páginas autenticadas
 // Esto evita que usuarios vean contenido sensible con el botón "atrás" después de logout
