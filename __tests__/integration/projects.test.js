@@ -3,8 +3,6 @@
  * 
  * TDD Pattern: Red → Green → Refactor
  * 
- * Estos tests verifican el comportamiento completo del endpoint /api/projects
- * incluyendo validaciones, base de datos y respuestas HTTP.
  * 
  * Setup/Teardown:
  * - beforeAll: Conectar a MongoDB Memory Server

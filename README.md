@@ -7,7 +7,7 @@
 **Grupo:** 2
 **Comisión:** A  
 **Alumno:** Mendiola, Eduardo E.  
-**Fecha de la Entrega:** 19-11-2025  
+**Fecha de la Entrega:** 22-11-2025  
 
 ---
 
