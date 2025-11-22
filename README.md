@@ -11,7 +11,6 @@
 
 ---
 
-
 ## Índice
 
 1. [Introducción del Caso](#1-introducción-del-caso)  
