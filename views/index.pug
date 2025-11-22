@@ -52,6 +52,11 @@ block content
           // Submit button
           button.btn.btn-primary.w-100.py-2(type="submit") Ingresar
 
+          if logoutSuccess
+            .alert.alert-success.text-center.mt-3.mb-0(role="alert")
+              i.bi.bi-check-circle-fill.me-2
+              = logoutSuccess
+
           if error && error.length > 0
             .alert.alert-danger.text-center.mt-3.mb-0(role="alert")
               i.bi.bi-exclamation-circle-fill.me-2

@@ -13,10 +13,17 @@ export const showLogin = (req, res) => {
     return res.redirect('/admin/dashboard');
   }
   
+  // Mensaje especial para logout exitoso
+  let successMessage = null;
+  if (req.query.logout === 'success') {
+    successMessage = 'Sesión cerrada exitosamente';
+  }
+  
   // Los mensajes flash ya están disponibles en res.locals gracias al middleware en app.js
   // No es necesario pasarlos nuevamente, evita consumirlos dos veces
   res.render('index', { 
-    title: 'ClickWave - Iniciar Sesión'
+    title: 'ClickWave - Iniciar Sesión',
+    logoutSuccess: successMessage
   });
 };
 
@@ -48,6 +55,7 @@ export const processLogin = async (req, res) => {
 
 /**
  * Procesar logout
+ * Destruye completamente la sesión y limpia cookies para prevenir acceso con caché
  */
 export const logout = (req, res, next) => {
   req.logout((err) => {
@@ -55,8 +63,19 @@ export const logout = (req, res, next) => {
       console.error('Error al cerrar sesión:', err);
       return next(err);
     }
-    req.flash('success', 'Sesión cerrada exitosamente');
-    res.redirect('/');
+    
+    // Destruir la sesión completamente
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error al destruir sesión:', err);
+      }
+      
+      // Limpiar la cookie de sesión
+      res.clearCookie('connect.sid');
+      
+      // Redirigir al login sin mensaje flash (ya no hay sesión para almacenarlo)
+      res.redirect('/?logout=success');
+    });
   });
 };
 

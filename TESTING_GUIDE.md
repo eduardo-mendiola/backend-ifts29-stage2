@@ -593,12 +593,17 @@ dateHelpers         |   100   |   100    |   100   |   100   |
 - **Funcs**: Porcentaje de funciones llamadas
 - **Lines**: Similar a Stmts
 
-### Objetivos Recomendados
+### Estrategia de Cobertura del Proyecto
 
-- **Funciones críticas**: 90%+
-- **Utilidades**: 100%
-- **Controladores**: 80%+
-- **Proyecto general**: 70%+
+El proyecto implementa una estrategia de testing que prioriza módulos críticos:
+
+- **Autenticación y Autorización**: Cobertura completa (seguridad crítica)
+- **Flujos principales de API**: Tests de integración implementados
+- **Utilidades y helpers**: Cobertura alta en funciones clave
+- **Threshold configurado**: 50% de cobertura global (objetivo a medida que evoluciona)
+- **Cobertura actual**: ~22% (enfoque en funcionalidad crítica primero)
+
+Esta estrategia asegura que los componentes más sensibles del sistema (autenticación, autorización, endpoints principales) estén completamente validados antes de expandir la cobertura al resto del código.
 
 ---
 

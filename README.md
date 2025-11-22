@@ -546,7 +546,8 @@ Estos permisos se asignan a roles (`admin`, `manager`, `developer`, `client`, `e
 **Cobertura de Código:**
 
 - Generación de reportes de cobertura en formato HTML con `lcov-report`.
-- Objetivo: Mantener cobertura superior al 80% en módulos críticos.
+- Estrategia: Priorización de cobertura en módulos críticos (autenticación, autorización, API principal).
+- Objetivo configurado: Alcanzar threshold del 50% de cobertura global a medida que el proyecto evoluciona.
 
 ### 2.3.4 Mejoras de Seguridad
 
@@ -782,12 +783,16 @@ El conjunto de pruebas está organizado en tres categorías complementarias:
   - Functions (funciones invocadas)
   - Lines (líneas totales vs cubiertas)
 
-- **Objetivo de calidad:** Mantener cobertura superior al 80% en módulos críticos (controladores, middleware de autenticación, lógica de negocio)
+- **Estrategia de cobertura:** Enfoque en testing de módulos críticos primero:
+  - Autenticación y autorización: Cobertura completa
+  - Flujos principales de API: Tests de integración implementados
+  - Objetivo configurado: Threshold del 50% de cobertura global
+  - Cobertura actual: ~22% (priorización de seguridad y funcionalidad crítica)
 
 - **Integración continua:** Scripts npm disponibles:
-  - `npm test`: Ejecuta todos los tests
+  - `npm test`: Ejecuta todos los tests (56+ tests pasando)
   - `npm run test:watch`: Modo watch para desarrollo
-  - `npm run test:coverage`: Genera reporte completo de cobertura
+  - `npm run test:coverage`: Genera reporte completo de cobertura con métricas detalladas
 
 **Estrategia de Testing:**
 

@@ -12,7 +12,7 @@ import authRoutes from './routes/auth-routes.js';
 import apiAuthRoutes from './routes/api-auth-routes.js';
 
 // Importar middleware de autenticación
-import { isAuthenticated } from './middleware/authMiddleware.js';
+import { isAuthenticated, noCacheHeaders } from './middleware/authMiddleware.js';
 import { injectPermissionHelpers, requirePermission } from './middleware/permissionMiddleware.js';
 
 // Importar rutas de cada entidad
@@ -117,6 +117,10 @@ app.use(flash());
 // Inicializar Passport y sesiones
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Middleware para prevenir cacheo del navegador en páginas autenticadas
+// Esto evita que usuarios vean contenido sensible con el botón "atrás" después de logout
+app.use(noCacheHeaders);
 
 // Bypass de autenticación para tests (solo en NODE_ENV=test)
 if (process.env.NODE_ENV === 'test') {

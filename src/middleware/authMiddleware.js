@@ -1,4 +1,18 @@
 /**
+ * Middleware para prevenir el cacheo del navegador
+ * Agrega headers HTTP que instruyen al navegador a no cachear contenido sensible
+ * Esto previene que usuarios puedan ver páginas anteriores con el botón "atrás" después de logout
+ */
+export const noCacheHeaders = (req, res, next) => {
+  res.set({
+    'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+  next();
+};
+
+/**
  * Middleware para proteger rutas web (vistas Pug)
  * Verifica si el usuario está autenticado mediante sesión de Passport
  */
