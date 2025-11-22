@@ -1146,7 +1146,7 @@ PORT=4000
 MONGO_URI_ATLAS="mongodb://localhost:27017/clickwavedb" 
 # o MONGO_URI_ATLAS="mongodb+srv://user:password@cluster.mongodb.net/..."
 
-# NUEVO: Secrets para autenticación
+# Secrets para autenticación
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_clickwave2025
 SESSION_SECRET=your_super_secret_session_key_change_this_in_production_clickwave2025
 NODE_ENV=development
