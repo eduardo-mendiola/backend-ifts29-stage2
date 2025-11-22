@@ -70,7 +70,7 @@ script.
           const formAction = rowToDelete.formToDelete.action;
           const response = await fetch(formAction, { method: 'DELETE' });
 
-          if (response.ok) {
+          if (response.ok || response.status === 204) {
             rowToDelete.remove();
           } else {
             // Intentar obtener el mensaje de error del servidor
@@ -80,13 +80,17 @@ script.
             // Mostrar mensaje según el código de estado
             if (response.status === 403) {
               alert('❌ Acceso denegado: ' + errorMessage);
+            } else if (response.status === 400) {
+              alert('⚠️ ' + errorMessage);
+            } else if (response.status === 404) {
+              alert('❌ No encontrado: ' + errorMessage);
             } else {
-              alert('Error al eliminar: ' + errorMessage);
+              alert('❌ Error al eliminar: ' + errorMessage);
             }
           }
         } catch (error) {
           console.error('Error:', error);
-          alert('Error al eliminar el registro.');
+          alert('❌ Error al eliminar el registro.');
         }
       }
       modal.hide();

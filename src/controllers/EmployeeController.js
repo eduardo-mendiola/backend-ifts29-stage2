@@ -248,7 +248,54 @@ class EmployeeController extends PermissionAwareController {
         }
     };
 
+    // Sobrescribir delete para eliminar también el usuario asociado
+    delete = async (req, res) => {
+        try {
+            const { id } = req.params;
+            
+            // 1. Buscar el empleado para obtener el user_id
+            const employee = await this.model.findById(id);
+            
+            if (!employee) {
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Empleado no encontrado.' 
+                });
+            }
 
+            const userId = employee.user_id;
+
+            // 2. Eliminar el empleado
+            const deletedEmployee = await this.model.delete(id);
+            
+            if (!deletedEmployee) {
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'No se pudo eliminar el empleado.' 
+                });
+            }
+
+            // 3. Eliminar el usuario asociado si existe
+            if (userId) {
+                try {
+                    await User.delete(userId);
+                    console.log(`✅ Usuario ${userId} eliminado junto con el empleado ${id}`);
+                } catch (userError) {
+                    console.error('Error al eliminar usuario asociado:', userError.message);
+                    // No fallar la operación si el usuario ya no existe
+                }
+            }
+
+            console.log('✅ Empleado eliminado exitosamente junto con su usuario');
+            res.status(204).send();
+        } catch (error) {
+            console.error('Error al eliminar empleado:', error.message);
+            res.status(500).json({ 
+                success: false,
+                message: 'Error interno del servidor al eliminar empleado.' 
+            });
+        }
+    };
 
 }
 
