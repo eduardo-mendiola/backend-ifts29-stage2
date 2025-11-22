@@ -48,6 +48,7 @@
        2.3.3 [Testing Integral con Jest](#233-testing-integral-con-jest)  
        2.3.4 [Mejoras de Seguridad](#234-mejoras-de-seguridad)  
        2.3.5 [Dashboards y Reportes con Chart.js](#235-dashboards-y-reportes-con-chartjs)  
+       2.3.6 [Sistema de Roles Temporales](#236-sistema-de-roles-temporales)  
 
 3. [Descripción Técnica del Sistema](#3-descripción-técnica-del-sistema)  
    3.1 [Introducción a la Arquitectura y Componentes Principales](#31-introducción-a-la-arquitectura-y-componentes-principales)  
@@ -100,6 +101,7 @@
    7.3 [Casos especiales por módulo](#73-casos-especiales-por-módulo)  
        7.3.1 [Usuarios y Empleados (filtros de selección)](#731-usuarios-y-empleados-filtros-de-selección)  
        7.3.2 [Roles (opciones de permisos)](#732-roles-opciones-de-permisos)  
+           7.3.2.1 [Sistema de Roles Temporales](#7321-sistema-de-roles-temporales)  
        7.3.3 [Proyectos (selección de equipos)](#733-proyectos-selección-de-equipos)  
        7.3.4 [Equipos (selección miembros y asignación de roles)](#734-equipos-selección-miembros-y-asignación-de-roles)  
        7.3.5 [Presupuesto (carga de ítems y cálculo de impuestos y descuentos)](#735-presupuesto-carga-de-ítems-y-cálculo-de-impuestos-y-descuentos)  
@@ -592,6 +594,26 @@ Estos permisos se asignan a roles (`admin`, `manager`, `developer`, `client`, `e
 - `ProjectReportController`: Análisis de proyectos por estado, equipo, área y rentabilidad.
 - `FinancialReportController`: Consolidación de datos de facturación, pagos, gastos y presupuestos.
 
+### 2.3.6 Sistema de Roles Temporales
+
+**Gestión Automática de Roles con Expiración:**
+
+Se implementó un sistema completo de roles temporales que permite asignar permisos por tiempo limitado con reversión automática:
+
+- **Configuración flexible de duración:** Los roles temporales pueden configurarse desde segundos hasta meses, permitiendo escenarios como accesos temporales de prueba, permisos de emergencia por ausencias, accesos limitados para consultores externos y períodos de capacitación con permisos supervisados.
+
+- **Reversión automática:** Al expirar el tiempo configurado, el sistema automáticamente revierte al rol de respaldo (`fallback_role_id`) sin intervención manual.
+
+- **Servicio de expiración (`RoleExpirationService`):** Incluye métodos para verificar y revertir usuarios específicos, procesar todos los roles expirados mediante cron jobs, configurar roles temporales y obtener el estado de todos los roles temporales activos.
+
+- **Tareas programadas (Cron Jobs):** Verificación cada minuto de roles expirados y reportes de estado cada 6 horas con logs detallados de cada reversión.
+
+- **Interfaz de usuario:** Formularios con checkbox para activar rol temporal, selectores de duración y rol de respaldo, alertas visuales mostrando tiempo restante y fecha de expiración.
+
+- **Validaciones y seguridad:** Eliminación de usuarios validada contra empleados asociados, cascada de eliminación controlada y preservación de trazabilidad en cambios de rol.
+
+Para detalles visuales de esta funcionalidad, consulte la **Sección 7.3.2.1 - Sistema de Roles Temporales**.
+
 ---
 
 
@@ -639,6 +661,7 @@ El ecosistema tecnológico fue seleccionado para garantizar la eficiencia, segur
 | Almacenamiento de sesiones | connect-mongo | 5.1.0 | Persistencia de sesiones en MongoDB |
 | Autenticación API | JSON Web Tokens (JWT) | 9.0.2 | Tokens para protección de endpoints REST |
 | Hash de contraseñas | bcrypt | 6.0.0 | Cifrado seguro de contraseñas |
+| Tareas programadas | node-cron | 4.2.1 | Scheduler para verificación de roles temporales |
 
 **Presentación y Frontend:**
 
@@ -838,7 +861,7 @@ A continuación se describen todas las entidades del sistema y su funcionalidad 
 - **TeamModel:** Representa equipos de trabajo con líder (`team_leader`) y miembros, incluyendo su rol dentro del equipo (`team_role_id`). Soporta populate anidado de líder y miembros con roles y datos de usuario.
 - **TeamRoleModel:** Define roles dentro de equipos (p.ej., Dev, QA, PM). Campos: `code`, `name`, `description`. Incluye métodos para validación de duplicados.
 - **TimeEntryModel:** Registra el tiempo trabajado por empleados en tareas, vinculando Employee y Task (y mediante populate, Project). Campos: `date`, `hours_worked`, `description`, `billable`, `approved`, `approved_by`, `supervisor_comment`.
-- **UserModel:** Representa usuarios del sistema para acceso y autenticación. Campos: `username`, `password_hash`, `email`, `role_id`, `last_login`, `is_active`, `code`. Permite populate de role_id para obtener información completa de permisos y rol del usuario.
+- **UserModel:** Representa usuarios del sistema para acceso y autenticación. Campos: `username`, `password_hash`, `email`, `role_id`, `last_login`, `is_active`, `code`. Incluye sistema de **roles temporales** con campos adicionales: `is_temporary_role` (Boolean), `role_expiration_date` (Date), `role_duration_value` (Number), `role_duration_unit` (enum: seconds/minutes/hours/days/months) y `fallback_role_id` (ObjectId). Permite asignar roles con expiración automática que revierten a un rol de respaldo configurado. Métodos: `calculateRoleExpiration()`, `findUsersWithExpiredRoles()`, `revertToFallbackRole()`. Permite populate de role_id para obtener información completa de permisos y rol del usuario.
 
 ### 3.2.4 Interacción entre Capas
 
@@ -1214,12 +1237,12 @@ __tests__/
 #### 1. Smoke Tests (7/7)
 Verificación básica del sistema de testing: Jest, operaciones básicas, async/await, helpers globales.
 
-![Smoke Tests](./assets/screenshots/smoke-tests.png)
+![Smoke Tests](./assets/screenshots/smoke-tests.webp)
 
 #### 2. Unit Tests - dateHelpers (18/18)
 Tests unitarios para funciones de formateo de fechas: `formatDate`, `formatDatesForInput`, edge cases.
 
-![Unit Tests - dateHelpers](./assets/screenshots/unit-datehelpers.png)
+![Unit Tests - dateHelpers](./assets/screenshots/unit-datehelpers.webp)
 
 #### 3. Integration Tests - POST /api/projects (14/14)
 Tests de integración completos para creación de proyectos:
@@ -1229,7 +1252,7 @@ Tests de integración completos para creación de proyectos:
 - Validación de referencias (ObjectIds)
 - Campos opcionales y valores por defecto
 
-![Integration Tests - POST](./assets/screenshots/integration-projects-post.png)
+![Integration Tests - POST](./assets/screenshots/integration-projects-post.webp)
 
 #### 4. Integration Tests - CRUD /api/projects (15/15)
 Tests de integración para operaciones CRUD completas:
@@ -1239,7 +1262,7 @@ Tests de integración para operaciones CRUD completas:
 - **DELETE** /api/projects/:id - Eliminar proyecto
 - Manejo de errores (404, 500)
 
-![Integration Tests - CRUD](./assets/screenshots/integration-projects-crud.png)
+![Integration Tests - CRUD](./assets/screenshots/integration-projects-crud.webp)
 
 #### 5. Suite Completa (56/56 - 100%)
 Ejecución de toda la suite de tests:
@@ -1250,7 +1273,7 @@ Ejecución de toda la suite de tests:
 
 **Resultado: 56 tests pasando, 0 fallando**
 
-![Test Suite Completa](./assets/screenshots/full-test-suite.png)
+![Test Suite Completa](./assets/screenshots/full-test-suite.webp)
 
 ### Documentación Completa
 
@@ -1362,6 +1385,13 @@ Muestra la gestión de roles y la configuración de permisos específicos para c
 
 ![Roles](assets/screenshots/roles_permisos1.webp)
 ![Roles](assets/screenshots/roles_permisos2.webp)
+
+#### 7.3.2.1 Sistema de Roles Temporales
+
+**Descripción:**  
+El sistema permite asignar roles con expiración automática, ideal para accesos temporales, períodos de prueba o permisos limitados en el tiempo. La configuración es flexible, permitiendo duraciones desde segundos hasta meses. Al expirar el plazo, el sistema revierte automáticamente al rol de respaldo configurado mediante un servicio de cron jobs que verifica cada minuto y genera logs de auditoría completos. La interfaz incluye controles intuitivos con checkbox de activación, selectores de duración y rol de respaldo, alertas visuales de tiempo restante, y validaciones de seguridad para eliminación de usuarios y trazabilidad de cambios. Casos de uso: empleados en período de prueba, permisos de emergencia para developers, consultores externos con acceso limitado temporalmente.
+
+![Sistema de Roles Temporales](assets/screenshots/temporal-roles-overview.webp)
 
 ---
 
