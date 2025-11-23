@@ -331,15 +331,14 @@ block content
           scales: {
             x: {
               beginAtZero: true,
-              ticks: { 
-                color: '#f0f0f0',
+              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim(),
                 callback: (value) => '$' + value.toLocaleString()
               },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             },
             y: {
-              ticks: { color: '#f0f0f0' },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim() },
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             }
           }
         }
@@ -367,7 +366,7 @@ block content
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { color: '#f0f0f0' }
+              labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim() }
             }
           }
         }
@@ -394,12 +393,12 @@ block content
           scales: {
             y: {
               beginAtZero: true,
-              ticks: { color: '#f0f0f0', stepSize: 1 },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim(), stepSize: 1 },
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             },
             x: {
-              ticks: { color: '#f0f0f0' },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim() },
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             }
           }
         }
@@ -429,12 +428,12 @@ block content
           scales: {
             y: {
               beginAtZero: true,
-              ticks: { color: '#f0f0f0', stepSize: 1 },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim(), stepSize: 1 },
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             },
             x: {
-              ticks: { color: '#f0f0f0' },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim() },
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             }
           }
         }
@@ -465,7 +464,7 @@ block content
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { color: '#f0f0f0', font: { size: 10 } }
+              labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim(), font: { size: 10 } }
             }
           }
         }

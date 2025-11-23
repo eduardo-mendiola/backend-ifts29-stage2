@@ -188,7 +188,7 @@ block content
               display: true,
               position: 'top',
               labels: { 
-                color: '#f0f0f0',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim(),
                 font: { size: 12 }
               }
             },
@@ -218,20 +218,20 @@ block content
             y: {
               beginAtZero: true,
               ticks: { 
-                color: '#f0f0f0',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim(),
                 callback: function(value) {
                   return '$' + value.toLocaleString();
                 }
               },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             },
             x: {
               ticks: { 
-                color: '#f0f0f0',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim(),
                 maxRotation: 45,
                 minRotation: 45
               },
-              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim() }
             }
           }
         }

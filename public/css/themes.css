@@ -15,8 +15,8 @@
   --border-color: #dee2e6;
 
   /* Navegación */
-  --nav-hover: #495057;
-  --nav-active: #6c757d;
+  --nav-hover: #d3d5d7;
+  --nav-active: #c8ccd0;
 
   /* Scrollbar */
   --scrollbar-thumb: #adb5bd;
@@ -25,7 +25,7 @@
   /* Tablas */
   --table-bg: #ffffff;
   --table-border: #dee2e6;
-  --table-hover: #f8f9fa;
+  --table-hover: #d3d5d7;
 
   /* Dropdowns */
   --dropdown-bg: #ffffff;
@@ -51,8 +51,8 @@
   --modal-header-bg: #f8f9fa;
 
   /* Gráficos */
-  --chart-grid: #e0e0e0;
-  --chart-text: #333333;
+  --chart-grid: #dee2e6;
+  --chart-text: #343a40;
   --chart-bg: rgba(0, 0, 0, 0.05);
 }
 
@@ -130,7 +130,7 @@ table,
 
 /* Mejorar grosor de texto para mejor legibilidad */
 body {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Mantener peso normal para inputs */
@@ -194,6 +194,21 @@ textarea {
 }
 
 .table-hover tbody tr:hover {
+  background-color: var(--table-hover) !important;
+}
+
+/* Override más específico para tablas Bootstrap en modo claro */
+.table-hover > tbody > tr:hover > * {
+  --bs-table-accent-bg: var(--table-hover) !important;
+  background-color: var(--table-hover) !important;
+}
+
+.table-dark.table-hover tbody tr:hover {
+  background-color: var(--table-hover) !important;
+}
+
+.table-dark.table-hover tbody tr:hover td,
+.table-dark.table-hover tbody tr:hover th {
   background-color: var(--table-hover) !important;
 }
 
@@ -311,4 +326,118 @@ form.bg-dark {
 .bg-dark h6,
 .bg-dark p {
   color: var(--text-primary) !important;
+}
+/* Override FUERTE para hover en tablas Bootstrap - modo claro */
+[data-theme="light"] .table-dark tbody tr:hover,
+[data-theme="light"] .table-dark tbody tr:hover td,
+[data-theme="light"] .table-dark tbody tr:hover th,
+:root .table-dark tbody tr:hover,
+:root .table-dark tbody tr:hover td,
+:root .table-dark tbody tr:hover th {
+  background-color: #d3d5d7 !important;
+  --bs-table-bg: #d3d5d7 !important;
+  --bs-table-accent-bg: #d3d5d7 !important;
+}
+
+/* Para tablas sin data-theme (modo claro por defecto) */
+html:not([data-theme="dark"]) .table-hover tbody tr:hover,
+html:not([data-theme="dark"]) .table-hover tbody tr:hover td,
+html:not([data-theme="dark"]) .table-hover tbody tr:hover th {
+  background-color: #d3d5d7 !important;
+  --bs-table-bg: #d3d5d7 !important;
+  --bs-table-accent-bg: #d3d5d7 !important;
+}
+/* FORZAR hover claro en tablas - máxima prioridad */
+html:not([data-theme="dark"]) .table-dark.table-hover tbody tr:hover,
+html:not([data-theme="dark"]) .table-dark.table-hover tbody tr:hover > *,
+html:not([data-theme="dark"]) .table.table-hover tbody tr:hover,
+html:not([data-theme="dark"]) .table.table-hover tbody tr:hover > * {
+  background-color: rgba(211, 213, 215, 1) !important;
+  --bs-table-bg-state: rgba(211, 213, 215, 1) !important;
+  --bs-table-bg-type: rgba(211, 213, 215, 1) !important;
+}
+
+/* Para asegurar que funcione en modo light explícito */
+[data-theme="light"] .table-hover tbody tr:hover,
+[data-theme="light"] .table-hover tbody tr:hover > * {
+  background-color: rgba(211, 213, 215, 1) !important;
+}
+/* MÁXIMA ESPECIFICIDAD - Forzar hover claro en TODAS las tablas */
+body:not([data-theme="dark"]) .table-hover tbody tr:hover,
+body:not([data-theme="dark"]) .table-hover tbody tr:hover td,
+body:not([data-theme="dark"]) .table-hover tbody tr:hover th,
+body:not([data-theme="dark"]) .table-dark tbody tr:hover,
+body:not([data-theme="dark"]) .table-dark tbody tr:hover td,
+body:not([data-theme="dark"]) .table-dark tbody tr:hover th {
+  background-color: #d3d5d7 !important;
+  background: #d3d5d7 !important;
+}
+/* Corregir th (headers) en tablas para modo claro */
+body:not([data-theme="dark"]) .table th,
+body:not([data-theme="dark"]) .table-dark th,
+html:not([data-theme="dark"]) .table th,
+html:not([data-theme="dark"]) .table-dark th {
+  background-color: #e9ecef !important;
+  color: #343a40 !important;
+  border-color: #dee2e6 !important;
+}
+
+body:not([data-theme="dark"]) .table thead th,
+body:not([data-theme="dark"]) .table-dark thead th,
+html:not([data-theme="dark"]) .table thead th,
+html:not([data-theme="dark"]) .table-dark thead th {
+  background-color: #e9ecef !important;
+  color: #343a40 !important;
+}
+
+body:not([data-theme="dark"]) .table tbody th,
+body:not([data-theme="dark"]) .table-dark tbody th,
+html:not([data-theme="dark"]) .table tbody th,
+html:not([data-theme="dark"]) .table-dark tbody th {
+  background-color: #e9ecef !important;
+  color: #343a40 !important;
+}
+/* Forzar colores de texto en gráficos Chart.js para modo claro */
+body:not([data-theme="dark"]) canvas {
+  color: #343a40 !important;
+}
+
+/* Usar variables CSS personalizadas para Chart.js */
+:root {
+  --chart-label-color: #343a40;
+  --chart-grid-color: #dee2e6;
+}
+
+[data-theme="dark"] {
+  --chart-label-color: #f0f0f0;
+  --chart-grid-color: rgba(255, 255, 255, 0.1);
+}
+/* Asegurar que text-success y text-danger funcionen en modo claro */
+body:not([data-theme="dark"]) .text-success,
+html:not([data-theme="dark"]) .text-success {
+  color: #198754 !important;
+}
+
+body:not([data-theme="dark"]) .text-danger,
+html:not([data-theme="dark"]) .text-danger {
+  color: #dc3545 !important;
+}
+
+/* Ajustar intensidad de text-themed para que no sea tan fuerte */
+.text-themed {
+  color: var(--text-primary) !important;
+  opacity: 0.9;
+}
+/* Cambiar botones outline-warning a gris oscuro en modo claro */
+body:not([data-theme="dark"]) .btn-outline-warning,
+html:not([data-theme="dark"]) .btn-outline-warning {
+  color: #495057 !important;
+  border-color: #495057 !important;
+}
+
+body:not([data-theme="dark"]) .btn-outline-warning:hover,
+html:not([data-theme="dark"]) .btn-outline-warning:hover {
+  color: #ffffff !important;
+  background-color: #495057 !important;
+  border-color: #495057 !important;
 }
