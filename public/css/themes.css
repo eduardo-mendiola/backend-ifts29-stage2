@@ -213,3 +213,89 @@ table,
 .border-themed {
   border-color: var(--border-color) !important;
 }
+
+/* Overrides para clases de Bootstrap hardcodeadas */
+/* Estas clases ahora se adaptan al tema actual */
+
+.table-dark {
+  background-color: var(--table-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--table-border) !important;
+}
+
+.table-dark thead th,
+.table-dark tbody td {
+  background-color: var(--table-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--table-border) !important;
+}
+
+.table-dark tbody tr:hover {
+  background-color: var(--table-hover) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--table-hover) !important;
+}
+
+.bg-dark {
+  background-color: var(--bg-secondary) !important;
+}
+
+.text-white {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+/* Sidebar específicamente */
+.sidebar.bg-dark {
+  background-color: var(--bg-sidebar) !important;
+}
+
+/* Forms con bg-dark */
+form.bg-dark {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Modales con bg-dark */
+.modal-content.bg-dark {
+  background-color: var(--modal-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Cards con bg-dark */
+.card.bg-dark {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Asegurar que los bordes de tablas se vean bien */
+.table-bordered,
+.table-bordered th,
+.table-bordered td {
+  border-color: var(--table-border) !important;
+}
+
+/* Headers de tabla */
+.table thead th {
+  background-color: var(--table-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--table-border) !important;
+}
+
+/* Asegurar que los textos en elementos oscuros se adapten */
+.bg-dark .form-label,
+.bg-dark label,
+.bg-dark h1,
+.bg-dark h2,
+.bg-dark h3,
+.bg-dark h4,
+.bg-dark h5,
+.bg-dark h6,
+.bg-dark p {
+  color: var(--text-primary) !important;
+}
