@@ -8,6 +8,7 @@ function toggleTheme() {
     localStorage.setItem('theme', newTheme);
 
     updateThemeIcon(newTheme);
+    updateAllCharts();
 }
 
 // Función para actualizar el icono y texto del tema
@@ -23,6 +24,21 @@ function updateThemeIcon(theme) {
     } else {
         icon.className = 'bi bi-moon-fill me-2';
         text.textContent = 'Modo Oscuro';
+    }
+}
+
+// Función para actualizar todos los gráficos Chart.js
+function updateAllCharts() {
+    // Verificar si Chart.js está disponible
+    if (typeof Chart === 'undefined') return;
+
+    // Actualizar todos los gráficos activos
+    if (window.chartInstances && Array.isArray(window.chartInstances)) {
+        window.chartInstances.forEach(chart => {
+            if (typeof window.updateChartTheme === 'function') {
+                window.updateChartTheme(chart);
+            }
+        });
     }
 }
 

@@ -8,51 +8,51 @@ block content
       //- Columna 1: Bienvenida y rol
       .col-12.col-lg-6.text-center.text-lg-start.mb-4.mb-lg-0
         if user
-          h2.mb-1(style="color: #ffffff; font-weight: 700;")
+          h2.mb-1(class="text-themed" style="font-weight: 700;")
             | Bienvenido, #{user.employee && user.employee.first_name ? user.employee.first_name + ' ' + user.employee.last_name : user.username}!
-          h3(style="color: #d3d3d3ff; font-weight: 600;")
+          h3(class="text-themed-secondary" style="font-weight: 600;")
             | Rol: #{user.role_id ? user.role_id.name : 'Usuario'}
       
       //- Columna 2: Logo y slogan
       .col-12.col-lg-6.text-center.text-lg-end
         img.mb-3(src="/images/nexusflow_logo.png" alt="Logo" style="height:70px; width:auto;")
-        p.text-secondary(style="font-size: 1rem;") La aplicación para gestionar tus proyectos
+        p.text-themed-secondary(style="font-size: 1rem;") La aplicación para gestionar tus proyectos
     
     //- Sección especial para rol ejecutivo
     if hasPermission('view_executive_dashboard')
       .container
-        h4.text-center.text-white.mb-5 Accesos Rápidos - Dashboards Ejecutivos
+        h4.text-center.text-themed.mb-5 Accesos Rápidos - Dashboards Ejecutivos
         .row.g-3.justify-content-center
           .col-6.col-md-4.col-lg-2-4
-            a.card.bg-dark.border-primary.text-decoration-none.h-100(href="/executive-dashboard" style="transition: transform 0.2s;")
+            a.card.card.border-primary.text-decoration-none.h-100(href="/executive-dashboard" style="transition: transform 0.2s;")
               .card-body.text-center.py-3
                 i.bi.bi-speedometer2.text-primary.mb-2(style="font-size: 2rem;")
-                h6.card-title.text-white.mb-1 Dashboard Ejecutivo
-                small.card-text.text-secondary KPIs clave
+                h6.card-title.text-themed.mb-1 Dashboard Ejecutivo
+                small.card-text.text-themed-secondary KPIs clave
           .col-6.col-md-4.col-lg-2-4
-            a.card.bg-dark.border-success.text-decoration-none.h-100(href="/reports/financial" style="transition: transform 0.2s;")
+            a.card.card.border-success.text-decoration-none.h-100(href="/reports/financial" style="transition: transform 0.2s;")
               .card-body.text-center.py-3
                 i.bi.bi-currency-dollar.text-success.mb-2(style="font-size: 2rem;")
-                h6.card-title.text-white.mb-1 Reporte Financiero
-                small.card-text.text-secondary Ingresos y gastos
+                h6.card-title.text-themed.mb-1 Reporte Financiero
+                small.card-text.text-themed-secondary Ingresos y gastos
           .col-6.col-md-4.col-lg-2-4
-            a.card.bg-dark.border-info.text-decoration-none.h-100(href="/reports/projects" style="transition: transform 0.2s;")
+            a.card.card.border-info.text-decoration-none.h-100(href="/reports/projects" style="transition: transform 0.2s;")
               .card-body.text-center.py-3
                 i.bi.bi-kanban.text-info.mb-2(style="font-size: 2rem;")
-                h6.card-title.text-white.mb-1 Reporte de Proyectos
-                small.card-text.text-secondary Estado y desempeño
+                h6.card-title.text-themed.mb-1 Reporte de Proyectos
+                small.card-text.text-themed-secondary Estado y desempeño
           .col-6.col-md-4.col-lg-2-4
-            a.card.bg-dark.border-warning.text-decoration-none.h-100(href="/reports/clients" style="transition: transform 0.2s;")
+            a.card.card.border-warning.text-decoration-none.h-100(href="/reports/clients" style="transition: transform 0.2s;")
               .card-body.text-center.py-3
                 i.bi.bi-people.text-warning.mb-2(style="font-size: 2rem;")
-                h6.card-title.text-white.mb-1 Reporte de Clientes
-                small.card-text.text-secondary Facturación
+                h6.card-title.text-themed.mb-1 Reporte de Clientes
+                small.card-text.text-themed-secondary Facturación
           .col-6.col-md-4.col-lg-2-4
-            a.card.bg-dark.border-danger.text-decoration-none.h-100(href="/analysis/profitability" style="transition: transform 0.2s;")
+            a.card.card.border-danger.text-decoration-none.h-100(href="/analysis/profitability" style="transition: transform 0.2s;")
               .card-body.text-center.py-3
                 i.bi.bi-graph-up-arrow.text-danger.mb-2(style="font-size: 2rem;")
-                h6.card-title.text-white.mb-1 Análisis Rentabilidad
-                small.card-text.text-secondary Márgenes
+                h6.card-title.text-themed.mb-1 Análisis Rentabilidad
+                small.card-text.text-themed-secondary Márgenes
         
         style.
           .col-lg-2-4 {
@@ -72,36 +72,36 @@ block content
     //- Accesos normales para otros roles
     else
       .container
-        h4.text-center.text-white.mb-5 Accesos Rápidos
+        h4.text-center.text-themed.mb-5 Accesos Rápidos
         .row.g-3.justify-content-center
           if hasPermission('view_employees')
             .col-6.col-md-4.col-lg-3
-              a.card.bg-dark.border-primary.text-decoration-none.h-100(href="/employees" style="transition: transform 0.2s;")
+              a.card.card.border-primary.text-decoration-none.h-100(href="/employees" style="transition: transform 0.2s;")
                 .card-body.text-center.py-3
                   i.bi.bi-people-fill.text-primary.mb-2(style="font-size: 2rem;")
-                  h6.card-title.text-white.mb-1 Empleados
-                  small.card-text.text-secondary Gestión de personal
+                  h6.card-title.text-themed.mb-1 Empleados
+                  small.card-text.text-themed-secondary Gestión de personal
           if hasPermission('view_projects')
             .col-6.col-md-4.col-lg-3
-              a.card.bg-dark.border-success.text-decoration-none.h-100(href="/projects" style="transition: transform 0.2s;")
+              a.card.card.border-success.text-decoration-none.h-100(href="/projects" style="transition: transform 0.2s;")
                 .card-body.text-center.py-3
                   i.bi.bi-kanban.text-success.mb-2(style="font-size: 2rem;")
-                  h6.card-title.text-white.mb-1 Proyectos
-                  small.card-text.text-secondary Administración
+                  h6.card-title.text-themed.mb-1 Proyectos
+                  small.card-text.text-themed-secondary Administración
           if hasPermission('view_clients')
             .col-6.col-md-4.col-lg-3
-              a.card.bg-dark.border-info.text-decoration-none.h-100(href="/clients" style="transition: transform 0.2s;")
+              a.card.card.border-info.text-decoration-none.h-100(href="/clients" style="transition: transform 0.2s;")
                 .card-body.text-center.py-3
                   i.bi.bi-building.text-info.mb-2(style="font-size: 2rem;")
-                  h6.card-title.text-white.mb-1 Clientes
-                  small.card-text.text-secondary Gestión comercial
+                  h6.card-title.text-themed.mb-1 Clientes
+                  small.card-text.text-themed-secondary Gestión comercial
           if hasPermission('view_invoices')
             .col-6.col-md-4.col-lg-3
-              a.card.bg-dark.border-warning.text-decoration-none.h-100(href="/invoices" style="transition: transform 0.2s;")
+              a.card.card.border-warning.text-decoration-none.h-100(href="/invoices" style="transition: transform 0.2s;")
                 .card-body.text-center.py-3
                   i.bi.bi-receipt.text-warning.mb-2(style="font-size: 2rem;")
-                  h6.card-title.text-white.mb-1 Facturas
-                  small.card-text.text-secondary Facturación
+                  h6.card-title.text-themed.mb-1 Facturas
+                  small.card-text.text-themed-secondary Facturación
         
         style.
           .card:hover {
