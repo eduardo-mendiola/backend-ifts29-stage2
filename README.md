@@ -1391,6 +1391,7 @@ Muestra la gestión de roles y la configuración de permisos específicos para c
 El sistema permite asignar roles con expiración automática, ideal para accesos temporales, períodos de prueba o permisos limitados en el tiempo. La configuración es flexible, permitiendo duraciones desde segundos hasta meses. Al expirar el plazo, el sistema revierte automáticamente al rol de respaldo configurado mediante un servicio de cron jobs que verifica cada minuto y genera logs de auditoría completos. La interfaz incluye controles intuitivos con checkbox de activación, selectores de duración y rol de respaldo, alertas visuales de tiempo restante, y validaciones de seguridad para eliminación de usuarios y trazabilidad de cambios. Casos de uso: empleados en período de prueba, permisos de emergencia para developers, consultores externos con acceso limitado temporalmente.
 
 ![Sistema de Roles Temporales](assets/screenshots/temporal-roles-overview.webp)
+![Sistema de Roles Temporales](assets/screenshots/temporal-roles-overview2.webp)
 
 ---
 

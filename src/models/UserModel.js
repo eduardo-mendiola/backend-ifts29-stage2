@@ -82,11 +82,11 @@ class UserModel extends BaseModel {
   }
 
   async findAll() {
-    return super.findAll(['role_id']); // populate automático
+    return super.findAll(['role_id', 'fallback_role_id']); // populate automático
   }
 
   async findById(id) {
-    return super.findById(id, ['role_id']); // populate automático
+    return super.findById(id, ['role_id', 'fallback_role_id']); // populate automático
   }
 
   // Método para buscar por username
