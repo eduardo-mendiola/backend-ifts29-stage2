@@ -128,6 +128,19 @@ table,
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* Mejorar grosor de texto para mejor legibilidad */
+body {
+  font-weight: 500;
+}
+
+/* Mantener peso normal para inputs */
+.form-control,
+.form-select,
+input,
+textarea {
+  font-weight: 400;
+}
+
 /* Bootstrap overrides para soporte de temas */
 .card {
   background-color: var(--card-bg) !important;
