@@ -1,7 +1,6 @@
 /**
  * Middleware para prevenir el cacheo del navegador
  * Agrega headers HTTP que instruyen al navegador a no cachear contenido sensible
- * Esto previene que usuarios puedan ver páginas anteriores con el botón "atrás" después de logout
  */
 export const noCacheHeaders = (req, res, next) => {
   res.set({

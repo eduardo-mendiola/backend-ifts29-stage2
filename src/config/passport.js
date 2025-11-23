@@ -6,7 +6,7 @@ import EmployeeModel from '../models/EmployeeModel.js';
 // Estrategia Local para login con username y password
 passport.use(new LocalStrategy(
   {
-    usernameField: 'email', // Usar email como campo de usuario
+    usernameField: 'email', 
     passwordField: 'password'
   },
   async (email, password, done) => {
