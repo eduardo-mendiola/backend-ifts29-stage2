@@ -3,13 +3,13 @@
   /* Fondos */
   --bg-primary: #f8f9fa;
   --bg-secondary: #ffffff;
-  --bg-sidebar: #343a40;
+  --bg-sidebar: #e9ecef;
 
   /* Textos */
   --text-primary: #212529;
   --text-secondary: #6c757d;
-  --text-sidebar: #ffffff;
-  --text-sidebar-muted: rgba(255, 255, 255, 0.7);
+  --text-sidebar: #212529;
+  --text-sidebar-muted: rgba(33, 37, 41, 0.7);
 
   /* Bordes */
   --border-color: #dee2e6;
@@ -65,7 +65,7 @@
   /* Textos */
   --text-primary: #f0f0f0;
   --text-secondary: #b0b0b0;
-  --text-sidebar: #ffffff;
+  --text-sidebar: #212529;
   --text-sidebar-muted: #ffffffb3;
 
   /* Bordes */
