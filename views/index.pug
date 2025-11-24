@@ -14,7 +14,7 @@ block content
 
         // Logo pequeño inferior
         img.mb-3(src="/images/devpulse_logo.webp" alt="DevPulse" style="width: 130px; height: auto; opacity: 0.95;")
-        span.mt-0.mb-8 NexusFlow v3.0
+        span.mt-0.mb-8(style="color: #ffffff;") NexusFlow v3.0
         p.mt-1.mb-1(style="font-size: .75rem; color: #ffffffff;") 
           | © 2025 - Eduardo Mendiola
 
@@ -26,7 +26,7 @@ block content
           img#cw-logo.mb-3(src="/images/logo_cw.webp" data-dark-src="/images/logo_cw.webp" data-light-src="/images/logo_cw_light.webp" alt="ClickWave" width="130")
 
           h1.mb-1.fw-semibold(style="font-size: 1.5rem;") Ingreso a NexusFlow
-          p(style="font-size: .8rem; color: #d3d3d3ff; margin-top: -2px;") Plataforma de gestión unificada PSA/ERP.
+          p.text-themed-secondary(style="font-size: .8rem; margin-top: -2px;") Plataforma de gestión unificada PSA/ERP/CRM.
 
           // Email o Username
           .form-floating.mb-3
@@ -41,7 +41,7 @@ block content
               i.bi.bi-eye#eyeIcon
 
           .div.text-end.w-100.mb-4
-            a(href="#", style="font-size: .8rem; color: #d3d3d3ff; text-decoration: none;")
+            a.text-themed-secondary(href="#", style="font-size: .8rem; text-decoration: none;")
               | ¿Olvidaste tu contraseña?
 
           // Remember me
@@ -69,11 +69,11 @@ block content
               = success[0]
 
           p.mt-4.text-center(style="font-size: .85rem;")
-            a(href="#", style="color: #d3d3d3ff; text-decoration: none;")
+            a.text-themed-secondary(href="#", style="text-decoration: none;")
               | Términos de Servicio y Privacidad
 
-          p.text-center(style="font-size: .75rem; color: #d3d3d3ff;")
+          p.text-center.text-themed-secondary(style="font-size: .75rem;")
             | Powered by 
-            img(src="/images/aws.webp" alt="AWS" style="height: 18px; margin-left: 4px; opacity: 0.9;")
+            img(src="/images/aws.webp" data-dark-src="/images/aws.webp" data-light-src="/images/aws_light.webp" alt="AWS" style="height: 18px; margin-left: 4px; opacity: 0.9;")
 
 
