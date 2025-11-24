@@ -62,6 +62,45 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load all contacts for modal
     await loadAllContacts();
+
+    // Setup socket event listeners AFTER all variables are initialized
+    socket.on('chat-message', (data) => {
+        const { message, conversationId } = data;
+
+        // If message is for active conversation, append it
+        if (activeConversation && conversationId === activeConversation.conversationId) {
+            const isSent = message.sender._id === currentUser.id;
+            appendMessage(message.text, isSent, message.timestamp, true);
+            scrollToBottom();
+        }
+
+        // Reload conversations to update last message
+        loadConversations();
+    });
+
+    socket.on('new-message-notification', (data) => {
+        console.log('New message notification received:', data);
+        const { conversationId } = data;
+
+        // Join the conversation room
+        socket.emit('join-conversations', currentUser.id);
+
+        // Reload conversations list
+        loadConversations();
+    });
+
+    socket.on('connect', () => {
+        console.log('✅ Connected to chat server');
+    });
+
+    socket.on('disconnect', () => {
+        console.log('❌ Disconnected from chat server');
+    });
+
+    socket.on('error', (error) => {
+        console.error('Socket error:', error);
+        alert(error.message || 'Error en el chat');
+    });
 });
 
 function setupEventListeners() {
@@ -111,12 +150,19 @@ function setupEventListeners() {
             const message = messageInput.value.trim();
 
             if (message && activeConversation) {
+                // Show message immediately in UI (optimistic update)
+                appendMessage(message, true, new Date(), true);
+                scrollToBottom();
+
+                // Send via Socket.io
                 socket.emit('chat-message', {
                     senderId: currentUser.id,
                     receiverId: activeConversation.contact._id,
                     text: message,
                     conversationId: activeConversation.conversationId
                 });
+
+                // Clear input
                 messageInput.value = '';
             }
         });
@@ -185,7 +231,9 @@ function renderConversations(conversations) {
         item.dataset.contactName = conv.contact.username;
 
         const time = formatTime(conv.lastMessageTime);
-        const unreadBadge = conv.unreadCount > 0
+        // Don't show badge for active conversation
+        const isActive = activeConversation && activeConversation.conversationId === conv.conversationId;
+        const unreadBadge = (conv.unreadCount > 0 && !isActive)
             ? `<span class="badge bg-primary rounded-pill">${conv.unreadCount}</span>`
             : '';
 
@@ -455,111 +503,6 @@ function scrollToBottom() {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-// Handle form submission
-chatForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const message = messageInput.value.trim();
-
-    if (message && activeConversation) {
-        // Send via Socket.io
-        socket.emit('chat-message', {
-            senderId: currentUser.id,
-            receiverId: activeConversation.contact._id,
-            text: message,
-            conversationId: activeConversation.conversationId
-        });
-
-        // Clear input
-        messageInput.value = '';
-    }
-});
-
-// Listen for incoming messages
-socket.on('chat-message', (data) => {
-    const { message, conversationId } = data;
-
-    // If message is for active conversation, append it
-    if (activeConversation && conversationId === activeConversation.conversationId) {
-        const isSent = message.sender._id === currentUser.id;
-        appendMessage(message.text, isSent, message.timestamp, true);
-        scrollToBottom();
-    }
-
-    // Reload conversations to update last message
-    loadConversations();
-});
-
-// Listen for new message notifications (for real-time updates when not in room)
-socket.on('new-message-notification', (data) => {
-    console.log('New message notification received:', data);
-    const { conversationId } = data;
-
-    // Join the conversation room
-    socket.emit('join-conversations', currentUser.id);
-
-    // Reload conversations list
-    loadConversations();
-});
-
-// New chat button
-newChatBtn.addEventListener('click', async () => {
-    console.log('Opening contact modal...');
-    // Reload contacts to ensure fresh data
-    await loadAllContacts();
-    console.log('Contacts loaded:', allContacts);
-    // Render contacts explicitly before showing modal
-    renderContactsModal(allContacts);
-    // Show modal after rendering
-    contactModal.show();
-});
-
-// Delete conversation logic
-deleteConversationBtn.addEventListener('click', () => {
-    if (!activeConversation) return;
-    deleteConfirmModal.show();
-});
-
-confirmDeleteBtn.addEventListener('click', async () => {
-    deleteConfirmModal.hide();
-
-    if (!activeConversation) return;
-
-    try {
-        console.log(`Attempting to delete conversation: /chat/conversations/${activeConversation.conversationId}`);
-        const response = await fetch(`/chat/conversations/${activeConversation.conversationId}`, {
-            method: 'DELETE'
-        });
-        console.log('Delete response status:', response.status);
-
-        const data = await response.json();
-        console.log('Delete response data:', data);
-
-        if (data.success) {
-            // Reset UI
-            activeConversation = null;
-
-            // Show empty state properly
-            emptyState.style.display = '';
-            emptyState.style.removeProperty('display');
-            emptyState.style.display = 'flex';
-
-            conversationHeader.style.display = 'none';
-            messagesContainer.style.display = 'none';
-            inputArea.style.display = 'none';
-            messagesList.innerHTML = '';
-
-            // Reload conversations
-            await loadConversations();
-            // Optional: show a toast or small notification instead of alert
-        } else {
-            alert(data.message || 'Error al eliminar la conversación');
-        }
-    } catch (error) {
-        console.error('Error deleting conversation:', error);
-        alert('Error al eliminar la conversación');
-    }
-});
-
 // Helper functions
 function generateConversationId(userId1, userId2) {
     const ids = [userId1, userId2].sort();
@@ -582,17 +525,3 @@ function formatTime(timestamp) {
         return date.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
     }
 }
-
-// Connection status
-socket.on('connect', () => {
-    console.log('✅ Connected to chat server');
-});
-
-socket.on('disconnect', () => {
-    console.log('❌ Disconnected from chat server');
-});
-
-socket.on('error', (error) => {
-    console.error('Socket error:', error);
-    alert(error.message || 'Error en el chat');
-});
