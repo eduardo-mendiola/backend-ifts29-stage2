@@ -67,11 +67,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     socket.on('chat-message', (data) => {
         const { message, conversationId } = data;
 
-        // If message is for active conversation, append it
+        // If message is for active conversation
         if (activeConversation && conversationId === activeConversation.conversationId) {
             const isSent = message.sender._id === currentUser.id;
-            appendMessage(message.text, isSent, message.timestamp, true);
-            scrollToBottom();
+
+            // Only show RECEIVED messages (sent messages already shown via optimistic update)
+            if (!isSent) {
+                appendMessage(message.text, isSent, message.timestamp, true);
+                scrollToBottom();
+            }
         }
 
         // Reload conversations to update last message

@@ -88,6 +88,15 @@ const PORT = process.env.PORT || 3000;
 
                 await conversation.save();
 
+                // Make sure both users are in the conversation room
+                const allSockets = await io.fetchSockets();
+                allSockets.forEach(s => {
+                    const socketRooms = Array.from(s.rooms);
+                    if (socketRooms.includes(senderId.toString()) || socketRooms.includes(receiverId.toString())) {
+                        s.join(conversationId);
+                    }
+                });
+
                 // Emit to conversation room
                 io.to(conversationId).emit('chat-message', {
                     message,
