@@ -448,6 +448,11 @@ app.use('/api/document-files', documentFileRoutes);
 // Chat routes
 app.use('/chat', chatRoutes);
 
+// Help Center Route
+app.get('/help-center', isAuthenticated, (req, res) => {
+  res.render('help-center/index', { title: 'Centro de Ayuda' });
+});
+
 
 // ||--------------------------------------------------------------------------------------------------||
 

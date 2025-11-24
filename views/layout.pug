@@ -347,6 +347,8 @@ html(lang="es")
                   i#theme-icon.bi.bi-moon-fill.me-2
                   span#theme-text Modo Oscuro
               li
+                a.dropdown-item(href="/help-center") Centro de Ayuda
+              li
                 a.dropdown-item(href="#") Configuración
               li
                 a.dropdown-item(href="/profile") Mi perfil
@@ -357,6 +359,8 @@ html(lang="es")
 
       main.flex-grow-1.p-4
         block content
+
+
 
     // --- SCRIPTS ---
     script(src="/socket.io/socket.io.js")
@@ -440,3 +444,5 @@ html(lang="es")
           });
         });
       });
+
+    block scripts
