@@ -9,6 +9,7 @@ function toggleTheme() {
 
     updateThemeIcon(newTheme);
     updateAllCharts();
+    updateLogos(newTheme);
 }
 
 // Función para actualizar el icono y texto del tema
@@ -25,6 +26,21 @@ function updateThemeIcon(theme) {
         icon.className = 'bi bi-moon-fill me-2';
         text.textContent = 'Modo Oscuro';
     }
+}
+
+// Función para actualizar los logos según el tema
+function updateLogos(theme) {
+    const logos = document.querySelectorAll('img[data-light-src][data-dark-src]');
+
+    logos.forEach(img => {
+        const newSrc = theme === 'light'
+            ? img.getAttribute('data-light-src')
+            : img.getAttribute('data-dark-src');
+
+        if (newSrc && img.src !== newSrc) {
+            img.src = newSrc;
+        }
+    });
 }
 
 // Función para actualizar todos los gráficos Chart.js
@@ -47,10 +63,16 @@ function updateAllCharts() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // Esperar a que el DOM esté listo para actualizar el icono
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => updateThemeIcon(savedTheme));
-    } else {
+    // Función de inicialización
+    const initTheme = () => {
         updateThemeIcon(savedTheme);
+        updateLogos(savedTheme);
+    };
+
+    // Esperar a que el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTheme);
+    } else {
+        initTheme();
     }
 })();

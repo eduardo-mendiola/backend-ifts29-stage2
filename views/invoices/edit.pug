@@ -3,7 +3,7 @@ extends ../layout.pug
 
 block content
   .d-flex.justify-content-center
-    form.bg-dark.text-white.p-4.rounded.shadow(
+    form.card.p-4.rounded.shadow(
       action=`/invoices/${item.id}?_method=PUT`, 
       method="POST", 
       style="width:100%; max-width:1200px; max-height:100vh; overflow-y:auto;"
@@ -61,7 +61,7 @@ block content
                 i.bi.bi-plus-circle.me-1
                 | Agregar Ítem
 
-            table.table.table-dark.table-striped.mt-3#itemsTable
+            table.table.table-striped.mt-3#itemsTable
               thead
                 tr
                   th Descripción
@@ -149,14 +149,15 @@ block content
           
 
       // Botones de acción
-      button.btn.btn-success.mt-3(type="submit", tabindex="10") Actualizar Factura
-      a.btn.btn-danger-soft.mt-3.ms-3(href="/invoices", tabindex="11") Cancelar
+      div.mt-3
+        button.btn.btn-success(type="submit", tabindex="10") Actualizar Factura
+        a.btn.btn-danger-soft.ms-3(href="/invoices", tabindex="11") Cancelar
 
  
   // Modal para agregar/editar ítem
   div.modal.fade#itemModal(tabindex='-1', aria-labelledby='itemModalLabel', aria-hidden='true')
     div.modal-dialog
-      div.modal-content.bg-dark.text-white
+      div.modal-content
         div.modal-header
           h5.modal-title#itemModalLabel Agregar ítem
           button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Cerrar')
@@ -176,7 +177,7 @@ block content
   // Modal de confirmación de eliminación
   div.modal.fade#confirmDeleteModal(tabindex='-1', aria-labelledby='confirmDeleteLabel', aria-hidden='true')
     div.modal-dialog
-      div.modal-content.bg-dark.text-white
+      div.modal-content
         div.modal-header
           h5.modal-title#confirmDeleteLabel Confirmar Eliminación
           button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Cerrar')
