@@ -176,9 +176,10 @@ html(lang="es")
             //- CHAT INTERNO (siempre visible para usuarios autenticados)
             if hasPermission('view_chat')
               li.nav-item
-                a.nav-link.text-white(href="/chat")
+                a.nav-link.text-white.position-relative(href="/chat")
                   i.bi.bi-chat-dots-fill.me-2
                   | Chat 
+                  span#chat-notification-dot.position-absolute.top-50.end-0.translate-middle-y.me-3.bg-success.border.border-light.rounded-circle(style="width: 10px; height: 10px; display: none;")
 
             //- DASHBOARD EJECUTIVO
             if hasPermission('view_executive_dashboard')
@@ -358,6 +359,10 @@ html(lang="es")
         block content
 
     // --- SCRIPTS ---
+    script(src="/socket.io/socket.io.js")
+    script.
+      window.user = !{JSON.stringify(user || {})};
+    script(src="/js/notifications.js")
 
 
     script.
