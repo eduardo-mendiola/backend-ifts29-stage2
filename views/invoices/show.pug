@@ -13,7 +13,7 @@ block content
                 )= item.status === 'draft' ? 'Generar Factura' : 'Imprimir'
       a.btn.btn-gray(href="/invoices", tabindex="1") Volver
  
-  table.table.table-dark
+  table.table
     tbody
       tr
         th ID
@@ -47,7 +47,7 @@ block content
         td= item.notes || 'N/A'
 
   h3.mt-4 Presupuesto asociado    
-  table.table.table-dark
+  table.table
     tbody
       tr 
         th Presupuesto

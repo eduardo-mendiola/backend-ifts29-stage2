@@ -109,7 +109,10 @@ export const allPermissions = [
   'export_reports',
   'view_all_invoices',
   'view_all_payments',
-  'view_all_receipts'
+  'view_all_receipts',
+
+  // Chat
+  'view_chat'
 ];
 
 export const permissionLabels = {
@@ -223,5 +226,8 @@ export const permissionLabels = {
   export_reports: "Reportes: Exportar",
   view_all_invoices: "Facturas: Ver Todas (Admin)",
   view_all_payments: "Pagos: Ver Todos (Admin)",
-  view_all_receipts: "Cobros: Ver Todos (Admin)"
+  view_all_receipts: "Cobros: Ver Todos (Admin)",
+
+  // Chat
+  view_chat: "Chat: Ver y Usar"
 };

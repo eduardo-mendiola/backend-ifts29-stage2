@@ -85,7 +85,7 @@
   /* Tablas */
   --table-bg: #1e1e1e;
   --table-border: rgba(255, 255, 255, 0.1);
-  --table-hover: #2a2a2a;
+  --table-hover: #242424;
 
   /* Dropdowns */
   --dropdown-bg: #343a40;
@@ -100,7 +100,8 @@
   --form-text: #f0f0f0;
   --form-border: rgba(255, 255, 255, 0.2);
   --form-placeholder: #888888;
-  --form-focus-bg: #d1d1d1; /* Casi blanco, un poco menos brillante para no encandilar tanto */
+  --form-focus-bg: #d1d1d1;
+  /* Casi blanco, un poco menos brillante para no encandilar tanto */
   --form-focus-text: #212529;
   --form-focus-label: #343a40;
 
@@ -204,7 +205,7 @@ textarea {
 }
 
 /* Override más específico para tablas Bootstrap en modo claro */
-.table-hover > tbody > tr:hover > * {
+.table-hover>tbody>tr:hover>* {
   --bs-table-accent-bg: var(--table-hover) !important;
   background-color: var(--table-hover) !important;
 }
@@ -333,6 +334,7 @@ form.bg-dark {
 .bg-dark p {
   color: var(--text-primary) !important;
 }
+
 /* Override FUERTE para hover en tablas Bootstrap - modo claro */
 [data-theme="light"] .table-dark tbody tr:hover,
 [data-theme="light"] .table-dark tbody tr:hover td,
@@ -353,11 +355,12 @@ html:not([data-theme="dark"]) .table-hover tbody tr:hover th {
   --bs-table-bg: #d3d5d7 !important;
   --bs-table-accent-bg: #d3d5d7 !important;
 }
+
 /* FORZAR hover claro en tablas - máxima prioridad */
 html:not([data-theme="dark"]) .table-dark.table-hover tbody tr:hover,
-html:not([data-theme="dark"]) .table-dark.table-hover tbody tr:hover > *,
+html:not([data-theme="dark"]) .table-dark.table-hover tbody tr:hover>*,
 html:not([data-theme="dark"]) .table.table-hover tbody tr:hover,
-html:not([data-theme="dark"]) .table.table-hover tbody tr:hover > * {
+html:not([data-theme="dark"]) .table.table-hover tbody tr:hover>* {
   background-color: rgba(211, 213, 215, 1) !important;
   --bs-table-bg-state: rgba(211, 213, 215, 1) !important;
   --bs-table-bg-type: rgba(211, 213, 215, 1) !important;
@@ -365,9 +368,10 @@ html:not([data-theme="dark"]) .table.table-hover tbody tr:hover > * {
 
 /* Para asegurar que funcione en modo light explícito */
 [data-theme="light"] .table-hover tbody tr:hover,
-[data-theme="light"] .table-hover tbody tr:hover > * {
+[data-theme="light"] .table-hover tbody tr:hover>* {
   background-color: rgba(211, 213, 215, 1) !important;
 }
+
 /* MÁXIMA ESPECIFICIDAD - Forzar hover claro en TODAS las tablas */
 html:not([data-theme="dark"]) body .table-hover tbody tr:hover,
 html:not([data-theme="dark"]) body .table-hover tbody tr:hover td,
@@ -378,6 +382,7 @@ html:not([data-theme="dark"]) body .table-dark tbody tr:hover th {
   background-color: #d3d5d7 !important;
   background: #d3d5d7 !important;
 }
+
 /* Corregir th (headers) en tablas para modo claro */
 html:not([data-theme="dark"]) body .table th,
 html:not([data-theme="dark"]) body .table-dark th,
@@ -403,6 +408,7 @@ html:not([data-theme="dark"]) .table-dark tbody th {
   background-color: #e9ecef !important;
   color: #343a40 !important;
 }
+
 /* Forzar colores de texto en gráficos Chart.js para modo claro */
 html:not([data-theme="dark"]) body canvas {
   color: #343a40 !important;
@@ -418,22 +424,40 @@ html:not([data-theme="dark"]) body canvas {
   --chart-label-color: #f0f0f0;
   --chart-grid-color: rgba(255, 255, 255, 0.1);
 }
-/* Asegurar que text-success y text-danger funcionen en modo claro */
-html:not([data-theme="dark"]) body .text-success,
-html:not([data-theme="dark"]) .text-success {
+
+
+/* FORZAR text-success y text-danger incluso dentro de tablas oscuras */
+
+/* Modo claro */
+html:not([data-theme="dark"]) table .text-success,
+html:not([data-theme="dark"]) .table-dark .text-success {
   color: #198754 !important;
 }
 
-html:not([data-theme="dark"]) body .text-danger,
-html:not([data-theme="dark"]) .text-danger {
+html:not([data-theme="dark"]) table .text-danger,
+html:not([data-theme="dark"]) .table-dark .text-danger {
   color: #dc3545 !important;
 }
+
+/* Modo oscuro */
+html[data-theme="dark"] table .text-success,
+html[data-theme="dark"] .table-dark .text-success {
+  color: #4ade80 !important; /* verde clarito o tu color */
+}
+
+html[data-theme="dark"] table .text-danger,
+html[data-theme="dark"] .table-dark .text-danger {
+  color: #f87171 !important; /* rojo clarito o tu color */
+}
+
+
 
 /* Ajustar intensidad de text-themed para que no sea tan fuerte */
 .text-themed {
   color: var(--text-primary) !important;
   opacity: 0.9;
 }
+
 /* Cambiar botones outline-warning a gris oscuro en modo claro */
 html:not([data-theme="dark"]) body .btn-outline-warning,
 html:not([data-theme="dark"]) .btn-outline-warning {
@@ -447,6 +471,7 @@ html:not([data-theme="dark"]) .btn-outline-warning:hover {
   background-color: #495057 !important;
   border-color: #495057 !important;
 }
+
 /* Corregir fondos de acordeones en modo claro */
 html:not([data-theme="dark"]) body .accordion,
 html:not([data-theme="dark"]) .accordion {
@@ -476,6 +501,7 @@ html:not([data-theme="dark"]) .accordion-body {
   background-color: #ffffff !important;
   color: #343a40 !important;
 }
+
 /* Corregir fondo del área de checkbox en acordeones para modo claro */
 html:not([data-theme="dark"]) .accordion-header .d-flex[style*="background-color: #4a5057"] {
   background-color: #f8f9fa !important;
@@ -484,11 +510,13 @@ html:not([data-theme="dark"]) .accordion-header .d-flex[style*="background-color
 html:not([data-theme="dark"]) .accordion-header .d-flex[style*="background-color: #343a40"] {
   background-color: #f8f9fa !important;
 }
+
 /* Fix para botones en formularios tipo card */
 .form-card-actions .btn {
   width: auto !important;
   display: inline-block !important;
 }
+
 /* Fix para tablas en modo oscuro */
 [data-theme="dark"] .table {
   color: var(--text-primary) !important;
@@ -496,48 +524,257 @@ html:not([data-theme="dark"]) .accordion-header .d-flex[style*="background-color
   border-color: var(--table-border) !important;
 }
 
-[data-theme="dark"] .table > :not(caption) > * > * {
+[data-theme="dark"] .table> :not(caption)>*>* {
   background-color: var(--table-bg) !important;
   color: var(--text-primary) !important;
   border-color: var(--table-border) !important;
 }
 
-[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > * {
+[data-theme="dark"] .table-striped>tbody>tr:nth-of-type(odd)>* {
   background-color: rgba(255, 255, 255, 0.05) !important;
   color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .table-hover > tbody > tr:hover > * {
+[data-theme="dark"] .table-hover>tbody>tr:hover>* {
   background-color: rgba(255, 255, 255, 0.075) !important;
   color: var(--text-primary) !important;
 }
+
 /* Fix para form-floating con estilos personalizados de focus */
-.form-floating > .form-control:focus,
-.form-floating > .form-control:not(:placeholder-shown) {
+.form-floating>.form-control:focus,
+.form-floating>.form-control:not(:placeholder-shown) {
   background-color: var(--form-focus-bg) !important;
   color: var(--form-focus-text) !important;
   border-color: var(--form-focus-bg) !important;
 }
 
-.form-floating > .form-control:-webkit-autofill {
+.form-floating>.form-control:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 30px var(--form-focus-bg) inset !important;
   -webkit-text-fill-color: var(--form-focus-text) !important;
 }
 
 /* Asegurar que el label tenga el color correcto */
-.form-floating > label {
+.form-floating>label {
+  color: var(--form-placeholder) !important;
+}
+
+/* Para tablas sin data-theme (modo claro por defecto) */
+html:not([data-theme="dark"]) .table-hover tbody tr:hover,
+html:not([data-theme="dark"]) .table-hover tbody tr:hover td,
+html:not([data-theme="dark"]) .table-hover tbody tr:hover th {
+  background-color: #d3d5d7 !important;
+  --bs-table-bg: #d3d5d7 !important;
+  --bs-table-accent-bg: #d3d5d7 !important;
+}
+
+/* FORZAR hover claro en tablas - máxima prioridad */
+html:not([data-theme="dark"]) .table-dark.table-hover tbody tr:hover,
+html:not([data-theme="dark"]) .table-dark.table-hover tbody tr:hover>*,
+html:not([data-theme="dark"]) .table.table-hover tbody tr:hover,
+html:not([data-theme="dark"]) .table.table-hover tbody tr:hover>* {
+  background-color: rgba(211, 213, 215, 1) !important;
+  --bs-table-bg-state: rgba(211, 213, 215, 1) !important;
+  --bs-table-bg-type: rgba(211, 213, 215, 1) !important;
+}
+
+/* Para asegurar que funcione en modo light explícito */
+[data-theme="light"] .table-hover tbody tr:hover,
+[data-theme="light"] .table-hover tbody tr:hover>* {
+  background-color: rgba(211, 213, 215, 1) !important;
+}
+
+/* MÁXIMA ESPECIFICIDAD - Forzar hover claro en TODAS las tablas */
+html:not([data-theme="dark"]) body .table-hover tbody tr:hover,
+html:not([data-theme="dark"]) body .table-hover tbody tr:hover td,
+html:not([data-theme="dark"]) body .table-hover tbody tr:hover th,
+html:not([data-theme="dark"]) body .table-dark tbody tr:hover,
+html:not([data-theme="dark"]) body .table-dark tbody tr:hover td,
+html:not([data-theme="dark"]) body .table-dark tbody tr:hover th {
+  background-color: #d3d5d7 !important;
+  background: #d3d5d7 !important;
+}
+
+/* Corregir th (headers) en tablas para modo claro */
+html:not([data-theme="dark"]) body .table th,
+html:not([data-theme="dark"]) body .table-dark th,
+html:not([data-theme="dark"]) .table th,
+html:not([data-theme="dark"]) .table-dark th {
+  background-color: #e9ecef !important;
+  color: #343a40 !important;
+  border-color: #dee2e6 !important;
+}
+
+html:not([data-theme="dark"]) body .table thead th,
+html:not([data-theme="dark"]) body .table-dark thead th,
+html:not([data-theme="dark"]) .table thead th,
+html:not([data-theme="dark"]) .table-dark thead th {
+  background-color: #e9ecef !important;
+  color: #343a40 !important;
+}
+
+html:not([data-theme="dark"]) body .table tbody th,
+html:not([data-theme="dark"]) body .table-dark tbody th,
+html:not([data-theme="dark"]) .table tbody th,
+html:not([data-theme="dark"]) .table-dark tbody th {
+  background-color: #e9ecef !important;
+  color: #343a40 !important;
+}
+
+/* Forzar colores de texto en gráficos Chart.js para modo claro */
+html:not([data-theme="dark"]) body canvas {
+  color: #343a40 !important;
+}
+
+/* Usar variables CSS personalizadas para Chart.js */
+:root {
+  --chart-label-color: #343a40;
+  --chart-grid-color: #dee2e6;
+}
+
+[data-theme="dark"] {
+  --chart-label-color: #f0f0f0;
+  --chart-grid-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Asegurar que text-success y text-danger funcionen en modo claro */
+html:not([data-theme="dark"]) body .text-success,
+html:not([data-theme="dark"]) .text-success {
+  color: #198754 !important;
+}
+
+html:not([data-theme="dark"]) body .text-danger,
+html:not([data-theme="dark"]) .text-danger {
+  color: #dc3545 !important;
+}
+
+/* Ajustar intensidad de text-themed para que no sea tan fuerte */
+.text-themed {
+  color: var(--text-primary) !important;
+  opacity: 0.9;
+}
+
+/* Cambiar botones outline-warning a gris oscuro en modo claro */
+html:not([data-theme="dark"]) body .btn-outline-warning,
+html:not([data-theme="dark"]) .btn-outline-warning {
+  color: #495057 !important;
+  border-color: #495057 !important;
+}
+
+html:not([data-theme="dark"]) body .btn-outline-warning:hover,
+html:not([data-theme="dark"]) .btn-outline-warning:hover {
+  color: #ffffff !important;
+  background-color: #495057 !important;
+  border-color: #495057 !important;
+}
+
+/* Corregir fondos de acordeones en modo claro */
+html:not([data-theme="dark"]) body .accordion,
+html:not([data-theme="dark"]) .accordion {
+  background-color: #f8f9fa !important;
+}
+
+html:not([data-theme="dark"]) body .accordion-item,
+html:not([data-theme="dark"]) .accordion-item {
+  background-color: #ffffff !important;
+  border-color: #dee2e6 !important;
+}
+
+html:not([data-theme="dark"]) body .accordion-button,
+html:not([data-theme="dark"]) .accordion-button {
+  background-color: #e9ecef !important;
+  color: #343a40 !important;
+}
+
+html:not([data-theme="dark"]) body .accordion-button:not(.collapsed),
+html:not([data-theme="dark"]) .accordion-button:not(.collapsed) {
+  background-color: #dee2e6 !important;
+  color: #343a40 !important;
+}
+
+html:not([data-theme="dark"]) body .accordion-body,
+html:not([data-theme="dark"]) .accordion-body {
+  background-color: #ffffff !important;
+  color: #343a40 !important;
+}
+
+/* Corregir fondo del área de checkbox en acordeones para modo claro */
+html:not([data-theme="dark"]) .accordion-header .d-flex[style*="background-color: #4a5057"] {
+  background-color: #f8f9fa !important;
+}
+
+html:not([data-theme="dark"]) .accordion-header .d-flex[style*="background-color: #343a40"] {
+  background-color: #f8f9fa !important;
+}
+
+/* Fix para botones en formularios tipo card */
+.form-card-actions .btn {
+  width: auto !important;
+  display: inline-block !important;
+}
+
+/* Fix para tablas en modo oscuro */
+[data-theme="dark"] .table {
+  color: var(--text-primary) !important;
+  background-color: var(--table-bg) !important;
+  border-color: var(--table-border) !important;
+}
+
+[data-theme="dark"] .table> :not(caption)>*>* {
+  background-color: var(--table-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--table-border) !important;
+}
+
+[data-theme="dark"] .table-striped>tbody>tr:nth-of-type(odd)>* {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .table-hover>tbody>tr:hover>* {
+  background-color: rgba(255, 255, 255, 0.075) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Fix para form-floating con estilos personalizados de focus */
+.form-floating>.form-control:focus,
+.form-floating>.form-control:not(:placeholder-shown) {
+  background-color: var(--form-focus-bg) !important;
+  color: var(--form-focus-text) !important;
+  border-color: var(--form-focus-bg) !important;
+}
+
+.form-floating>.form-control:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px var(--form-focus-bg) inset !important;
+  -webkit-text-fill-color: var(--form-focus-text) !important;
+}
+
+/* Asegurar que el label tenga el color correcto */
+.form-floating>label {
   color: var(--form-placeholder) !important;
 }
 
 /* Cuando el label flota (focus o tiene valor) */
-.form-floating > .form-control:focus ~ label,
-.form-floating > .form-control:not(:placeholder-shown) ~ label {
+.form-floating>.form-control:focus~label,
+.form-floating>.form-control:not(:placeholder-shown)~label {
   color: var(--form-focus-label) !important;
   background-color: transparent !important;
 }
 
+/* Desactivar hover en tablas que no tengan la clase explícita .table-hover */
+table:not(.table-hover) tbody tr:hover {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+table:not(.table-hover)>tbody>tr:hover>* {
+  background-color: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  --bs-table-accent-bg: transparent !important;
+}
+
 /* Placeholder siempre transparente en form-floating */
-.form-floating > .form-control::placeholder,
-.form-floating > .form-control:focus::placeholder {
+.form-floating>.form-control::placeholder,
+.form-floating>.form-control:focus::placeholder {
   color: transparent !important;
 }

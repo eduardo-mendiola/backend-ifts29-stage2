@@ -34,6 +34,10 @@ const PORT = process.env.PORT || 3000;
         // Join user to their conversation rooms
         socket.on('join-conversations', async (userId) => {
             try {
+                // Join user's personal room for notifications
+                socket.join(userId);
+                console.log(`User ${userId} joined personal room: ${userId}`);
+
                 const conversations = await Conversation.find({
                     participants: userId
                 });
@@ -88,6 +92,12 @@ const PORT = process.env.PORT || 3000;
                 io.to(conversationId).emit('chat-message', {
                     message,
                     conversationId
+                });
+
+                // Notify receiver to reload conversations/join room if not present
+                io.to(receiverId).emit('new-message-notification', {
+                    conversationId,
+                    senderId
                 });
 
                 console.log(`Message sent in room ${conversationId}`);

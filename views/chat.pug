@@ -44,24 +44,33 @@ block content
               i.bi.bi-send
 
   //- Contact Selection Modal
-  .modal.fade#contactModal(tabindex="-1")
+  .modal.fade#contactModal(tabindex="-1" aria-hidden="true")
     .modal-dialog.modal-dialog-centered
       .modal-content
         .modal-header
           h5.modal-title Nuevo Chat
-          button.btn-close(type="button" data-bs-dismiss="modal")
+          button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
         .modal-body
-          input#contactSearch.form-control.mb-3(type="text" placeholder="Buscar contacto...")
-          #contactList.list-group
+          input.form-control.mb-3#contactSearch(type="text" placeholder="Buscar usuario...")
+          .list-group#contactList
             //- Contacts will be loaded here
+
+  //- Delete Confirmation Modal
+  .modal.fade#deleteConfirmModal(tabindex="-1" aria-hidden="true")
+    .modal-dialog.modal-dialog-centered
+      .modal-content
+        .modal-header
+          h5.modal-title Eliminar Conversación
+          button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+        .modal-body
+          p ¿Estás seguro de que deseas eliminar esta conversación? Esta acción no se puede deshacer.
+        .modal-footer
+          button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Cancelar
+          button.btn.btn-danger#confirmDeleteBtn(type="button") Eliminar
 
   //- User data for JavaScript
   script.
-    window.user = {
-      _id: '#{user._id}',
-      username: '#{user.username}',
-      email: '#{user.email || ""}'
-    };
+    window.user = !{JSON.stringify(user)};
 
   //- Socket.io client
   script(src="/socket.io/socket.io.js")

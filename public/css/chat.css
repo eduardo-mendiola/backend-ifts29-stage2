@@ -257,3 +257,17 @@
     font-size: 0.7rem;
     min-width: 20px;
 }
+
+/* Dark Mode Overrides */
+[data-theme="dark"] .text-muted {
+    color: #adb5bd !important;
+    /* Bootstrap gray-500, much lighter */
+}
+
+[data-theme="dark"] .last-message,
+[data-theme="dark"] .time,
+[data-theme="dark"] #current-contact-status,
+[data-theme="dark"] .modal-body .text-muted {
+    color: #ced4da !important;
+    /* Even lighter for better contrast */
+}

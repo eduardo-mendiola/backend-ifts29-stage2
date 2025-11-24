@@ -1,39 +1,56 @@
 // Socket.io client connection
 const socket = io();
 
-// DOM elements
-const messagesList = document.getElementById('messages');
-const chatForm = document.getElementById('chatForm');
-const messageInput = document.getElementById('messageInput');
-const currentContactName = document.getElementById('current-contact-name');
-const contactsList = document.getElementById('contactsList');
-const newChatBtn = document.getElementById('newChatBtn');
-const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
-const contactSearch = document.getElementById('contactSearch');
-const contactList = document.getElementById('contactList');
-const deleteConversationBtn = document.getElementById('deleteConversationBtn');
-const conversationHeader = document.getElementById('conversationHeader');
-const messagesContainer = document.getElementById('messagesContainer');
-const inputArea = document.getElementById('inputArea');
-const emptyState = document.getElementById('emptyState');
-
-// Current user (from session)
-const currentUser = {
-    id: document.querySelector('body').dataset.userId || null,
-    name: document.querySelector('body').dataset.userName || 'Usuario'
-};
-
-// Current active conversation
+// Global variables
+let currentUser = { id: null, name: 'Usuario' };
 let activeConversation = null;
 let allContacts = [];
+let contactModal;
+let deleteConfirmModal;
+
+// DOM Elements (will be initialized on load)
+let messagesList, chatForm, messageInput, currentContactName, contactsList, newChatBtn, contactSearch, contactList, deleteConversationBtn, conversationHeader, messagesContainer, inputArea, emptyState, confirmDeleteBtn;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize DOM elements
+    messagesList = document.getElementById('messages');
+    chatForm = document.getElementById('chatForm');
+    messageInput = document.getElementById('messageInput');
+    currentContactName = document.getElementById('current-contact-name');
+    contactsList = document.getElementById('contactsList');
+    newChatBtn = document.getElementById('newChatBtn');
+    contactSearch = document.getElementById('contactSearch');
+    contactList = document.getElementById('contactList');
+    deleteConversationBtn = document.getElementById('deleteConversationBtn');
+    conversationHeader = document.getElementById('conversationHeader');
+    messagesContainer = document.getElementById('messagesContainer');
+    inputArea = document.getElementById('inputArea');
+    emptyState = document.getElementById('emptyState');
+    confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    // Initialize Modals
+    const contactModalEl = document.getElementById('contactModal');
+    if (contactModalEl) {
+        contactModal = new bootstrap.Modal(contactModalEl);
+    }
+
+    const deleteModalEl = document.getElementById('deleteConfirmModal');
+    if (deleteModalEl) {
+        deleteConfirmModal = new bootstrap.Modal(deleteModalEl);
+    }
+
     // Set user data from session if available
     if (window.user) {
         currentUser.id = window.user._id;
         currentUser.name = window.user.username;
+    } else {
+        currentUser.id = document.querySelector('body').dataset.userId;
+        currentUser.name = document.querySelector('body').dataset.userName;
     }
+
+    // Event Listeners setup
+    setupEventListeners();
 
     // Join user's conversation rooms
     if (currentUser.id) {
@@ -46,6 +63,96 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load all contacts for modal
     await loadAllContacts();
 });
+
+function setupEventListeners() {
+    // New chat button
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', async () => {
+            console.log('Opening contact modal...');
+            await loadAllContacts();
+            renderContactsModal(allContacts);
+            if (contactModal) contactModal.show();
+        });
+    }
+
+    // Delete conversation button
+    if (deleteConversationBtn) {
+        deleteConversationBtn.addEventListener('click', () => {
+            if (!activeConversation) return;
+            if (deleteConfirmModal) deleteConfirmModal.show();
+        });
+    }
+
+    // Confirm delete button
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (deleteConfirmModal) deleteConfirmModal.hide();
+            await handleDeleteConversation();
+        });
+    }
+
+    // Search contacts
+    if (contactSearch) {
+        contactSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allContacts.filter(c =>
+                (c.displayName && c.displayName.toLowerCase().includes(query)) ||
+                c.username.toLowerCase().includes(query) ||
+                (c.email && c.email.toLowerCase().includes(query))
+            );
+            renderContactsModal(filtered);
+        });
+    }
+
+    // Chat form
+    if (chatForm) {
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = messageInput.value.trim();
+
+            if (message && activeConversation) {
+                socket.emit('chat-message', {
+                    senderId: currentUser.id,
+                    receiverId: activeConversation.contact._id,
+                    text: message,
+                    conversationId: activeConversation.conversationId
+                });
+                messageInput.value = '';
+            }
+        });
+    }
+}
+
+async function handleDeleteConversation() {
+    if (!activeConversation) return;
+
+    try {
+        console.log(`Attempting to delete conversation: /chat/conversations/${activeConversation.conversationId}`);
+        const response = await fetch(`/chat/conversations/${activeConversation.conversationId}`, {
+            method: 'DELETE'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            activeConversation = null;
+            emptyState.style.display = '';
+            emptyState.style.removeProperty('display');
+            emptyState.style.display = 'flex';
+
+            conversationHeader.style.display = 'none';
+            messagesContainer.style.display = 'none';
+            inputArea.style.display = 'none';
+            messagesList.innerHTML = '';
+
+            await loadConversations();
+        } else {
+            alert(data.message || 'Error al eliminar la conversación');
+        }
+    } catch (error) {
+        console.error('Error deleting conversation:', error);
+        alert('Error al eliminar la conversación');
+    }
+}
 
 // Load conversations from API
 async function loadConversations() {
@@ -287,6 +394,12 @@ async function selectConversation(conversation) {
     const contactName = conversation.contact.displayName || conversation.contact.username;
     currentContactName.textContent = contactName;
 
+    // Clear unread badge locally
+    const badge = selectedItem ? selectedItem.querySelector('.badge') : null;
+    if (badge) {
+        badge.remove();
+    }
+
     // Load messages
     await loadMessages(conversation.conversationId);
 }
@@ -376,6 +489,18 @@ socket.on('chat-message', (data) => {
     loadConversations();
 });
 
+// Listen for new message notifications (for real-time updates when not in room)
+socket.on('new-message-notification', (data) => {
+    console.log('New message notification received:', data);
+    const { conversationId } = data;
+
+    // Join the conversation room
+    socket.emit('join-conversations', currentUser.id);
+
+    // Reload conversations list
+    loadConversations();
+});
+
 // New chat button
 newChatBtn.addEventListener('click', async () => {
     console.log('Opening contact modal...');
@@ -388,34 +513,50 @@ newChatBtn.addEventListener('click', async () => {
     contactModal.show();
 });
 
-// Delete conversation
-deleteConversationBtn.addEventListener('click', async () => {
+// Delete conversation logic
+deleteConversationBtn.addEventListener('click', () => {
+    if (!activeConversation) return;
+    deleteConfirmModal.show();
+});
+
+confirmDeleteBtn.addEventListener('click', async () => {
+    deleteConfirmModal.hide();
+
     if (!activeConversation) return;
 
-    if (confirm('¿Estás seguro de que deseas eliminar esta conversación?')) {
-        try {
-            const response = await fetch(`/chat/conversations/${activeConversation.conversationId}`, {
-                method: 'DELETE'
-            });
+    try {
+        console.log(`Attempting to delete conversation: /chat/conversations/${activeConversation.conversationId}`);
+        const response = await fetch(`/chat/conversations/${activeConversation.conversationId}`, {
+            method: 'DELETE'
+        });
+        console.log('Delete response status:', response.status);
 
-            const data = await response.json();
+        const data = await response.json();
+        console.log('Delete response data:', data);
 
-            if (data.success) {
-                // Reset UI
-                activeConversation = null;
-                emptyState.style.display = 'flex';
-                conversationHeader.style.display = 'none';
-                messagesContainer.style.display = 'none';
-                inputArea.style.display = 'none';
-                messagesList.innerHTML = '';
+        if (data.success) {
+            // Reset UI
+            activeConversation = null;
 
-                // Reload conversations
-                await loadConversations();
-            }
-        } catch (error) {
-            console.error('Error deleting conversation:', error);
-            alert('Error al eliminar la conversación');
+            // Show empty state properly
+            emptyState.style.display = '';
+            emptyState.style.removeProperty('display');
+            emptyState.style.display = 'flex';
+
+            conversationHeader.style.display = 'none';
+            messagesContainer.style.display = 'none';
+            inputArea.style.display = 'none';
+            messagesList.innerHTML = '';
+
+            // Reload conversations
+            await loadConversations();
+            // Optional: show a toast or small notification instead of alert
+        } else {
+            alert(data.message || 'Error al eliminar la conversación');
         }
+    } catch (error) {
+        console.error('Error deleting conversation:', error);
+        alert('Error al eliminar la conversación');
     }
 });
 
