@@ -24,6 +24,11 @@ class DocumentController extends PermissionAwareController {
     }
 
     getAllView = async (req, res) => {
+        // Primero verificar que tiene permiso básico para ver documentos
+        if (!this.checkPermission(req, `view_${this.resourceName}`)) {
+            return this.denyAccess(res);
+        }
+
         try {
             const userId = req.user?._id || req.session?.user?._id;
             let items;

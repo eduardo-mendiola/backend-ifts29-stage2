@@ -423,7 +423,22 @@ app.put('/payments/:id/status', isAuthenticated, PaymentController.updateStatus)
 app.get('/expense-categories', isAuthenticated, ExpenseCategoryController.getAllView);
 app.get('/expense-categories/new', isAuthenticated, ExpenseCategoryController.newView);
 app.get('/expense-categories/:id/edit', isAuthenticated, ExpenseCategoryController.getEditView);
+app.get('/expense-categories/:id', isAuthenticated, ExpenseCategoryController.getByIdView);
+app.post('/expense-categories', isAuthenticated, ExpenseCategoryController.createView);
+app.put('/expense-categories/:id', isAuthenticated, ExpenseCategoryController.updateView);
 
+// Vistas Pug para Documents
+app.get('/document-files', isAuthenticated, DocumentFileController.getAllView);
+app.get('/document-files/new', isAuthenticated, DocumentFileController.newView);
+app.get('/document-files/:id/edit', isAuthenticated, DocumentFileController.getEditView);
+app.get('/document-files/:id', isAuthenticated, DocumentFileController.getByIdView);
+app.post('/document-files', isAuthenticated, DocumentFileController.createView);
+app.put('/document-files/:id', isAuthenticated, DocumentFileController.updateView);
+
+
+
+
+// || -----------------------------Rutas base (endpoints de la API) ------------------------------||
 // Rutas de API existentes (sin protección por defecto - pueden protegerse individualmente)
 app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);

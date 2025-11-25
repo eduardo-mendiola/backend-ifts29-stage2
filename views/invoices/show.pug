@@ -83,7 +83,7 @@ block content
 
   h3.mt-4 Extras   
   if item.extras && item.extras.length > 0
-    table.table.table-dark
+    table.table
       tbody
         tr 
           th Moneda 
@@ -127,7 +127,7 @@ block content
           td $#{item.extras_final_total.toFixed(2)}
 
   h3.mt-4 Valores totales de la Factura   
-  table.table.table-dark
+  table.table
     tbody
       tr 
         th Monto Total de la Factura

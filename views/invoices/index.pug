@@ -61,9 +61,9 @@ block content
               else if item.status === 'cancelled'
                 button.btn.btn-danger-soft.btn-sm(
                   disabled,
-                  style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed;"
+                  style="width:60px; text-align:center; opacity:0.5; cursor:not-allowed; font-size:0.8rem;"
                 ) Anulada
-              //- Si NO está en draft pero está cancelada → botón deshabilitado
+              //- Si NO está en draft pero está pagada → botón deshabilitado
               else if item.status === 'paid'
                 button.btn.btn-danger-soft.btn-sm(
                   disabled,
@@ -80,7 +80,7 @@ block content
                   input(type="hidden", name="status", value="cancelled")
                   button.btn.btn-danger-soft.btn-sm(
                     type="button",
-                    style="width:60px; text-align:center;"
+                    style="width:60px; text-align:center; font-size:0.8rem;"
                     data-bs-toggle="modal",
                     data-bs-target=`#confirmCancelModal-${item.id}`
                   ) Anular
@@ -88,7 +88,7 @@ block content
             // Modal de confirmación
             div.modal.fade(id=`confirmCancelModal-${item.id}`, tabindex="-1", aria-labelledby=`confirmCancelModalLabel-${item.id}`, aria-hidden="true")
               div.modal-dialog
-                div.modal-content.bg-dark.text-white
+                div.modal-content
                   div.modal-header
                     h5.modal-title(id=`confirmCancelModalLabel-${item.id}`) Confirmar cancelación
                     button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
